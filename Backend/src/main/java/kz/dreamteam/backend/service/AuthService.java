@@ -15,43 +15,17 @@ import java.util.Date;
 
 @Service
 public class AuthService {
-    private static final String SECRET_KEY = "secretkeysecretkeysecretkeysecretkeysecretkeysecretkeysecretkeysecretkeysecretkeysecretkeysecretkeysecretkeysecretkeysecretkeysecretkey";
+
+    private final JwtService jwtService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(JwtService jwtService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
-
-    private String generateJwtToken(User user) {
-        // Это простая генерация токена, в реальном проекте вам нужно будет использовать библиотеку для JWT
-        return Jwts.builder()
-                .setSubject(user.getEmail()) // Используйте email или user_id как уникальный идентификатор
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24 часа
-                .signWith(SignatureAlgorithm.HS512, SECRET_KEY) // Используйте секретный ключ
-                .compact();
-    }
-
-    public Claims getClaimsFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey("secretkey")
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-//    public boolean validateToken(String token, UserDetails userDetails) {
-//        String username = getClaimsFromToken(token).getSubject();
-//        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-//    }
-
-    private boolean isTokenExpired(String token) {
-        return getClaimsFromToken(token).getExpiration().before(new Date());
-    }
-
-
 
     public ResponseEntity<String> login(LoginBody body) {
         try {
@@ -62,7 +36,7 @@ public class AuthService {
             // Проверить, соответствует ли пароль
             if (passwordEncoder.matches(body.getPassword(), user.getPasswordHash())) {
                 // Если пароль верный, создаем токен (можно использовать JWT)
-                String token = generateJwtToken(user); // Метод для создания токена
+                String token = jwtService.generateJwtToken(user); // Метод для создания токена
 
                 return ResponseEntity.ok("Bearer " + token); // Возвращаем токен
             } else {

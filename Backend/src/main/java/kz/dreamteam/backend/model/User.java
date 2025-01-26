@@ -27,6 +27,10 @@ public class User {
     @Column(length = 1)
     private Character sex;
 
+    public Long getUserId() {
+        return userId;
+    }
+
     public String getName() {
         return name;
     }
@@ -50,6 +54,7 @@ public class User {
     public Character getSex() {
         return sex;
     }
+
 
     public void setName(String name) {
         this.name = name;
