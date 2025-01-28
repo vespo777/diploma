@@ -1,31 +1,36 @@
 package kz.dreamteam.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
 public class SocialDetails {
 
     @Id
-    private Long userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Ensure the ID is auto-generated
+    private Long id;
 
     private Boolean smoking;
     private Boolean drinking;
     private String religion;
     private String lifePlans;
-
-    private String sports; // Или используйте @ElementCollection если sports это список
+    private String sports;
 
     @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
-    // Getters and setters
-    public Long getUserId() {
-        return userId;
+    public SocialDetails() {
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Boolean getSmoking() {

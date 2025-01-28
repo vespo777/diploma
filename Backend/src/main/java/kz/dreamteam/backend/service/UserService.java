@@ -5,6 +5,7 @@ import kz.dreamteam.backend.model.LocationDetails;
 import kz.dreamteam.backend.model.RoommatePreferences;
 import kz.dreamteam.backend.model.SocialDetails;
 import kz.dreamteam.backend.model.User;
+import kz.dreamteam.backend.model.dto.CurrentUserDTO;
 import kz.dreamteam.backend.model.dto.UpdateUserProfileRequest;
 import kz.dreamteam.backend.repository.LocationDetailsRepository;
 import kz.dreamteam.backend.repository.RoommatePreferencesRepository;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -43,8 +45,20 @@ public class UserService {
         Long userId = jwtService.getUserIdFromToken(token);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
         return ResponseEntity.ok(user);
+    }
+
+    public ResponseEntity<?> getUserById(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("User with ID " + userId + " not found");
+        }
     }
 
 
@@ -63,7 +77,7 @@ public class UserService {
             userRepository.save(user);
 
             // Обновление социального профиля
-            SocialDetails socialDetails = socialDetailsRepository.findByUserId(userId)
+            SocialDetails socialDetails = socialDetailsRepository.findById(userId)
                     .orElseThrow(() -> new NoSuchElementException("Social details not found"));
 
             socialDetails.setSmoking(updateRequest.getSmoking());
@@ -74,7 +88,7 @@ public class UserService {
             socialDetailsRepository.save(socialDetails);
 
             // Обновление информации о местоположении
-            LocationDetails locationDetails = locationDetailsRepository.findByUserId(userId)
+            LocationDetails locationDetails = locationDetailsRepository.findById(userId)
                     .orElseThrow(() -> new NoSuchElementException("Location details not found"));
 
             locationDetails.setCityFrom(updateRequest.getCityFrom());
@@ -85,7 +99,7 @@ public class UserService {
             locationDetailsRepository.save(locationDetails);
 
             // Обновление предпочтений по сожителям
-            RoommatePreferences roommatePreferences = roommatePreferencesRepository.findByUserId(userId)
+            RoommatePreferences roommatePreferences = roommatePreferencesRepository.findById(userId)
                     .orElseThrow(() -> new NoSuchElementException("Roommate preferences not found"));
 
             roommatePreferences.setPrefersDorm(updateRequest.getPrefersDorm());

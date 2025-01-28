@@ -1,5 +1,6 @@
 package kz.dreamteam.backend.model.dto;
 
+
 public class UpdateUserProfileRequest {
     private String name;
     private String surname;

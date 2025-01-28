@@ -32,6 +32,11 @@ public class UserController {
         return this.userService.getCurrentUser(token);
     }
 
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
+        return this.userService.getUserById(userId);
+    }
+
     @PutMapping("/profile/{userId}")
     public ResponseEntity<String> updateProfile(
             @PathVariable Long userId,

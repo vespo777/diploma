@@ -1,5 +1,6 @@
 package kz.dreamteam.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -26,6 +27,42 @@ public class User {
 
     @Column(length = 1)
     private Character sex;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonManagedReference
+    private SocialDetails socialDetails;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonManagedReference
+    private LocationDetails locationDetails;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonManagedReference
+    private RoommatePreferences roommatePreferences;
+
+    public RoommatePreferences getRoommatePreferences() {
+        return roommatePreferences;
+    }
+
+    public void setRoommatePreferences(RoommatePreferences roommatePreferences) {
+        this.roommatePreferences = roommatePreferences;
+    }
+
+    public LocationDetails getLocationDetails() {
+        return locationDetails;
+    }
+
+    public void setLocationDetails(LocationDetails locationDetails) {
+        this.locationDetails = locationDetails;
+    }
+
+    public SocialDetails getSocialDetails() {
+        return socialDetails;
+    }
+
+    public void setSocialDetails(SocialDetails socialDetails) {
+        this.socialDetails = socialDetails;
+    }
 
     public Long getUserId() {
         return userId;

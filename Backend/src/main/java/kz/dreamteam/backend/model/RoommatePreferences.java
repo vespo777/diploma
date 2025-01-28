@@ -1,12 +1,14 @@
 package kz.dreamteam.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
 public class RoommatePreferences {
 
     @Id
-    private Long userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Ensure the ID is auto-generated
+    private Long id;
 
     private Boolean prefersDorm;
     private Boolean prefersApartment;
@@ -14,16 +16,20 @@ public class RoommatePreferences {
     private String sleepTime;
 
     @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
-    // Getters and setters
-    public Long getUserId() {
-        return userId;
+    public RoommatePreferences() {
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Boolean getPrefersDorm() {
