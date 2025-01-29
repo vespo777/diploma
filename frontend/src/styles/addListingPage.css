@@ -26,3 +26,19 @@
     cursor: pointer;
   }
   
+  .textarea {
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+    padding-top: 12px;
+  }
+  
+  .input-group textarea + .input-icon {
+    top: 20px;
+    transform: none;
+  }
+  
+  .auth-box {
+    max-width: 500px;
+  }
+  

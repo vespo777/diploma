@@ -1,15 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Navbar } from './components/Navbar';
+import Navbar from './components/Navbar';
 import { ListingPage } from './pages/ListingPage';
-import { AddListingPage } from './pages/AddListingPage';
+import AddListingPage from './pages/AddListingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import './styles/global.css';
 import { AuthProvider } from './contexts/AuthContext';
 
-function App() {
+const App = () => {
   return (
     <AuthProvider>
       <Router>
@@ -28,6 +28,6 @@ function App() {
       </Router>
     </AuthProvider>
   );
-}
+};
 
 export default App;

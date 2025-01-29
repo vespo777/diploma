@@ -1,64 +1,71 @@
 import React from 'react';
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import '../styles/navbar.css';
+import { useAuth } from "../contexts/AuthContext";
+import { motion } from "framer-motion";
+import logo from "../imgs/logo.jpg";
 
+const Navbar = () => {
+  const { user, logout } = useAuth();
 
-export const Navbar = () => {
-  const linkStyle = {
-    color: '#fff',
-    textDecoration: 'none',
-    padding: '8px 12px',
-    borderRadius: '4px',
-    marginRight: '10px',
-    transition: 'background-color 0.3s ease'
-  };
-
-  const registerStyle = {
-    ...linkStyle,
-    backgrounColor: "rgb(227, 191, 72)",
-    marginRight: '0'
+  const handleLogout = () => {
+    logout();
   };
 
   return (
-    <nav style={{ 
-      background: '#007bff', 
-      color: '#fff', 
-      padding: '10px',
-      display: 'flex',
-      alignItems: 'center'
-    }}>
-      <a href="/" 
-        style={linkStyle} 
-        className="nav-link"
-      >
-        Home
-      </a>
-      <a href="/add-listing" 
-        style={linkStyle}
-        className="nav-link"
-      >
-        Add Listing
-      </a>
-      <a href="/profile" 
-        style={linkStyle}
-        className="nav-link"
-      >
-        Profile
-      </a>
-      <div style={{display: 'flex', marginLeft: 'auto'}}>
-        <a href="/login" 
-          style={linkStyle}
-          className="nav-link"
-        >
-          Login
-        </a>
-        <a href="/register" 
-          style={registerStyle}
-          className="nav-link register"
-        >
-          Register
-        </a>
+    <motion.nav 
+      className="navbar"
+      initial={{ y: -10 }}
+      animate={{ y: 0 }}
+      transition={{ type: "spring", stiffness: 120 }}
+    >
+      <div className="nav-brand">
+        <img src={logo} alt="logo" />
+        <Link to="/" className="brand-link">
+          HomeSwap
+        </Link>
       </div>
-    </nav>
+
+      <div className="nav-links">
+        <Link to="/" className="nav-link">
+          Home
+        </Link>
+        <Link to="/add-listing" className="nav-link">
+          Add Listing
+        </Link>
+        {user && (
+          <Link to="/profile" className="nav-link">
+            Profile
+          </Link>
+        )}
+      </div>
+
+      <div className="nav-auth">
+        {user ? (
+          <>
+            <span className="user-email">{user.email}</span>
+            <motion.button 
+              className="logout-button"
+              onClick={handleLogout}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Logout
+            </motion.button>
+          </>
+        ) : (
+          <div className="auth-buttons">
+            <Link to="/login" className="nav-link login">
+              Login
+            </Link>
+            <Link to="/register" className="nav-link register">
+              Register
+            </Link>
+          </div>
+        )}
+      </div>
+    </motion.nav>
   );
 };
+
+export default Navbar;

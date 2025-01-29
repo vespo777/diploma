@@ -1,17 +1,21 @@
-import React, { useContext } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { AuthContext } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import styles from "../styles/ProfilePage.module.css";  // Import as CSS module
 import avatarImage from "../imgs/download.png";
-
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const ProfilePage = () => {
   // console.log("ProfilePage loaded");
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  if (!user) {
-    return <p>Loading...</p>;
-  }
+  useEffect(() => {
+    if (!user) navigate("/login");
+  }, [user, navigate]);
+
+  if (!user) return <p>Loading...</p>;
 
   return (
     <motion.div 
