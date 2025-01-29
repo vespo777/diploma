@@ -41,12 +41,6 @@ const LoginPage = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <motion.div 
-              className="input-icon"
-              whileHover={{ scale: 1.1 }}
-            >
-              📧
-            </motion.div>
           </div>
 
           <div className="input-group">

@@ -6,22 +6,35 @@ import { Link } from "react-router-dom";
 
 const RegisterPage = () => {
   const { register } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
+    birthDate: "",
+    sex: ""
+  });
   const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (password !== confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
       setError("Passwords don't match!");
       return;
     }
 
     try {
-      await register(email, password);
+      await register(formData);
     } catch (err) {
       setError("Failed to create an account");
     }
@@ -40,28 +53,77 @@ const RegisterPage = () => {
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <input
-              type="email"
+              type="text"
+              name="firstName"
               className="auth-input"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="First Name"
+              value={formData.firstName}
+              onChange={handleChange}
               required
             />
-            <motion.div 
-              className="input-icon"
-              whileHover={{ scale: 1.1 }}
+          </div>
+
+          <div className="input-group">
+            <input
+              type="text"
+              name="lastName"
+              className="auth-input"
+              placeholder="Last Name"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="input-group">
+            <input
+              type="email"
+              name="email"
+              className="auth-input"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-divider"></div>
+
+          <div className="input-group">
+            <label className="date-label">Date of birth</label>
+            <input
+              type="date"
+              name="birthDate"
+              className="auth-input"
+              value={formData.birthDate}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="input-group gender-group">
+            <select
+              name="sex"
+              className="auth-input gender-select"
+              value={formData.sex}
+              onChange={handleChange}
+              required
             >
-              📧
-            </motion.div>
+              <option value="">Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
           </div>
 
           <div className="input-group">
             <input
               type="password"
+              name="password"
               className="auth-input"
               placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
               required
             />
             <motion.div 
@@ -75,10 +137,11 @@ const RegisterPage = () => {
           <div className="input-group">
             <input
               type="password"
+              name="confirmPassword"
               className="auth-input"
               placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={formData.confirmPassword}
+              onChange={handleChange}
               required
             />
             <motion.div 

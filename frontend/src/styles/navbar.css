@@ -1,6 +1,7 @@
 .navbar {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 1rem 2rem;
+  /* background: linear-gradient(135deg, #7a8562 0%, #ffffff 100%); */
+  background: #2D2D2D;
+  padding: 0.5rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -74,12 +75,12 @@
 }
 
 .nav-link.register {
-  background: white;
-  color: #764ba2;
+  background: rgb(228, 133, 90);
+  color: #e0e0e0;
 }
 
 .nav-link.register:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(70, 66, 66, 0.9);
   transform: translateY(-2px);
 }
 
