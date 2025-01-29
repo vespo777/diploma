@@ -1,23 +1,36 @@
 import React, { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
 import { motion } from "framer-motion";
-import "../styles/LoginRegister.css";
 import { Link } from "react-router-dom";
+import "../styles/LoginRegister.css";
 
-const LoginPage = () => {
-  const { login } = useAuth();
+const ResetPasswordPage = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-
     try {
-      await login(email, password);
+      const response = await fetch('http://localhost:3001/api/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage("Password reset link has been sent to your email!");
+        setError("");
+      } else {
+        setError(data.message || "Failed to send reset link");
+        setMessage("");
+      }
     } catch (err) {
-      setError("Failed to log in. Please check your credentials.");
+      setError("An error occurred. Please try again.");
+      setMessage("");
     }
   };
 
@@ -29,41 +42,19 @@ const LoginPage = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h2>Welcome Back</h2>
+        <h2>Reset Password</h2>
         {error && <div className="error-message">{error}</div>}
+        {message && <div className="success-message">{message}</div>}
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <input
               type="email"
               className="auth-input"
-              placeholder="Email"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-          </div>
-
-          <div className="input-group">
-            <input
-              type="password"
-              className="auth-input"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <motion.div 
-              className="input-icon"
-              whileHover={{ scale: 1.1 }}
-            >
-              🔒
-            </motion.div>
-          </div>
-
-          <div className="reset-password">
-            <Link to="/reset-password" className="auth-link">
-              Forgot Password?
-            </Link>
           </div>
 
           <motion.button
@@ -72,13 +63,13 @@ const LoginPage = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            Sign In
+            Send Reset Link
           </motion.button>
         </form>
         <div className="auth-footer">
-          Don't have an account?{" "}
-          <Link to="/register" className="auth-link">
-            Register here
+          Remember your password?{" "}
+          <Link to="/login" className="auth-link">
+            Login here
           </Link>
         </div>
       </motion.div>
@@ -86,4 +77,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default ResetPasswordPage; 

@@ -177,4 +177,22 @@ input[type="date"].auth-input::-webkit-calendar-picker-indicator {
   background-repeat: no-repeat;
   background-position: right 8px center;
   background-size: 16px;
+}
+
+.success-message {
+  background: #c6f6d5;
+  color: #2f855a;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.reset-password {
+  margin-top: -10px;
+  color: #4a5568;
+  font-size: 14px;
+  text-align: left;
+  margin-bottom: 25px;
+  margin-left: 10px;
 } 
