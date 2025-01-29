@@ -1,0 +1,180 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ececec 0%, #424242 110%);
+  padding: 20px;
+}
+
+.auth-box {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.auth-box h2 {
+  color: #2d3748;
+  font-size: 28px;
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 20px;
+  
+}
+
+.auth-input {
+  width: 90%;
+  padding: 15px 45px 15px 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: white;
+  color: #7a7a7a;
+}
+
+.auth-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  outline: none;
+}
+
+.input-icon {
+  position: absolute;
+  right: 15px; 
+  top: 30%;
+  /* transform: translateY(-50%); */
+  color: #a0aec0;
+  font-size: 20px;
+}
+
+.auth-button {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #b87a08 0%, #7739b6 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.auth-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+  background: #fed7d7;
+  color: #c53030;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.auth-footer {
+  margin-top: 25px;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+.auth-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.auth-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 100;
+    
+    transform: translateY(0);
+  }
+}
+
+.auth-box {
+  animation: fadeIn 0.5s ease-out;
+}
+
+select.auth-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  background: white;
+}
+
+input[type="date"].auth-input {
+  cursor: pointer;
+}
+
+input[type="date"].auth-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
+  position: absolute;
+  right: 40px;
+  width: 20px;
+  height: 20px;
+}
+
+.input-group + .input-group {
+  margin-top: 15px;
+}
+
+.form-divider {
+  height: 20px; /* Space after email field */
+}
+
+.date-label {
+  display: block;
+  text-align: left;
+  margin-bottom: 5px;
+  color: #4a5568;
+  font-size: 0.9rem;
+  margin-left: 10px;
+  font-weight: 600;
+}
+
+.gender-group {
+  width: 150px; /* Smaller width for gender select */
+  margin-right: auto; /* Push to right */
+  margin-top: -52px; /* Align with date input */
+  margin-left: -8px;
+}
+
+.gender-select {
+  padding-right: 30px; /* Space for the dropdown arrow */
+}
+
+
+
+/* Style the select dropdown arrow */
+.gender-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+} 
