@@ -21,3 +21,11 @@
     text-decoration: none;
   }
   
+  .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .nav-link.register:hover {
+    background-color: rgba(227, 191, 72, 0.1);
+  }
+  
