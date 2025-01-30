@@ -52,12 +52,12 @@ const LoginPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <motion.div 
-              className="input-icon"
-              whileHover={{ scale: 1.1 }}
-            >
-              🔒
-            </motion.div>
+          </div>
+
+          <div className="reset-password">
+            <Link to="/reset-password" className="auth-link">
+              Forgot Password?
+            </Link>
           </div>
 
           <motion.button

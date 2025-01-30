@@ -1,33 +1,39 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import { ListingPage } from './pages/ListingPage';
-import AddListingPage from './pages/AddListingPage';
+import HomePage from './pages/HomePage';
+import ListingPage from './pages/ListingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import ProfilePage from './pages/ProfilePage';
-import './styles/global.css';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import AddListingPage from './pages/AddListingPage';
 import { AuthProvider } from './contexts/AuthContext';
+// Сначала импортируем глобальные стили
+import './index.css';  
+// Затем компонентные стили
+import './styles/navbar.css';
+import './styles/HomePage.css';
+import './styles/ListingPage.css';
+import './styles/LoginRegister.css';
 
-const App = () => {
+function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="app-container">
+    <Router>
+      <AuthProvider>
+        <div className="App">
           <Navbar />
-          <div className="content">
-            <Routes>
-              <Route path="/" element={<ListingPage />} />
-              <Route path="/add-listing" element={<AddListingPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-            </Routes>
-          </div>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/listing/:id" element={<ListingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/add-listing" element={<AddListingPage />} />
+          </Routes>
         </div>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
-};
+}
 
 export default App;

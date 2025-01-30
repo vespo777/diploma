@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/navbar.css';
 import { useAuth } from "../contexts/AuthContext";
@@ -7,31 +7,60 @@ import logo from "../imgs/logo.jpg";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleLogout = () => {
     logout();
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // Implement your search logic here
+    console.log('Searching for:', searchQuery);
+  };
+
   return (
     <motion.nav 
       className="navbar"
-      initial={{ y: -10 }}
+      initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 120 }}
     >
       <div className="nav-brand">
         <img src={logo} alt="logo" />
         <Link to="/" className="brand-link">
-          HomeSwap
+          Roommates
         </Link>
+      </div>
+
+      <div className="search-container">
+        <form onSubmit={handleSearch}>
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="Search for homes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="search-input"
+            />
+            <motion.button 
+              type="submit"
+              className="search-button"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="search-icon">🔍</span>
+            </motion.button>
+          </div>
+        </form>
       </div>
 
       <div className="nav-links">
         <Link to="/" className="nav-link">
-          Home
+          Main Page
         </Link>
         <Link to="/add-listing" className="nav-link">
-          Add Listing
+          Add an Announcement
         </Link>
         {user && (
           <Link to="/profile" className="nav-link">

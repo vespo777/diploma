@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #ececec 0%, #424242 110%);
+  background: linear-gradient(135deg, #ffffff 0%, #d6d4d4 100%);
   padding: 20px;
 }
 
@@ -32,7 +32,7 @@
 }
 
 .auth-input {
-  width: 90%;
+  width: 100%;
   padding: 15px 45px 15px 15px;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
@@ -159,10 +159,10 @@ input[type="date"].auth-input::-webkit-calendar-picker-indicator {
 }
 
 .gender-group {
-  width: 150px; /* Smaller width for gender select */
+  width: 50%; /* Smaller width for gender select */
   margin-right: auto; /* Push to right */
-  margin-top: -52px; /* Align with date input */
-  margin-left: -8px;
+  /* margin-top: -52px; Align with date input */
+  /* margin-left: -8px; */
 }
 
 .gender-select {
@@ -177,4 +177,78 @@ input[type="date"].auth-input::-webkit-calendar-picker-indicator {
   background-repeat: no-repeat;
   background-position: right 8px center;
   background-size: 16px;
+}
+
+.success-message {
+  background: #c6f6d5;
+  color: #2f855a;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.reset-password {
+  margin-top: -10px;
+  color: #4a5568;
+  font-size: 14px;
+  text-align: left;
+  margin-bottom: 25px;
+  margin-left: 10px;
+}
+
+/* Add these new styles for the confirmation message */
+.confirmation-box {
+  text-align: center;
+  padding: 2.5rem;
+}
+
+.confirmation-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.confirmation-text {
+  color: #2d3748;
+  font-size: 16px;
+  margin: 20px 0;
+  line-height: 1.5;
+}
+
+.confirmation-text strong {
+  display: block;
+  color: #4a5568;
+  margin-top: 8px;
+}
+
+.confirmation-subtext {
+  color: #718096;
+  font-size: 14px;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.auth-button.secondary {
+  background: #718096;
+  margin-bottom: 15px;
+}
+
+.auth-button.secondary:hover {
+  background: #4a5568;
+}
+
+/* Animation classes */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.confirmation-box {
+  animation: slideIn 0.5s ease-out;
 } 
