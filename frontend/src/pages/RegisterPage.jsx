@@ -126,12 +126,6 @@ const RegisterPage = () => {
               onChange={handleChange}
               required
             />
-            <motion.div 
-              className="input-icon"
-              whileHover={{ scale: 1.1 }}
-            >
-              🔒
-            </motion.div>
           </div>
 
           <div className="input-group">
@@ -144,12 +138,6 @@ const RegisterPage = () => {
               onChange={handleChange}
               required
             />
-            <motion.div 
-              className="input-icon"
-              whileHover={{ scale: 1.1 }}
-            >
-              🔒
-            </motion.div>
           </div>
 
           <motion.button
