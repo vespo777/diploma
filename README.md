@@ -1,3 +1,3 @@
 # diploma
-java, spring
+java spring;
 react jsx
