@@ -1,11 +1,13 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { mockListings } from '../mockData/listings';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/ListingPage.css';
 
 const ListingPage = () => {
   const { id } = useParams();
+  const { user } = useAuth();
   const listing = mockListings.find(l => l.id === parseInt(id));
 
   if (!listing) {
@@ -64,23 +66,34 @@ const ListingPage = () => {
         </div>
 
         {/* Contact Form */}
-        <div className="contact-section">
-          <div className="contact-card">
-            <h3>Contact Owner</h3>
-            <form className="contact-form">
-              <input type="text" placeholder="Your Name" />
-              <input type="email" placeholder="Your Email" />
-              <textarea placeholder="Message"></textarea>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-              >
-                Send Message
-              </motion.button>
-            </form>
+        {user ? (
+          <div className="contact-section">
+            <div className="contact-card">
+              <h3>Contact Owner</h3>
+              <form className="contact-form">
+                <input type="text" placeholder="Your Name" />
+                <input type="email" placeholder="Your Email" />
+                <textarea placeholder="Message"></textarea>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                >
+                  Send Message
+                </motion.button>
+              </form>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="contact-section">
+            <div className="contact-card">
+              <h3>Want to contact the owner?</h3>
+              <Link to="/login" className="auth-link">
+                Login to send a message
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Similar Listings */}
