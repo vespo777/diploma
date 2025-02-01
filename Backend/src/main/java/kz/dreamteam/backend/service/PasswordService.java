@@ -6,10 +6,13 @@ import kz.dreamteam.backend.repository.LocationDetailsRepository;
 import kz.dreamteam.backend.repository.RoommatePreferencesRepository;
 import kz.dreamteam.backend.repository.SocialDetailsRepository;
 import kz.dreamteam.backend.repository.UserRepository;
+import kz.dreamteam.backend.util.DateUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 @Service
 public class PasswordService {
@@ -58,11 +61,11 @@ public class PasswordService {
     public ResponseEntity<String> register(RegisterBody request) {
         try {
             var user = new User();
-            user.setName(request.getName());
-            user.setSurname(request.getSurname());
+            user.setName(request.getFirstName());
+            user.setSurname(request.getLastName());
             user.setEmail(request.getEmail());
             user.setPasswordHash(encodePassword(request.getRawPassword()));
-            user.setAge(request.getAge());
+            user.setBirthDate(DateUtil.convertToDate(request.getBirthDate()));
             user.setSex(request.getSex());
 
             userRepository.save(user);

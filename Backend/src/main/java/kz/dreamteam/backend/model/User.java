@@ -3,6 +3,8 @@ package kz.dreamteam.backend.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "users") // Matches the table name
 public class User {
@@ -23,7 +25,7 @@ public class User {
     private String passwordHash;
 
     @Column
-    private Integer age;
+    private LocalDate birthDate;;
 
     @Column(length = 1)
     private Character sex;
@@ -84,8 +86,8 @@ public class User {
         return passwordHash;
     }
 
-    public Integer getAge() {
-        return age;
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 
     public Character getSex() {
@@ -109,8 +111,8 @@ public class User {
         this.passwordHash = passwordHash;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setBirthDate(LocalDate dateOfBirth) {
+        this.birthDate = dateOfBirth;
     }
 
     public void setSex(Character sex) {

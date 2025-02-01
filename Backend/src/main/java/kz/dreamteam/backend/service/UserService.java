@@ -72,7 +72,7 @@ public class UserService {
             user.setName(updateRequest.getName());
             user.setSurname(updateRequest.getSurname());
             user.setEmail(updateRequest.getEmail());
-            user.setAge(updateRequest.getAge());
+//            user.setDateOfBirth(updateRequest);
             user.setSex(updateRequest.getSex());
             userRepository.save(user);
 
