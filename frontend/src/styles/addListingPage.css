@@ -42,3 +42,75 @@
     max-width: 500px;
   }
   
+  .listing-box {
+    max-width: 800px !important;
+    width: 90% !important;
+  }
+  
+  .form-section {
+    margin-bottom: 2rem;
+  }
+  
+  .form-section h3 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+  
+  .input-row {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .input-group.half {
+    flex: 1;
+  }
+  
+  .checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .file-input {
+    padding: 0.5rem !important;
+  }
+  
+  .photo-preview {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    overflow-x: auto;
+    padding: 1rem 0;
+  }
+  
+  .photo-preview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  @media (max-width: 768px) {
+    .input-row {
+      flex-direction: column;
+    }
+    
+    .checkbox-group {
+      grid-template-columns: 1fr;
+    }
+  }
+  

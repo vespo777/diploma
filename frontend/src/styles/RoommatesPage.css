@@ -1,0 +1,47 @@
+.roommates-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.roommates-page h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2d3748;
+}
+
+.roommates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.roommate-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.roommate-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.roommate-card h3 {
+  margin: 0 0 10px 0;
+  color: #2d3748;
+}
+
+.roommate-card p {
+  margin: 5px 0;
+  color: #718096;
+}
+
+@media (max-width: 768px) {
+  .roommates-grid {
+    grid-template-columns: 1fr;
+  }
+} 

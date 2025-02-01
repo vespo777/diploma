@@ -8,9 +8,10 @@ import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import AddListingPage from './pages/AddListingPage';
 import { AuthProvider } from './contexts/AuthContext';
-// Сначала импортируем глобальные стили
+import RoommatesPage from './pages/RoommatesPage';
+import ApartmentsPage from './pages/ApartmentsPage';
+import FAQPage from './pages/Help';
 import './index.css';  
-// Затем компонентные стили
 import './styles/navbar.css';
 import './styles/HomePage.css';
 import './styles/ListingPage.css';
@@ -29,6 +30,9 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/add-listing" element={<AddListingPage />} />
+            <Route path="/roommates" element={<RoommatesPage />} />
+            <Route path="/apartments" element={<ApartmentsPage />} />
+            <Route path="/faq" element={<FAQPage />} />
           </Routes>
         </div>
       </AuthProvider>

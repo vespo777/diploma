@@ -1,10 +1,17 @@
 import React from 'react';
+import { Link, Navigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { mockListings } from '../mockData/listings';
 import '../styles/HomePage.css';
 
 const HomePage = () => {
+  const { user } = useAuth();
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
   return (
     <div className="home-container">
       <section className="hero-section">

@@ -83,6 +83,7 @@
   border-radius: 8px;
   margin-bottom: 20px;
   font-size: 14px;
+  text-align: center;
 }
 
 .auth-footer {
@@ -186,6 +187,19 @@ input[type="date"].auth-input::-webkit-calendar-picker-indicator {
   border-radius: 8px;
   margin-bottom: 20px;
   font-size: 14px;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .reset-password {
