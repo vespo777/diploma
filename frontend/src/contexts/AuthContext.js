@@ -1,62 +1,53 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
+const API_URL = 'http://localhost:8080';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUser = useCallback(async (token) => {
-    try {
-      const response = await fetch('http://localhost:8080/register', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
-      } else {
-        logout();
-      }
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      logout();
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+  // При загрузке приложения проверяем localStorage
   useEffect(() => {
+    const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('token');
-    if (token) {
-      fetchUser(token);
-    } else {
-      setLoading(false);
+    
+    if (storedUser && token) {
+      setUser(JSON.parse(storedUser));
     }
-  }, [fetchUser]);
+    setLoading(false);
+  }, []);
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('http://localhost:8080/login', {
+      const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
-        await fetchUser(data.token);
-        return { success: true };
-      } else {
-        throw new Error(data.message || 'Login failed');
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Login failed');
       }
+
+      // Получаем токен как текст
+      const token = await response.text();
+      // Убираем "Bearer " из начала токена, если он есть
+      const cleanToken = token.replace('Bearer ', '');
+      localStorage.setItem('token', cleanToken);
+
+      // Создаем объект пользователя
+      const mockUser = {
+        email: email
+      };
+      setUser(mockUser);
+      localStorage.setItem('user', JSON.stringify(mockUser));
+      
+      return { success: true };
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -65,22 +56,36 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const response = await fetch('http://localhost:8080/api/auth/register', {
+      const requestData = {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        rawPassword: userData.password,
+        birthDate: userData.birthDate,
+        sex: userData.sex.charAt(0).toUpperCase()
+      };
+
+      const response = await fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(requestData),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
-        localStorage.setItem('token', data.token);
-        await fetchUser(data.token);
+        const mockUser = {
+          email: userData.email,
+          firstName: userData.firstName,
+          lastName: userData.lastName
+        };
+        setUser(mockUser);
+        localStorage.setItem('user', JSON.stringify(mockUser));
         return { success: true };
       } else {
-        throw new Error(data.message || 'Registration failed');
+        const errorText = await response.text();
+        throw new Error(errorText || 'Registration failed');
       }
     } catch (error) {
       console.error('Registration error:', error);
@@ -106,8 +111,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={value}>
       {!loading && children}
     </AuthContext.Provider>
-  );   
-  
+  );
 };
 
 export const useAuth = () => {

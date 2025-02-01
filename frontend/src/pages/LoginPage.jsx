@@ -1,23 +1,34 @@
 import React, { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuth } from "../contexts/AuthContext";
 import "../styles/LoginRegister.css";
-import { Link } from "react-router-dom";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
+    setIsLoading(true);
 
     try {
       await login(email, password);
+      setSuccess("Login successful! Redirecting to home page...");
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     } catch (err) {
-      setError("Failed to log in. Please check your credentials.");
+      setError(err.message || "Failed to login");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -31,6 +42,8 @@ const LoginPage = () => {
       >
         <h2>Welcome Back</h2>
         {error && <div className="error-message">{error}</div>}
+        {success && <div className="success-message">{success}</div>}
+        
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <input
@@ -65,10 +78,12 @@ const LoginPage = () => {
             className="auth-button"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            disabled={isLoading}
           >
-            Sign In
+            {isLoading ? "Logging in..." : "Sign In"}
           </motion.button>
         </form>
+
         <div className="auth-footer">
           Don't have an account?{" "}
           <Link to="/register" className="auth-link">

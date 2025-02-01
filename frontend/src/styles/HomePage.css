@@ -152,4 +152,11 @@ body {
   .listings-grid {
     grid-template-columns: 1fr;
   }
-} 
+}
+
+.home-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+

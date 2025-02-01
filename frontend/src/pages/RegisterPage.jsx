@@ -8,15 +8,16 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
     firstName: "",
     lastName: "",
+    email: "",
     birthDate: "",
-    sex: ""
+    sex: "",
+    password: "",
+    confirmPassword: ""
   });
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
     setFormData({
@@ -28,6 +29,7 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords don't match!");
@@ -36,7 +38,10 @@ const RegisterPage = () => {
 
     try {
       await register(formData);
-      navigate("/");
+      setSuccess("Registration successful! Redirecting to home page...");
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     } catch (err) {
       setError(err.message || "Failed to create an account");
     }
@@ -52,6 +57,7 @@ const RegisterPage = () => {
       >
         <h2>Create Account</h2>
         {error && <div className="error-message">{error}</div>}
+        {success && <div className="success-message">{success}</div>}
         
         <form onSubmit={handleSubmit}>
           <div className="input-group">
