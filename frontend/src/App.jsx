@@ -11,6 +11,8 @@ import { AuthProvider } from './contexts/AuthContext';
 import RoommatesPage from './pages/RoommatesPage';
 import ApartmentsPage from './pages/ApartmentsPage';
 import FAQPage from './pages/Help';
+import ProfilePage from './pages/ProfilePage';
+import ProfileIDPage from './pages/ProfileIDPage'
 import './index.css';  
 import './styles/navbar.css';
 import './styles/HomePage.css';
@@ -33,6 +35,8 @@ function App() {
             <Route path="/roommates" element={<RoommatesPage />} />
             <Route path="/apartments" element={<ApartmentsPage />} />
             <Route path="/faq" element={<FAQPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile/:id" element={<ProfileIDPage />} />
           </Routes>
         </div>
       </AuthProvider>

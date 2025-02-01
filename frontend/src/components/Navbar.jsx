@@ -52,20 +52,23 @@ const Navbar = () => {
         >
           Add an Announcement
         </Link>
-        {user && (
           <Link 
             to="/faq" 
             className={`nav-link ${isActive('/faq') ? 'active' : ''}`}
           >
             FAQ
           </Link>
-        )}
       </div>
 
       <div className="nav-auth">
         {user ? (
           <>
-            <span className="user-email">{user.email}</span>
+            {/* <span className="user-email">{user.email}</span> */}
+            <Link 
+            to="/profile" 
+            className={`user-email ${isActive('/profile') ? 'active' : ''}`}>
+            {user.email}
+          </Link>
             <motion.button 
               className="logout-button"
               onClick={handleLogout}
@@ -85,7 +88,7 @@ const Navbar = () => {
             </Link>
             <Link 
               to="/register" 
-              className={`nav-link register ${isActive('/register') ? 'active' : ''}`}
+              className={`nav-link register : ''}`}
             >
               Register
             </Link>

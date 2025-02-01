@@ -94,6 +94,22 @@
   color: white;
   opacity: 0.9;
   font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.user-email.active {
+  position: relative;
+}
+
+.user-email.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #ff8a1d;
+  animation: underline 0.3s ease;
 }
 
 .logout-button {
@@ -153,7 +169,7 @@
 .search-button {
   background: none;
   border: none;
-  padding: 8px 15px;
+  padding: 13px 15px;
   cursor: pointer;
   display: flex;
   align-items: center;

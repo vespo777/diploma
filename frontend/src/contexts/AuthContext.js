@@ -75,33 +75,13 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (response.ok) {
-        // После успешной регистрации сразу делаем логин
-        const loginResponse = await fetch(`${API_URL}/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({
-            email: userData.email,
-            password: userData.password
-          }),
-        });
-
-        if (loginResponse.ok) {
-          const token = await loginResponse.text();
-          const cleanToken = token.replace('Bearer ', '');
-          localStorage.setItem('token', cleanToken);
-
-          const mockUser = {
-            email: userData.email,
-            firstName: userData.firstName,
-            lastName: userData.lastName
-          };
-          setUser(mockUser);
-          localStorage.setItem('user', JSON.stringify(mockUser));
-        }
-        
+        const mockUser = {
+          email: userData.email,
+          firstName: userData.firstName,
+          lastName: userData.lastName
+        };
+        setUser(mockUser);
+        localStorage.setItem('user', JSON.stringify(mockUser));
         return { success: true };
       } else {
         const errorText = await response.text();
