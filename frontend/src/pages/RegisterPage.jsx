@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuth } from "../contexts/AuthContext";
 import "../styles/LoginRegister.css";
-import { Link } from "react-router-dom";
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
   const { register } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
@@ -35,8 +36,9 @@ const RegisterPage = () => {
 
     try {
       await register(formData);
+      navigate("/");
     } catch (err) {
-      setError("Failed to create an account");
+      setError(err.message || "Failed to create an account");
     }
   };
 
@@ -50,6 +52,7 @@ const RegisterPage = () => {
       >
         <h2>Create Account</h2>
         {error && <div className="error-message">{error}</div>}
+        
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <input
