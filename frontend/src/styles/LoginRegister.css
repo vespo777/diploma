@@ -28,10 +28,11 @@
 .input-group {
   position: relative;
   margin-bottom: 20px;
-  
+  width: 100%;
 }
 
-.auth-input {
+.auth-container .auth-box .auth-input,
+.auth-container .auth-box select.auth-input {
   width: 100%;
   padding: 15px 45px 15px 15px;
   border: 2px solid #e2e8f0;
@@ -40,21 +41,25 @@
   transition: all 0.3s ease;
   background: white;
   color: #7a7a7a;
+  box-sizing: border-box;
 }
 
-.auth-input:focus {
+.auth-container .auth-box .input-group {
+  width: 100%;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.auth-container .auth-box .gender-group {
+  width: 100%;
+  margin-right: 0;
+}
+
+.auth-input:focus,
+select.auth-input:focus {
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
   outline: none;
-}
-
-.input-icon {
-  position: absolute;
-  right: 15px; 
-  top: 30%;
-  /* transform: translateY(-50%); */
-  color: #a0aec0;
-  font-size: 20px;
 }
 
 .auth-button {
@@ -120,14 +125,6 @@
   animation: fadeIn 0.5s ease-out;
 }
 
-select.auth-input {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  cursor: pointer;
-  background: white;
-}
-
 input[type="date"].auth-input {
   cursor: pointer;
 }
@@ -160,24 +157,18 @@ input[type="date"].auth-input::-webkit-calendar-picker-indicator {
 }
 
 .gender-group {
-  width: 50%; /* Smaller width for gender select */
-  margin-right: auto; /* Push to right */
-  /* margin-top: -52px; Align with date input */
-  /* margin-left: -8px; */
+  width: 100%;
+  margin-right: 0;
 }
 
-.gender-select {
-  padding-right: 30px; /* Space for the dropdown arrow */
-}
-
-
-
-/* Style the select dropdown arrow */
-.gender-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  background-size: 16px;
+select.auth-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  background: white;
+  width: 100%;
+  padding-right: 30px;
 }
 
 .success-message {
@@ -265,4 +256,24 @@ input[type="date"].auth-input::-webkit-calendar-picker-indicator {
 
 .confirmation-box {
   animation: slideIn 0.5s ease-out;
+}
+
+/* Добавляем отступ между чекбоксом и текстом */
+input[type="checkbox"] {
+  margin-right: 8px; /* Отступ справа от чекбокса */
+}
+
+/* Или если нужен отступ после всего элемента с чекбоксом */
+.checkbox-group {
+  margin-bottom: 15px; /* Отступ снизу всей группы */
+}
+
+/* Если чекбокс находится внутри label */
+label input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Или более специфичный селектор для вашего случая */
+.auth-container .auth-box input[type="checkbox"] {
+  margin-right: 8px;
 } 

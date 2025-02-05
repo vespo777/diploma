@@ -1,20 +1,82 @@
 .roommates-page {
+  display: flex;
+  min-height: 100vh;
   padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  gap: 20px;
 }
 
-.roommates-page h1 {
-  text-align: center;
-  margin-bottom: 30px;
+.filter-sidebar {
+  width: 300px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.filter-section {
+  margin-bottom: 20px;
+}
+
+.filter-section h3 {
+  margin-bottom: 15px;
   color: #2d3748;
+  font-size: 1.1rem;
+}
+
+.price-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.input-group label {
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.input-group input {
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 1rem;
 }
 
 .roommates-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
-  padding: 20px;
 }
 
 .roommate-card {
@@ -22,26 +84,59 @@
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  display: flex;
+  gap: 15px;
+  transition: transform 0.2s;
 }
 
 .roommate-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
-.roommate-card h3 {
+.roommate-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.roommate-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.roommate-info {
+  flex: 1;
+}
+
+.roommate-info h3 {
   margin: 0 0 10px 0;
   color: #2d3748;
 }
 
-.roommate-card p {
-  margin: 5px 0;
-  color: #718096;
+.price-info {
+  color: #4a5568;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1.2rem;
+  color: #4a5568;
 }
 
 @media (max-width: 768px) {
-  .roommates-grid {
-    grid-template-columns: 1fr;
+  .roommates-page {
+    flex-direction: column;
+  }
+
+  .filter-sidebar {
+    width: 100%;
+    position: static;
   }
 } 
