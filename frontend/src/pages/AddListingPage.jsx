@@ -381,7 +381,7 @@ const AddListingPage = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            Add Listing
+            Add
           </motion.button>
         </form>
       </motion.div>

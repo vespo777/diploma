@@ -8,32 +8,30 @@ import "../styles/ProfilePage.css";
 const ProfilePage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [avatar, setAvatar] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [userId, setUserId] = useState(null);
   const [userData, setUserData] = useState({
     firstName: '',
     lastName: '',
     email: '',
-    phoneNumber: '',
     birthDate: '',
     sex: '',
-    bio: '',
     preferences: {
       smoking: false,
       drinking: false,
-      pets: false,
-      sports: false,
-      religion: false,
+      prefersDorm: false,
+      sports: '',
+      religion: '',
       wakeUpTime: '',
       sleepTime: '',
-      studyPlace: '',
+      university: '',
       workPlace: '',
-      profession: '',
+      school: '',
       cityFrom: '',
       currentCity: '',
-      livingPreference: '',
-      plans: '',
+      prefersApartment: false,
+      lifePlans: '',
     }
   });
 
@@ -45,51 +43,49 @@ const ProfilePage = () => {
 
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/profile`, {
-          method: 'GET',
-          credentials: 'include',
+        console.log('Fetching user data...');
+        const response = await fetch('http://localhost:8080/profile', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         });
-        
+
         if (response.ok) {
           const data = await response.json();
-          console.log('Полученные данные:', data);
           
+          // Подробное логирование всех объектов
+          console.log('socialDetails:', data.socialDetails);
+          console.log('locationDetails:', data.locationDetails);
+          console.log('roommatePreferences:', data.roommatePreferences);
+          
+          // Сохраняем предыдущие значения preferences при обновлении
           setUserData(prevData => ({
-            firstName: data.firstName || prevData.firstName,
-            lastName: data.lastName || prevData.lastName,
+            firstName: data.name || prevData.firstName,
+            lastName: data.surname || prevData.lastName,
             email: data.email || prevData.email,
-            phoneNumber: data.phoneNumber || prevData.phoneNumber,
             birthDate: data.birthDate || prevData.birthDate,
             sex: data.sex || prevData.sex,
-            bio: data.bio || prevData.bio,
             preferences: {
-              smoking: data.preferences?.smoking || false,
-              drinking: data.preferences?.drinking || false,
-              pets: data.preferences?.pets || false,
-              sports: data.preferences?.sports || false,
-              religion: data.preferences?.religion || false,
-              wakeUpTime: data.preferences?.wakeUpTime || '',
-              sleepTime: data.preferences?.sleepTime || '',
-              studyPlace: data.preferences?.studyPlace || '',
-              workPlace: data.preferences?.workPlace || '',
-              profession: data.preferences?.profession || '',
-              cityFrom: data.preferences?.cityFrom || '',
-              currentCity: data.preferences?.currentCity || '',
-              livingPreference: data.preferences?.livingPreference || '',
-              plans: data.preferences?.plans || '',
+              smoking: data.socialDetails?.smoking ?? prevData.preferences.smoking,
+              drinking: data.socialDetails?.drinking ?? prevData.preferences.drinking,
+              prefersDorm: data.roommatePreferences?.prefersDorm ?? prevData.preferences.prefersDorm,
+              prefersApartment: data.roommatePreferences?.prefersApartment ?? prevData.preferences.prefersApartment,
+              sports: data.socialDetails?.sports || prevData.preferences.sports,
+              religion: data.socialDetails?.religion || prevData.preferences.religion,
+              wakeUpTime: data.roommatePreferences?.wakeTime || prevData.preferences.wakeUpTime,
+              sleepTime: data.roommatePreferences?.sleepTime || prevData.preferences.sleepTime,
+              university: data.locationDetails?.university || prevData.preferences.university,
+              workPlace: data.locationDetails?.workplace || prevData.preferences.workPlace,
+              school: data.locationDetails?.school || prevData.preferences.school,
+              cityFrom: data.locationDetails?.cityFrom || prevData.preferences.cityFrom,
+              currentCity: data.locationDetails?.currentCity || prevData.preferences.currentCity,
+              lifePlans: data.socialDetails?.lifePlans || prevData.preferences.lifePlans
             }
           }));
           
-          if (data.avatarUrl) {
-            setPreviewUrl(data.avatarUrl);
-          }
+          setUserId(data.userId);
         } else {
-          console.error('Ошибка получения данных:', response.status);
+          console.error('Failed to fetch user data:', response.status);
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -102,7 +98,6 @@ const ProfilePage = () => {
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setAvatar(file);
       setPreviewUrl(URL.createObjectURL(file));
     }
   };
@@ -130,34 +125,57 @@ const ProfilePage = () => {
     e.preventDefault();
     
     try {
-      const formData = new FormData();
-      if (avatar) {
-        formData.append('avatar', avatar);
+      console.log('Current userId state:', userId);
+      if (!userId) {
+        console.error('User ID is not available');
+        alert('User ID is not available. Please try logging in again.');
+        return;
       }
-      
-      // Append basic user data
-      Object.keys(userData).forEach(key => {
-        if (key !== 'preferences') {
-          formData.append(key, userData[key]);
-        }
-      });
 
-      // Append preferences as JSON string
-      formData.append('preferences', JSON.stringify(userData.preferences));
+      const updateData = {
+        name: userData.firstName,
+        surname: userData.lastName,
+        email: userData.email,
+        sex: userData.sex,
+        smoking: userData.preferences.smoking,
+        drinking: userData.preferences.drinking,
+        religion: userData.preferences.religion,
+        sports: userData.preferences.sports,
+        lifePlans: userData.preferences.lifePlans,
+        cityFrom: userData.preferences.cityFrom,
+        currentCity: userData.preferences.currentCity,
+        school: userData.preferences.school,
+        university: userData.preferences.university,
+        workplace: userData.preferences.workPlace,
+        prefersDorm: userData.preferences.prefersDorm,
+        prefersApartment: userData.preferences.prefersApartment,
+        wakeTime: userData.preferences.wakeUpTime,
+        sleepTime: userData.preferences.sleepTime
+      };
 
-      const response = await fetch(`http://localhost:8080/profile/update`, {
+      console.log('User ID:', userId);
+      console.log('Отправляемые данные:', updateData);
+
+      const response = await fetch(`http://localhost:8080/profile/${userId}`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
         },
-        body: formData
+        body: JSON.stringify(updateData)
       });
 
       if (response.ok) {
         setIsEditing(false);
+        alert('Profile updated successfully!');
+      } else {
+        const errorData = await response.json();
+        console.error('Error updating profile:', errorData);
+        alert('Failed to update profile: ' + (errorData.message || 'Unknown error'));
       }
     } catch (error) {
       console.error('Error updating profile:', error);
+      alert('Failed to update profile');
     }
   };
 
@@ -249,16 +267,6 @@ const ProfilePage = () => {
               />
             </div>
 
-            <div className="form-group">
-              <label>Phone Number</label>
-              <input
-                type="tel"
-                name="phoneNumber"
-                value={userData.phoneNumber}
-                onChange={handleInputChange}
-                disabled={!isEditing}
-              />
-            </div>
 
             <div className="form-row">
               <div className="form-group">
@@ -317,36 +325,24 @@ const ProfilePage = () => {
                 <label>
                   <input
                     type="checkbox"
-                    name="pets"
-                    checked={userData.preferences.pets}
+                    name="prefersDorm"
+                    checked={userData.preferences.prefersDorm}
                     onChange={handlePreferenceChange}
                     disabled={!isEditing}
                   />
-                  Pets
+                  Prefers Dorm
                 </label>
               </div>
               <div className="preference-item">
                 <label>
                   <input
                     type="checkbox"
-                    name="sports"
-                    checked={userData.preferences.sports}
+                    name="prefersApartment"
+                    checked={userData.preferences.prefersApartment}
                     onChange={handlePreferenceChange}
                     disabled={!isEditing}
                   />
-                  Sports
-                </label>
-              </div>
-              <div className="preference-item">
-                <label>
-                  <input
-                    type="checkbox"
-                    name="religion"
-                    checked={userData.preferences.religion}
-                    onChange={handlePreferenceChange}
-                    disabled={!isEditing}
-                  />
-                  Religion
+                  Prefers Apartment
                 </label>
               </div>
             </div>
@@ -379,8 +375,8 @@ const ProfilePage = () => {
                 <label>Study Place</label>
                 <input
                   type="text"
-                  name="studyPlace"
-                  value={userData.preferences.studyPlace}
+                  name="university"
+                  value={userData.preferences.university}
                   onChange={handlePreferenceChange}
                   disabled={!isEditing}
                 />
@@ -395,14 +391,24 @@ const ProfilePage = () => {
                   disabled={!isEditing}
                 />
               </div>
+              <div className="form-group">
+                <label>Sports</label>
+                <input
+                  type="text"
+                  name="sports"
+                  value={userData.preferences.sports}
+                  onChange={handlePreferenceChange}
+                  disabled={!isEditing}
+                />
+              </div>
             </div>
 
             <div className="form-group">
-              <label>Profession</label>
+              <label>School</label>
               <input
                 type="text"
-                name="profession"
-                value={userData.preferences.profession}
+                name="school"
+                value={userData.preferences.school}
                 onChange={handlePreferenceChange}
                 disabled={!isEditing}
               />
@@ -429,44 +435,30 @@ const ProfilePage = () => {
                   disabled={!isEditing}
                 />
               </div>
+              <div className="form-group">
+                <label>Religion</label>
+                <input
+                  type="text"
+                  name="religion"
+                  value={userData.preferences.religion}
+                  onChange={handlePreferenceChange}
+                  disabled={!isEditing}
+                />
+              </div>
             </div>
 
-            <div className="form-group">
-              <label>Living Preference</label>
-              <select
-                name="livingPreference"
-                value={userData.preferences.livingPreference}
-                onChange={handlePreferenceChange}
-                disabled={!isEditing}
-              >
-                <option value="">Select preference</option>
-                <option value="DORMITORY">Dormitory</option>
-                <option value="APARTMENT">Apartment</option>
-              </select>
-            </div>
 
             <div className="form-group">
-              <label>Plans</label>
+              <label>Life Plans</label>
               <textarea
-                name="plans"
-                value={userData.preferences.plans}
+                name="lifePlans"
+                value={userData.preferences.lifePlans}
                 onChange={handlePreferenceChange}
                 disabled={!isEditing}
                 rows="4"
               />
             </div>
           </section>
-
-          <div className="form-group">
-            <label>Bio</label>
-            <textarea
-              name="bio"
-              value={userData.bio}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              rows="4"
-            />
-          </div>
 
           {isEditing && (
             <motion.button

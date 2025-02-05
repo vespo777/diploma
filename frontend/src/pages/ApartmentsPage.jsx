@@ -7,6 +7,10 @@ const ApartmentsPage = () => {
   const { user } = useAuth();
   const [apartments, setApartments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    smoking: false,
+    pets: false
+  });
 
   useEffect(() => {
     const fetchApartments = async () => {
@@ -28,6 +32,14 @@ const ApartmentsPage = () => {
     fetchApartments();
   }, []);
 
+  const handleFilterChange = (e) => {
+    const { name, checked } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: checked
+    }));
+  };
+
   if (!user) {
     return <Navigate to="/login" />;
   }
@@ -48,6 +60,30 @@ const ApartmentsPage = () => {
             {/* Add more apartment details as needed */}
           </div>
         ))}
+      </div>
+      <div className="filter-section">
+        <h3>Preferences</h3>
+        <div className="preferences-filters">
+          <label>
+            <input
+              type="checkbox"
+              name="smoking"
+              checked={filters.smoking}
+              onChange={handleFilterChange}
+            />
+            Smoking Allowed
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              name="pets"
+              checked={filters.pets}
+              onChange={handleFilterChange}
+            />
+            Pets Allowed
+          </label>
+          {/* Добавьте другие предпочтения */}
+        </div>
       </div>
     </div>
   );
