@@ -69,11 +69,11 @@ public class UserService {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new NoSuchElementException("User not found"));
 
-            user.setName(updateRequest.getName());
-            user.setSurname(updateRequest.getSurname());
-            user.setEmail(updateRequest.getEmail());
-//            user.setDateOfBirth(updateRequest);
-            user.setSex(updateRequest.getSex());
+//            user.setName(updateRequest.getName());
+//            user.setSurname(updateRequest.getSurname());
+//            user.setEmail(updateRequest.getEmail());
+////            user.setDateOfBirth(updateRequest);
+//            user.setSex(updateRequest.getSex());
             userRepository.save(user);
 
             // Обновление социального профиля
@@ -91,11 +91,11 @@ public class UserService {
             LocationDetails locationDetails = locationDetailsRepository.findById(userId)
                     .orElseThrow(() -> new NoSuchElementException("Location details not found"));
 
-            locationDetails.setCityFrom(updateRequest.getCityFrom());
-            locationDetails.setCurrentCity(updateRequest.getCurrentCity());
-            locationDetails.setSchool(updateRequest.getSchool());
-            locationDetails.setUniversity(updateRequest.getUniversity());
-            locationDetails.setWorkplace(updateRequest.getWorkplace());
+//            locationDetails.setCityFrom(updateRequest.getCityFrom());
+//            locationDetails.setCurrentCity(updateRequest.getCurrentCity());
+//            locationDetails.setSchool(updateRequest.getSchool());
+//            locationDetails.setUniversity(updateRequest.getUniversity());
+//            locationDetails.setWorkplace(updateRequest.getWorkplace());
             locationDetailsRepository.save(locationDetails);
 
             // Обновление предпочтений по сожителям
