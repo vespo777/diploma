@@ -29,7 +29,7 @@ public class RoommateSearch {
     private Long budgetMax;
 
     @Column
-    private Long scoreTest;
+    private Integer scoreTest;
 
     public Long getUserId() {
         return userId;
@@ -71,11 +71,11 @@ public class RoommateSearch {
         this.budgetMax = budgetMax;
     }
 
-    public Long getScoreTest() {
+    public Integer getScoreTest() {
         return scoreTest;
     }
 
-    public void setScoreTest(Long scoreTest) {
+    public void setScoreTest(Integer scoreTest) {
         this.scoreTest = scoreTest;
     }
 }

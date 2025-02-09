@@ -80,11 +80,11 @@ public class UserService {
             SocialDetails socialDetails = socialDetailsRepository.findById(userId)
                     .orElseThrow(() -> new NoSuchElementException("Social details not found"));
 
-            socialDetails.setSmoking(updateRequest.getSmoking());
-            socialDetails.setDrinking(updateRequest.getDrinking());
-            socialDetails.setReligion(updateRequest.getReligion());
-            socialDetails.setSports(updateRequest.getSports());
-            socialDetails.setLifePlans(updateRequest.getLifePlans());
+//            socialDetails.setSmoking(updateRequest.getSmoking());
+//            socialDetails.setDrinking(updateRequest.getDrinking());
+//            socialDetails.setReligion(updateRequest.getReligion());
+//            socialDetails.setSports(updateRequest.getSports());
+//            socialDetails.setLifePlans(updateRequest.getLifePlans());
             socialDetailsRepository.save(socialDetails);
 
             // Обновление информации о местоположении
@@ -102,10 +102,10 @@ public class UserService {
             RoommatePreferences roommatePreferences = roommatePreferencesRepository.findById(userId)
                     .orElseThrow(() -> new NoSuchElementException("Roommate preferences not found"));
 
-            roommatePreferences.setPrefersDorm(updateRequest.getPrefersDorm());
-            roommatePreferences.setPrefersApartment(updateRequest.getPrefersApartment());
-            roommatePreferences.setWakeTime(updateRequest.getWakeTime());
-            roommatePreferences.setSleepTime(updateRequest.getSleepTime());
+//            roommatePreferences.setPrefersDorm(updateRequest.getPrefersDorm());
+//            roommatePreferences.setPrefersApartment(updateRequest.getPrefersApartment());
+//            roommatePreferences.setWakeTime(updateRequest.getWakeTime());
+//            roommatePreferences.setSleepTime(updateRequest.getSleepTime());
             roommatePreferencesRepository.save(roommatePreferences);
 
             return ResponseEntity.ok("User profile updated successfully");

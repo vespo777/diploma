@@ -7,38 +7,68 @@ import jakarta.persistence.*;
 public class SocialDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Ensure the ID is auto-generated
-    private Long id;
-
-    private Boolean smoking;
-    private Boolean drinking;
-    private String religion;
-    private String lifePlans;
-    private String sports;
+    @Column(name = "user_id") // Первичный ключ такой же, как в User
+    private Long userId;
 
     @OneToOne
+    @MapsId
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
+
+    private String schoolName;
+    private String universityName;
+    private String universitySpecialty;
+    private Boolean drinking;
+    private Boolean smoking;
+    private String company;
+    private String profession;
+
 
     public SocialDetails() {
     }
 
     // Getters and setters
-    public Long getId() {
-        return id;
+
+
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public Boolean getSmoking() {
-        return smoking;
+    public User getUser() {
+        return user;
     }
 
-    public void setSmoking(Boolean smoking) {
-        this.smoking = smoking;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getSchoolName() {
+        return schoolName;
+    }
+
+    public void setSchoolName(String schoolName) {
+        this.schoolName = schoolName;
+    }
+
+    public String getUniversityName() {
+        return universityName;
+    }
+
+    public void setUniversityName(String universityName) {
+        this.universityName = universityName;
+    }
+
+    public String getUniversitySpecialty() {
+        return universitySpecialty;
+    }
+
+    public void setUniversitySpecialty(String universitySpecialty) {
+        this.universitySpecialty = universitySpecialty;
     }
 
     public Boolean getDrinking() {
@@ -49,36 +79,28 @@ public class SocialDetails {
         this.drinking = drinking;
     }
 
-    public String getReligion() {
-        return religion;
+    public Boolean getSmoking() {
+        return smoking;
     }
 
-    public void setReligion(String religion) {
-        this.religion = religion;
+    public void setSmoking(Boolean smoking) {
+        this.smoking = smoking;
     }
 
-    public String getLifePlans() {
-        return lifePlans;
+    public String getCompany() {
+        return company;
     }
 
-    public void setLifePlans(String lifePlans) {
-        this.lifePlans = lifePlans;
+    public void setCompany(String company) {
+        this.company = company;
     }
 
-    public String getSports() {
-        return sports;
+    public String getProfession() {
+        return profession;
     }
 
-    public void setSports(String sports) {
-        this.sports = sports;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void setProfession(String profession) {
+        this.profession = profession;
     }
 }
 

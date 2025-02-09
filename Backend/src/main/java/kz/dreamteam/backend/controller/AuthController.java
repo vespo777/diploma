@@ -44,6 +44,13 @@ public class AuthController {
         return this.authService.resetPassword(email, newPassword);
     }
 
+//    @PostMapping("/send-code-to-email")
+//    public ResponseEntity<?> sendCodeToEmail(String email) {
+//        return this.authService.sendCodeToEmail(email);
+//    }
+
+
+
 
 
 //    @PreAuthorize("hasRole('USER')")

@@ -2,66 +2,65 @@ package kz.dreamteam.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalTime;
 
 @Entity
 public class RoommatePreferences {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Ensure the ID is auto-generated
-    private Long id;
-
-    private Boolean prefersDorm;
-    private Boolean prefersApartment;
-    private String wakeTime;
-    private String sleepTime;
+    @Column(name = "user_id") // Первичный ключ такой же, как в User
+    private Long userId;
 
     @OneToOne
+    @MapsId
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
+    @Column(name = "wake_time", columnDefinition = "time(6)")
+    private LocalTime wakeTime;
+    @Column(name = "sleep_time", columnDefinition = "time(6)")
+    private LocalTime sleepTime;
+    @Column
+    private String pets;
 
     public RoommatePreferences() {
     }
 
     // Getters and setters
-    public Long getId() {
-        return id;
+
+
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public Boolean getPrefersDorm() {
-        return prefersDorm;
-    }
-
-    public void setPrefersDorm(Boolean prefersDorm) {
-        this.prefersDorm = prefersDorm;
-    }
-
-    public Boolean getPrefersApartment() {
-        return prefersApartment;
-    }
-
-    public void setPrefersApartment(Boolean prefersApartment) {
-        this.prefersApartment = prefersApartment;
-    }
-
-    public String getWakeTime() {
-        return wakeTime;
-    }
-
-    public void setWakeTime(String wakeTime) {
-        this.wakeTime = wakeTime;
-    }
-
-    public String getSleepTime() {
+    public LocalTime getSleepTime() {
         return sleepTime;
     }
 
-    public void setSleepTime(String sleepTime) {
+    public void setSleepTime(LocalTime sleepTime) {
         this.sleepTime = sleepTime;
+    }
+
+    public String getPets() {
+        return pets;
+    }
+
+    public void setPets(String pets) {
+        this.pets = pets;
+    }
+
+    public LocalTime getWakeTime() {
+        return wakeTime;
+    }
+
+    public void setWakeTime(LocalTime wakeTime) {
+        this.wakeTime = wakeTime;
     }
 
     public User getUser() {

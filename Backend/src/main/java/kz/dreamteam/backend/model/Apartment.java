@@ -12,29 +12,20 @@ public class Apartment {
     @Column(name = "apartment_id")
     private Long apartmentId;
 
-    @Column(name = "owner", nullable = false)
-    private String owner; // Assuming owner is a user_id (String)
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;  // Each apartment is associated with one user
 
-    @Column(name = "type", nullable = false)
-    private String type; // "house", "room", or "hostel"
-
-    @Column(name = "photo")
-    private String photo; // URL to the photo
-
-    @Column(name = "address", nullable = false)
-    private String address;
-
-    @Column(name = "description")
     private String description;
 
-    @Column(name = "call_number", nullable = false)
-    private String callNumber;
+    private String photoPath; // URL to the photo
 
-    @Column(name = "telegram_nickname")
-    private String telegramNickname;
+    private String location2Gis;
 
-    @Column(name = "link_to_krisha_kz")
     private String linkToKrishaKz; // URL to the listing on krisha.kz
+
+    private Integer roomQuantity;
+    private Integer sizeSquareMeter;
 
     public Long getApartmentId() {
         return apartmentId;
@@ -44,37 +35,6 @@ public class Apartment {
         this.apartmentId = apartmentId;
     }
 
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
 
     public String getDescription() {
         return description;
@@ -84,20 +44,20 @@ public class Apartment {
         this.description = description;
     }
 
-    public String getCallNumber() {
-        return callNumber;
+    public String getPhotoPath() {
+        return photoPath;
     }
 
-    public void setCallNumber(String callNumber) {
-        this.callNumber = callNumber;
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
     }
 
-    public String getTelegramNickname() {
-        return telegramNickname;
+    public String getLocation2Gis() {
+        return location2Gis;
     }
 
-    public void setTelegramNickname(String telegramNickname) {
-        this.telegramNickname = telegramNickname;
+    public void setLocation2Gis(String location2Gis) {
+        this.location2Gis = location2Gis;
     }
 
     public String getLinkToKrishaKz() {
@@ -106,5 +66,21 @@ public class Apartment {
 
     public void setLinkToKrishaKz(String linkToKrishaKz) {
         this.linkToKrishaKz = linkToKrishaKz;
+    }
+
+    public Integer getRoomQuantity() {
+        return roomQuantity;
+    }
+
+    public void setRoomQuantity(Integer roomQuantity) {
+        this.roomQuantity = roomQuantity;
+    }
+
+    public Integer getSizeSquareMeter() {
+        return sizeSquareMeter;
+    }
+
+    public void setSizeSquareMeter(Integer sizeSquareMeter) {
+        this.sizeSquareMeter = sizeSquareMeter;
     }
 }
