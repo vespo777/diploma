@@ -1,21 +1,14 @@
 import React from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { mockListings } from '../mockData/listings';
 import '../styles/HomePage.css';
 
 const HomePage = () => {
-  const { user } = useAuth();
-
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
 
   return (
     <div className="home-container">
       <section className="hero-section">
-      {/* <img src="../imgs/main_image.png" alt="hero" /> */}
         <h1>Find Your Perfect Home</h1>
         <p>Discover thousands of properties that match your preferences</p>
       </section>

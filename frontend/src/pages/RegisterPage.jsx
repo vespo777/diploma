@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
 import "../styles/LoginRegister.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -18,6 +19,25 @@ const RegisterPage = () => {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const validatePassword = (password) => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    const errors = [];
+    if (password.length < minLength) errors.push("At least 8 characters");
+    if (!hasUpperCase) errors.push("One uppercase letter");
+    if (!hasLowerCase) errors.push("One lowercase letter");
+    if (!hasNumbers) errors.push("One number");
+    if (!hasSpecialChar) errors.push("One special character");
+
+    return errors;
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -33,6 +53,12 @@ const RegisterPage = () => {
 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords don't match!");
+      return;
+    }
+
+    const passwordErrors = validatePassword(formData.password);
+    if (passwordErrors.length > 0) {
+      setError(`Password requirements: ${passwordErrors.join(", ")}`);
       return;
     }
 
@@ -126,27 +152,65 @@ const RegisterPage = () => {
           </div>
 
           <div className="input-group">
-            <input
-              type="password"
-              name="password"
-              className="auth-input"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                className="auth-input"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+            <div className="password-requirements">
+              Password must contain:
+              <ul>
+                <li className={formData.password.length >= 8 ? "met" : ""}>
+                  At least 8 characters
+                </li>
+                <li className={/[A-Z]/.test(formData.password) ? "met" : ""}>
+                  One uppercase letter
+                </li>
+                <li className={/[a-z]/.test(formData.password) ? "met" : ""}>
+                  One lowercase letter
+                </li>
+                <li className={/\d/.test(formData.password) ? "met" : ""}>
+                  One number
+                </li>
+                <li className={/[!@#$%^&*(),.?":{}|<>]/.test(formData.password) ? "met" : ""}>
+                  One special character
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div className="input-group">
-            <input
-              type="password"
-              name="confirmPassword"
-              className="auth-input"
-              placeholder="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                className="auth-input"
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
 
           <motion.button

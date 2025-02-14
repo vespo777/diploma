@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
+import { mockListings } from '../mockData/listings';
 import '../styles/ApartmentsPage.css';
 
 const ApartmentsPage = () => {
   const { user } = useAuth();
-  const [apartments, setApartments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [apartments, setApartments] = useState([]);
+  // const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     smoking: false,
     drinking: false,
@@ -25,25 +26,25 @@ const ApartmentsPage = () => {
     lifePlans: ''
   });
 
-  useEffect(() => {
-    const fetchApartments = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/apartments', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        const data = await response.json();
-        setApartments(data);
-      } catch (error) {
-        console.error('Error fetching apartments:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchApartments = async () => {
+  //     try {
+  //       const response = await fetch('http://localhost:8080/apartments', {
+  //         headers: {
+  //           'Authorization': `Bearer ${localStorage.getItem('token')}`
+  //         }
+  //       });
+  //       const data = await response.json();
+  //       setApartments(data);
+  //     } catch (error) {
+  //       console.error('Error fetching apartments:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchApartments();
-  }, []);
+  //   fetchApartments();
+  // }, []);
 
   const handleFilterChange = (e) => {
     const { name, type, value, checked } = e.target;
@@ -57,9 +58,9 @@ const ApartmentsPage = () => {
     return <Navigate to="/login" />;
   }
 
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div className="loading">Loading...</div>;
+  // }
 
   return (
     <div className="apartments-page">
@@ -194,15 +195,15 @@ const ApartmentsPage = () => {
       <div className="apartments-content">
         <h1>Available Apartments</h1>
         <div className="listings-grid">
-          {apartments.map((apartment) => (
+          {mockListings.map((apartment) => (
             <motion.div
               key={apartment.id}
               className="listing-card"
               whileHover={{ scale: 1.03 }}
               transition={{ duration: 0.2 }}
             >
-              <Link to={`/apartment/${apartment.id}`} className="listing-link">
-                <img src={apartment.images?.[0] || 'default-apartment-image.jpg'} alt={apartment.title} />
+              <Link to={`/listing/${apartment.id}`} className="listing-link">
+                <img src={apartment.images[0]} alt={apartment.title} />
                 <div className="listing-content">
                   <h3>{apartment.title}</h3>
                   <p className="listing-location">{apartment.location}</p>
