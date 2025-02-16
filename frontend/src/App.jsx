@@ -13,7 +13,8 @@ import ApartmentsPage from './pages/ApartmentsPage';
 import FAQPage from './pages/Help';
 import ProfilePage from './pages/ProfilePage';
 import ProfileIDPage from './pages/ProfileIDPage'
-import './index.css';  
+import AncetaPage from './pages/AncetaPage';
+import './index.css';
 import './styles/navbar.css';
 import './styles/HomePage.css';
 import './styles/ListingPage.css';
@@ -37,6 +38,7 @@ function App() {
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/profile/:id" element={<ProfileIDPage />} />
+            <Route path="/anceta-page" element={<AncetaPage />} />
           </Routes>
         </div>
       </AuthProvider>
