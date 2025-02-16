@@ -20,16 +20,16 @@ public class PersonalInfo {
     @JsonIgnore
     private User user;
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String name;
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String surname;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate birthDate;
 
-    @Column(nullable = false, length = 1)
+    @Column(length = 1)
     private Character gender;
 
     @Column

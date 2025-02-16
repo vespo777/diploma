@@ -3,16 +3,17 @@ package kz.dreamteam.backend.service;
 import jakarta.transaction.Transactional;
 import kz.dreamteam.backend.model.*;
 import kz.dreamteam.backend.repository.*;
-import kz.dreamteam.backend.util.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 
 @Service
 public class PasswordService {
+    private static final Logger log = LoggerFactory.getLogger(PasswordService.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final SocialDetailsRepository socialDetailsRepository;
@@ -20,6 +21,7 @@ public class PasswordService {
     private final RoommatePreferencesRepository roommatePreferencesRepository;
     private final PersonalInfoRepository personalInfoRepository;
     private final RoommateSearchRepository roommateSearchRepository;
+    private final ContactsRepository contactsRepository;
 
 
     public PasswordService(UserRepository userRepository,
@@ -28,6 +30,7 @@ public class PasswordService {
                            RoommatePreferencesRepository roommatePreferencesRepository,
                            PersonalInfoRepository personalInfoRepository,
                            RoommateSearchRepository roommateSearchRepository,
+                           ContactsRepository contactsRepository,
                            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.socialDetailsRepository = socialDetailsRepository;
@@ -35,6 +38,7 @@ public class PasswordService {
         this.roommatePreferencesRepository = roommatePreferencesRepository;
         this.personalInfoRepository = personalInfoRepository;
         this.roommateSearchRepository = roommateSearchRepository;
+        this.contactsRepository = contactsRepository;
         this.passwordEncoder = passwordEncoder;
 
     }
@@ -44,34 +48,58 @@ public class PasswordService {
     }
 
 
-    private void createEmptyPersonalInfo(User user) {
-        PersonalInfo personalInfo = new PersonalInfo();
-        personalInfo.setUser(user); // Link to the user
-        personalInfoRepository.save(personalInfo); // Save empty entry
+    private void createEmptyPersonalInfo(User user, String name, String surname) {
+        try {
+            PersonalInfo personalInfo = new PersonalInfo();
+
+            personalInfo.setName(name);
+            personalInfo.setSurname(surname);
+            personalInfo.setUser(user); // Link to the user
+            personalInfoRepository.save(personalInfo); // Save empty entry
+        } catch (Exception e) { log.error("Error in createEmptyPersonalInfo", e); }
     }
 
-    private void createRoomateSearch(User user) {
-        RoommateSearch roommateSearch = new RoommateSearch();
-        roommateSearch.setUser(user); // Link to the user
-        roommateSearchRepository.save(roommateSearch); // Save empty entry
+    private void createEmptyRoommateSearch(User user) {
+        try {
+            RoommateSearch roommateSearch = new RoommateSearch();
+            roommateSearch.setUser(user); // Link to the user
+            roommateSearchRepository.save(roommateSearch); // Save empty entry
+        } catch (Exception e) { log.error("Error in createEmptyRoommateSearch", e); }
+
+    }
+
+    private void createEmptyContacts(User user) {
+        try {
+            Contacts contacts = new Contacts();
+            contacts.setUser(user); // Link to the user
+            contactsRepository.save(contacts); // Save empty entry
+        } catch (Exception e) { log.error("Error in createEmptyContacts", e); }
     }
 
     private void createEmptyLocationDetails(User user) {
-        LocationDetails locationDetails = new LocationDetails();
-        locationDetails.setUser(user); // Link to the user
-        locationDetailsRepository.save(locationDetails); // Save empty entry
+        try {
+            LocationDetails locationDetails = new LocationDetails();
+            locationDetails.setUser(user); // Link to the user
+            locationDetailsRepository.save(locationDetails); // Save empty entry
+        } catch (Exception e) { log.error("Error in createEmptyLocationDetails", e); }
+
     }
 
     private void createEmptySocialDetails(User user) {
-        SocialDetails socialDetails = new SocialDetails();
-        socialDetails.setUser(user); // Link to the user
-        socialDetailsRepository.save(socialDetails); // Save empty entry
+        try {
+            SocialDetails socialDetails = new SocialDetails();
+            socialDetails.setUser(user); // Link to the user
+            socialDetailsRepository.save(socialDetails); // Save empty entry
+        } catch (Exception e) { log.error("Error in createEmptySocialDetails", e); }
     }
 
     private void createEmptyRoommatePreferences(User user) {
-        RoommatePreferences roommatePreferences = new RoommatePreferences();
-        roommatePreferences.setUser(user); // Link to the user
-        roommatePreferencesRepository.save(roommatePreferences); // Save empty entry
+        try {
+            RoommatePreferences roommatePreferences = new RoommatePreferences();
+            roommatePreferences.setUser(user); // Link to the user
+            roommatePreferencesRepository.save(roommatePreferences); // Save empty entry
+        } catch (Exception e) { log.error("Error in createEmptyRoommatePreferences", e); }
+
     }
 
     @Transactional
@@ -80,14 +108,17 @@ public class PasswordService {
             var user = new User();
             user.setEmail(request.getEmail());
             user.setPasswordHash(encodePassword(request.getRawPassword()));
+            user.setProfilePhotoPath("default");
 
             userRepository.save(user);
 
-            createEmptyPersonalInfo(user);
-            createRoomateSearch(user);
-            createEmptyLocationDetails(user);
+            createEmptyPersonalInfo(user, request.getName(), request.getSurname());
             createEmptySocialDetails(user);
+            createEmptyRoommateSearch(user);
             createEmptyRoommatePreferences(user);
+            createEmptyLocationDetails(user);
+            createEmptyContacts(user);
+
 
             return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
         } catch (Exception e) {

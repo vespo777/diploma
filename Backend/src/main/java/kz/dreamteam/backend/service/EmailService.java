@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
+import java.util.Random;
+
+
 @Service
 public class EmailService {
 
@@ -19,19 +22,22 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
-    public void sendEmail(String to, String subject, String text) {
+    public void sendEmail(String to) {
+
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            helper.setFrom("your-email@gmail.com");
+            Random random = new Random();
+
+            helper.setFrom("roommatefinder47@gmail.com");
             helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(text, true); // true = поддержка HTML
+            helper.setSubject("Password reset code");
+            helper.setText(String.valueOf(random.nextInt(900000)), true); // true = поддержка HTML
 
             mailSender.send(message);
         } catch (MessagingException e) {
-            logger.error("Failed to send email: {}", e);
+            logger.error("Failed to send email:", e);
         }
     }
 }

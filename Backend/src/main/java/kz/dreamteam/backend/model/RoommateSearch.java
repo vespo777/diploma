@@ -19,7 +19,7 @@ public class RoommateSearch {
     @JsonIgnore
     private User user;
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String searchStatus;
 
     @Column

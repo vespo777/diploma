@@ -5,7 +5,6 @@ import kz.dreamteam.backend.model.LocationDetails;
 import kz.dreamteam.backend.model.RoommatePreferences;
 import kz.dreamteam.backend.model.SocialDetails;
 import kz.dreamteam.backend.model.User;
-import kz.dreamteam.backend.model.dto.CurrentUserDTO;
 import kz.dreamteam.backend.model.dto.UpdateUserProfileRequest;
 import kz.dreamteam.backend.repository.LocationDetailsRepository;
 import kz.dreamteam.backend.repository.RoommatePreferencesRepository;

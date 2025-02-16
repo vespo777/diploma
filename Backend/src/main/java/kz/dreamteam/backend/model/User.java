@@ -18,7 +18,7 @@ public class User {
     private String passwordHash;
 
     @Column
-    private String profile_photo_path;
+    private String profilePhotoPath;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
@@ -39,6 +39,10 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
     private RoommatePreferences roommatePreferences;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonManagedReference
+    private Contacts contacts;
 
     public PersonalInfo getPersonalInfo() {
         return personalInfo;
@@ -80,6 +84,14 @@ public class User {
         this.socialDetails = socialDetails;
     }
 
+    public Contacts getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(Contacts contacts) {
+        this.contacts = contacts;
+    }
+
     public Long getUserId() {
         return userId;
     }
@@ -104,12 +116,12 @@ public class User {
         this.passwordHash = passwordHash;
     }
 
-    public String getProfile_photo_path() {
-        return profile_photo_path;
+    public String getProfilePhotoPath() {
+        return profilePhotoPath;
     }
 
-    public void setProfile_photo_path(String profile_photo_path) {
-        this.profile_photo_path = profile_photo_path;
+    public void setProfilePhotoPath(String profilePhotoPath) {
+        this.profilePhotoPath = profilePhotoPath;
     }
 }
 
