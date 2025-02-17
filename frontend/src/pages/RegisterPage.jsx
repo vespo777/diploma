@@ -12,8 +12,6 @@ const RegisterPage = () => {
     firstName: "",
     lastName: "",
     email: "",
-    birthDate: "",
-    sex: "",
     password: "",
     confirmPassword: ""
   });
@@ -61,9 +59,17 @@ const RegisterPage = () => {
       setError(`Password requirements: ${passwordErrors.join(", ")}`);
       return;
     }
+    const requestData = {
+      name: formData.firstName,
+      surname: formData.lastName,
+      email: formData.email,
+      rawPassword: formData.password
+    }
 
     try {
-      await register(formData);
+      console.log("RegisterPage, form Data:", requestData);
+
+      await register(requestData);
       setSuccess("Registration successful! Redirecting to home page...");
       setTimeout(() => {
         navigate("/");
@@ -75,7 +81,7 @@ const RegisterPage = () => {
 
   return (
     <div className="auth-container">
-      <motion.div 
+      <motion.div
         className="auth-box"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -84,7 +90,7 @@ const RegisterPage = () => {
         <h2>Create Account</h2>
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <input
@@ -123,33 +129,6 @@ const RegisterPage = () => {
           </div>
 
           <div className="form-divider"></div>
-
-          <div className="input-group">
-            <label className="date-label">Date of birth</label>
-            <input
-              type="date"
-              name="birthDate"
-              className="auth-input"
-              value={formData.birthDate}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="input-group gender-group">
-            <select
-              name="sex"
-              className="auth-input gender-select"
-              value={formData.sex}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
 
           <div className="input-group">
             <div className="password-input-wrapper">
@@ -233,4 +212,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage; 
+export default RegisterPage;

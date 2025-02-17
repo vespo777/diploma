@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('token');
-    
+
     if (storedUser && token) {
       setUser(JSON.parse(storedUser));
     }
@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
       };
       setUser(mockUser);
       localStorage.setItem('user', JSON.stringify(mockUser));
-      
+
       return { success: true };
     } catch (error) {
       console.error('Login error:', error);
@@ -57,12 +57,10 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       const requestData = {
-        firstName: userData.firstName,
-        lastName: userData.lastName,
+        name: userData.name,
+        surname: userData.surname,
         email: userData.email,
-        rawPassword: userData.password,
-        birthDate: userData.birthDate,
-        sex: userData.sex.charAt(0).toUpperCase()
+        rawPassword: userData.rawPassword
       };
 
       const response = await fetch(`${API_URL}/register`, {
@@ -77,8 +75,8 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         const mockUser = {
           email: userData.email,
-          firstName: userData.firstName,
-          lastName: userData.lastName
+          name: userData.name,
+          surname: userData.surname
         };
         setUser(mockUser);
         localStorage.setItem('user', JSON.stringify(mockUser));

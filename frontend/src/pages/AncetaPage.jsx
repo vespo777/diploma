@@ -240,4 +240,16 @@ const AncetaPage = () => {
     );
 };
 
+// <div className="input-group">
+//     <label className="date-label">Date of birth</label>
+//     <input
+//         type="date"
+//         name="birthDate"
+//         className="auth-input"
+//         value={formData.birthDate}
+//         onChange={handleChange}
+//         required
+//     />
+// </div>
+
 export default AncetaPage;

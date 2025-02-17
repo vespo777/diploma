@@ -9,7 +9,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [rawPassword, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +22,7 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      await login(email, rawPassword);
       setSuccess("Login successful! Redirecting to home page...");
       setTimeout(() => {
         navigate("/");
@@ -36,7 +36,7 @@ const LoginPage = () => {
 
   return (
     <div className="auth-container">
-      <motion.div 
+      <motion.div
         className="auth-box"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -45,7 +45,7 @@ const LoginPage = () => {
         <h2>Welcome Back</h2>
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <input
@@ -64,7 +64,7 @@ const LoginPage = () => {
                 type={showPassword ? "text" : "password"}
                 className="auth-input"
                 placeholder="Password"
-                value={password}
+                value={rawPassword}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
