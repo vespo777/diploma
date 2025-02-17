@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
-public class UserPersonalInfoController {
+public class PersonalInfoController {
     private final UserPersonalInfoService userPersonalInfoService;
 
-    public UserPersonalInfoController( UserPersonalInfoService userPersonalInfoService) {
+    public PersonalInfoController( UserPersonalInfoService userPersonalInfoService) {
         this.userPersonalInfoService = userPersonalInfoService;
     }
 
