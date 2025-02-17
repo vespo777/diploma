@@ -5,32 +5,26 @@ package kz.dreamteam.backend.model;
 public class RegisterBody {
 
 //    @Schema(description = "Имя")
-    private String firstName;
+    private String name;
 
 //    @Schema(description = "Фамилия")
-    private String lastName;
+    private String surname;
 
-//    @Schema(description = "Email пользователя")
+    //    @Schema(description = "Email пользователя")
     private String email;
 
 //    @Schema(description = "raw Пароль")
     private String rawPassword;
 
-    //    @Schema(description = "Возрост")
-    private String birthDate;
-
-//    @Schema(description = "Пол")
-    private Character sex;
 
 
 
-
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getSurname() {
+        return surname;
     }
 
     public String getEmail() {
@@ -40,14 +34,5 @@ public class RegisterBody {
     public String getRawPassword() {
         return rawPassword;
     }
-
-    public String getBirthDate() {
-        return birthDate;
-    }
-
-    public Character getSex() {
-        return sex;
-    }
-
 
 }

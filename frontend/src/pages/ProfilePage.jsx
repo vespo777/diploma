@@ -52,12 +52,12 @@ const ProfilePage = () => {
 
         if (response.ok) {
           const data = await response.json();
-          
+
           // Подробное логирование всех объектов
-          console.log('socialDetails:', data.socialDetails);
+          console.log('personal information:', data.personal_info);
           console.log('locationDetails:', data.locationDetails);
           console.log('roommatePreferences:', data.roommatePreferences);
-          
+
           // Сохраняем предыдущие значения preferences при обновлении
           setUserData(prevData => ({
             firstName: data.name || prevData.firstName,
@@ -82,7 +82,7 @@ const ProfilePage = () => {
               lifePlans: data.socialDetails?.lifePlans || prevData.preferences.lifePlans
             }
           }));
-          
+
           setUserId(data.userId);
         } else {
           console.error('Failed to fetch user data:', response.status);
@@ -123,7 +123,7 @@ const ProfilePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       console.log('Current userId state:', userId);
       if (!userId) {
@@ -156,7 +156,7 @@ const ProfilePage = () => {
       console.log('User ID:', userId);
       console.log('Отправляемые данные:', updateData);
 
-      const response = await fetch(`http://localhost:8080/profile/${userId}`, {
+      const response = await fetch(`http://localhost:8080/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -185,7 +185,7 @@ const ProfilePage = () => {
   }
 
   return (
-    <motion.div 
+    <motion.div
       className="profile-container"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -193,7 +193,7 @@ const ProfilePage = () => {
     >
       <div className="profile-header">
         <h1>My Profile</h1>
-        <button 
+        <button
           className="edit-button"
           onClick={() => setIsEditing(!isEditing)}
         >
@@ -201,7 +201,7 @@ const ProfilePage = () => {
         </button>
       </div>
 
-      <motion.div 
+      <motion.div
         className="profile-content"
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -209,9 +209,9 @@ const ProfilePage = () => {
       >
         <div className="avatar-section">
           <div className="avatar-container">
-            <img 
-              src={previewUrl || defaultAvatar} 
-              alt="Profile" 
+            <img
+              src={previewUrl || defaultAvatar}
+              alt="Profile"
               className="avatar-image"
             />
             {isEditing && (

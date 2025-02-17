@@ -5,42 +5,45 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "location_details")
 public class LocationDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Ensure the ID is auto-generated
-    private Long id;
-
-    private String cityFrom;
-    private String currentCity;
-    private String school;
-    private String university;
-    private String workplace;
+    @Column(name = "user_id") // Первичный ключ такой же, как в User
+    private Long userId;
 
     @OneToOne
+    @MapsId
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
+
+    @Column
+    private String regionFrom;
+    @Column
+    private String currentCity;
 
     public LocationDetails() {
     }
 
 
     // Getters and setters
-    public Long getId() {
-        return id;
+
+
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public String getCityFrom() {
-        return cityFrom;
+    public String getRegionFrom() {
+        return regionFrom;
     }
 
-    public void setCityFrom(String cityFrom) {
-        this.cityFrom = cityFrom;
+    public void setRegionFrom(String regionFrom) {
+        this.regionFrom = regionFrom;
     }
 
     public String getCurrentCity() {
@@ -51,29 +54,6 @@ public class LocationDetails {
         this.currentCity = currentCity;
     }
 
-    public String getSchool() {
-        return school;
-    }
-
-    public void setSchool(String school) {
-        this.school = school;
-    }
-
-    public String getUniversity() {
-        return university;
-    }
-
-    public void setUniversity(String university) {
-        this.university = university;
-    }
-
-    public String getWorkplace() {
-        return workplace;
-    }
-
-    public void setWorkplace(String workplace) {
-        this.workplace = workplace;
-    }
 
     public User getUser() {
         return user;

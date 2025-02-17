@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../contexts/AuthContext";
 import "../styles/LoginRegister.css";
 
@@ -8,10 +9,11 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [rawPassword, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +22,7 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      await login(email, rawPassword);
       setSuccess("Login successful! Redirecting to home page...");
       setTimeout(() => {
         navigate("/");
@@ -34,7 +36,7 @@ const LoginPage = () => {
 
   return (
     <div className="auth-container">
-      <motion.div 
+      <motion.div
         className="auth-box"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -43,7 +45,7 @@ const LoginPage = () => {
         <h2>Welcome Back</h2>
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <input
@@ -57,14 +59,23 @@ const LoginPage = () => {
           </div>
 
           <div className="input-group">
-            <input
-              type="password"
-              className="auth-input"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="auth-input"
+                placeholder="Password"
+                value={rawPassword}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
 
           <div className="reset-password">

@@ -2,6 +2,7 @@ package kz.dreamteam.backend.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,9 +47,15 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register").permitAll() // Доступ без авторизации
-//                        .anyRequest().authenticated() // Остальные запросы требуют авторизации
-                        .anyRequest().permitAll() // Остальные запросы требуют авторизации
+                        .requestMatchers(
+                                "/login",
+                                "/register",// Доступ без авторизации
+                                "/swagger-ui/**",  // Allow Swagger UI
+                                "/v3/api-docs/**", // Allow OpenAPI docs
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
+                        .anyRequest().authenticated() // Остальные запросы требуют авторизации
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Добавляем фильтр
 

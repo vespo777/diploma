@@ -27,7 +27,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
 
         // Пропускаем токен-проверку для определённых эндпоинтов
-        if (path.equals("/login") || path.equals("/register")) {
+        if (path.startsWith("/swagger-ui") ||
+                path.startsWith("/v3/api-docs") ||
+                path.startsWith("/swagger-resources") ||
+                path.startsWith("/webjars/") ||
+                path.equals("/login") ||
+                path.equals("/register")) {
             filterChain.doFilter(request, response);
             return;
         }

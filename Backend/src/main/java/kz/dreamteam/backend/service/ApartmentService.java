@@ -35,14 +35,14 @@ public class ApartmentService {
     public Apartment updateApartment(Long id, Apartment updatedApartment) {
         return apartmentRepository.findById(id)
                 .map(apartment -> {
-                    apartment.setOwner(updatedApartment.getOwner());
-                    apartment.setType(updatedApartment.getType());
-                    apartment.setPhoto(updatedApartment.getPhoto());
-                    apartment.setAddress(updatedApartment.getAddress());
-                    apartment.setDescription(updatedApartment.getDescription());
-                    apartment.setCallNumber(updatedApartment.getCallNumber());
-                    apartment.setTelegramNickname(updatedApartment.getTelegramNickname());
-                    apartment.setLinkToKrishaKz(updatedApartment.getLinkToKrishaKz());
+//                    apartment.setOwner(updatedApartment.getOwner());
+//                    apartment.setType(updatedApartment.getType());
+//                    apartment.setPhoto(updatedApartment.getPhoto());
+//                    apartment.setAddress(updatedApartment.getAddress());
+//                    apartment.setDescription(updatedApartment.getDescription());
+//                    apartment.setCallNumber(updatedApartment.getCallNumber());
+//                    apartment.setTelegramNickname(updatedApartment.getTelegramNickname());
+//                    apartment.setLinkToKrishaKz(updatedApartment.getLinkToKrishaKz());
                     return apartmentRepository.save(apartment);
                 })
                 .orElseThrow(() -> new RuntimeException("Apartment not found with id: " + id));

@@ -3,7 +3,6 @@ package kz.dreamteam.backend.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "users") // Matches the table name
@@ -12,23 +11,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(nullable = false, length = 50)
-    private String name;
-
-    @Column(nullable = false, length = 50)
-    private String surname;
-
-    @Column(nullable = false, unique = true, length = 255)
+    @Column(nullable = false, length = 255)
     private String email;
 
     @Column(nullable = false, length = 255)
     private String passwordHash;
 
     @Column
-    private LocalDate birthDate;;
+    private String profilePhotoPath;
 
-    @Column(length = 1)
-    private Character sex;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonManagedReference
+    private PersonalInfo personalInfo;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonManagedReference
+    private RoommateSearch roommateSearch;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
@@ -41,6 +39,26 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
     private RoommatePreferences roommatePreferences;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonManagedReference
+    private Contacts contacts;
+
+    public PersonalInfo getPersonalInfo() {
+        return personalInfo;
+    }
+
+    public void setPersonalInfo(PersonalInfo personalInfo) {
+        this.personalInfo = personalInfo;
+    }
+
+    public RoommateSearch getRoommateSearch() {
+        return roommateSearch;
+    }
+
+    public void setRoommateSearch(RoommateSearch roommateSearch) {
+        this.roommateSearch = roommateSearch;
+    }
 
     public RoommatePreferences getRoommatePreferences() {
         return roommatePreferences;
@@ -66,57 +84,44 @@ public class User {
         this.socialDetails = socialDetails;
     }
 
+    public Contacts getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(Contacts contacts) {
+        this.contacts = contacts;
+    }
+
     public Long getUserId() {
         return userId;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getSurname() {
-        return surname;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public Character getSex() {
-        return sex;
-    }
-
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
 
-    public void setBirthDate(LocalDate dateOfBirth) {
-        this.birthDate = dateOfBirth;
+    public String getProfilePhotoPath() {
+        return profilePhotoPath;
     }
 
-    public void setSex(Character sex) {
-        this.sex = sex;
+    public void setProfilePhotoPath(String profilePhotoPath) {
+        this.profilePhotoPath = profilePhotoPath;
     }
 }
 

@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
 import "../styles/LoginRegister.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -11,13 +12,30 @@ const RegisterPage = () => {
     firstName: "",
     lastName: "",
     email: "",
-    birthDate: "",
-    sex: "",
     password: "",
     confirmPassword: ""
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const validatePassword = (password) => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    const errors = [];
+    if (password.length < minLength) errors.push("At least 8 characters");
+    if (!hasUpperCase) errors.push("One uppercase letter");
+    if (!hasLowerCase) errors.push("One lowercase letter");
+    if (!hasNumbers) errors.push("One number");
+    if (!hasSpecialChar) errors.push("One special character");
+
+    return errors;
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -36,11 +54,25 @@ const RegisterPage = () => {
       return;
     }
 
+    const passwordErrors = validatePassword(formData.password);
+    if (passwordErrors.length > 0) {
+      setError(`Password requirements: ${passwordErrors.join(", ")}`);
+      return;
+    }
+    const requestData = {
+      name: formData.firstName,
+      surname: formData.lastName,
+      email: formData.email,
+      rawPassword: formData.password
+    }
+
     try {
-      await register(formData);
+      console.log("RegisterPage, form Data:", requestData);
+
+      await register(requestData);
       setSuccess("Registration successful! Redirecting to home page...");
       setTimeout(() => {
-        navigate("/");
+        navigate("/anceta-page");
       }, 2000);
     } catch (err) {
       setError(err.message || "Failed to create an account");
@@ -49,7 +81,7 @@ const RegisterPage = () => {
 
   return (
     <div className="auth-container">
-      <motion.div 
+      <motion.div
         className="auth-box"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -58,7 +90,7 @@ const RegisterPage = () => {
         <h2>Create Account</h2>
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <input
@@ -99,54 +131,65 @@ const RegisterPage = () => {
           <div className="form-divider"></div>
 
           <div className="input-group">
-            <label className="date-label">Date of birth</label>
-            <input
-              type="date"
-              name="birthDate"
-              className="auth-input"
-              value={formData.birthDate}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="input-group gender-group">
-            <select
-              name="sex"
-              className="auth-input gender-select"
-              value={formData.sex}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                className="auth-input"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+            <div className="password-requirements">
+              Password must contain:
+              <ul>
+                <li className={formData.password.length >= 8 ? "met" : ""}>
+                  At least 8 characters
+                </li>
+                <li className={/[A-Z]/.test(formData.password) ? "met" : ""}>
+                  One uppercase letter
+                </li>
+                <li className={/[a-z]/.test(formData.password) ? "met" : ""}>
+                  One lowercase letter
+                </li>
+                <li className={/\d/.test(formData.password) ? "met" : ""}>
+                  One number
+                </li>
+                <li className={/[!@#$%^&*(),.?":{}|<>]/.test(formData.password) ? "met" : ""}>
+                  One special character
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div className="input-group">
-            <input
-              type="password"
-              name="password"
-              className="auth-input"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="input-group">
-            <input
-              type="password"
-              name="confirmPassword"
-              className="auth-input"
-              placeholder="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                className="auth-input"
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
 
           <motion.button
@@ -169,4 +212,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage; 
+export default RegisterPage;
