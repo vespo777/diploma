@@ -3,9 +3,6 @@ package kz.dreamteam.backend.model.dto;
 import java.time.LocalDate;
 
 public class UpdatePersonalInfoDto {
-    private Long userId;
-    private String name;
-    private String surname;
     private LocalDate birthDate;
     private Character gender;
     private String religion;
@@ -14,11 +11,8 @@ public class UpdatePersonalInfoDto {
     // Constructors
     public UpdatePersonalInfoDto() {}
 
-    public UpdatePersonalInfoDto(Long userId, String name, String surname, LocalDate birthDate,
+    public UpdatePersonalInfoDto(LocalDate birthDate,
                            Character gender, String religion, String nationality) {
-        this.userId = userId;
-        this.name = name;
-        this.surname = surname;
         this.birthDate = birthDate;
         this.gender = gender;
         this.religion = religion;
@@ -26,15 +20,6 @@ public class UpdatePersonalInfoDto {
     }
 
     // Getters and Setters
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getSurname() { return surname; }
-    public void setSurname(String surname) { this.surname = surname; }
-
     public LocalDate getBirthDate() { return birthDate; }
     public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
 

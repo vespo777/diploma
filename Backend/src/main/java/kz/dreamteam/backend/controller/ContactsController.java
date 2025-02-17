@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/contacts")
+@RequestMapping("/user")
 public class ContactsController {
 
     private final ContactsService service;
@@ -15,7 +15,7 @@ public class ContactsController {
         this.service = service;
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/contacts/{userId}")
     public ResponseEntity<String> updateContacts(
             @PathVariable Long userId,
             @RequestBody UpdateContactsDto dto) {

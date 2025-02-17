@@ -27,20 +27,14 @@ public class LocationDetailsService {
         }
 
         LocationDetails details = optionalDetails.get();
-        boolean updated = false;
 
         if (dto.getRegionFrom() != null) {
             details.setRegionFrom(dto.getRegionFrom());
-            updated = true;
         }
         if (dto.getCurrentCity() != null) {
             details.setCurrentCity(dto.getCurrentCity());
-            updated = true;
         }
 
-        if (!updated) {
-            return ResponseEntity.ok("No changes were made, as no new values were provided.");
-        }
 
         repository.save(details);
         return ResponseEntity.ok("Location details updated successfully!");

@@ -18,7 +18,7 @@ public class PersonalInfoService {
     }
 
 
-    public ResponseEntity<String> updateUserPersonalInfo(Long userId, UpdatePersonalInfoDto updateRequest) {
+    public ResponseEntity<String> updatePersonalInfo(Long userId, UpdatePersonalInfoDto updateRequest) {
 
         PersonalInfo personalInfo = personalInfoRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Personal info not found for userId: " + userId));
