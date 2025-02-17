@@ -72,7 +72,7 @@ const RegisterPage = () => {
       await register(requestData);
       setSuccess("Registration successful! Redirecting to home page...");
       setTimeout(() => {
-        navigate("/");
+        navigate("/anceta-page");
       }, 2000);
     } catch (err) {
       setError(err.message || "Failed to create an account");

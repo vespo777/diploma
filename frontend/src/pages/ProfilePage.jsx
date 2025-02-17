@@ -54,7 +54,7 @@ const ProfilePage = () => {
           const data = await response.json();
 
           // Подробное логирование всех объектов
-          console.log('socialDetails:', data.socialDetails);
+          console.log('personal information:', data.personal_info);
           console.log('locationDetails:', data.locationDetails);
           console.log('roommatePreferences:', data.roommatePreferences);
 
@@ -156,7 +156,7 @@ const ProfilePage = () => {
       console.log('User ID:', userId);
       console.log('Отправляемые данные:', updateData);
 
-      const response = await fetch(`http://localhost:8080/profile/${userId}`, {
+      const response = await fetch(`http://localhost:8080/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
