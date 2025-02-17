@@ -47,8 +47,7 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register").permitAll() // Доступ без авторизации
-//                        .anyRequest().authenticated() // Остальные запросы требуют авторизации
-                        .anyRequest().permitAll() // Остальные запросы требуют авторизации
+                        .anyRequest().authenticated() // Остальные запросы требуют авторизации
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Добавляем фильтр
 

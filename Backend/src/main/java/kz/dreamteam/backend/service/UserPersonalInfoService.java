@@ -18,7 +18,6 @@ public class UserPersonalInfoService {
     }
 
 
-//    @Transactional
     public ResponseEntity<String> updateUserPersonalInfo(Long userId, UpdatePersonalInfoDto updateRequest) {
 
         PersonalInfo personalInfo = personalInfoRepository.findById(userId)
