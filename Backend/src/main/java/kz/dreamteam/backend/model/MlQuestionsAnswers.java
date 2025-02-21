@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.Type;
 
 @Entity
-@Table(name = "users_ml_questions_answers")
-public class UserMlQuestionsAnswers {
+@Table(name = "ml_questions_answers")
+public class MlQuestionsAnswers {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

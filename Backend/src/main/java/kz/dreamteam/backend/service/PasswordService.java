@@ -103,7 +103,7 @@ public class PasswordService {
     }
 
     @Transactional
-    public ResponseEntity<String> register(RegisterBody request) {
+    public ResponseEntity<User> register(RegisterBody request) {
         try {
             var user = new User();
             user.setEmail(request.getEmail());
@@ -120,10 +120,10 @@ public class PasswordService {
             createEmptyContacts(user);
 
 
-            return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+            return ResponseEntity.status(HttpStatus.CREATED).body(user);
         } catch (Exception e) {
             // Handle exceptions and return error response
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new User());
         }
     }
 

@@ -50,5 +50,10 @@ public class UserController {
     }
 
 
+    @GetMapping("/checkBirthDate")
+    public ResponseEntity<Boolean> getAllUsers(@RequestParam Long userId) {
+        return userService.checkMlQuestionsAnswers(userId);
+    }
+
 
 }

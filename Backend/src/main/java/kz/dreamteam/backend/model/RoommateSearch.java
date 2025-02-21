@@ -20,7 +20,7 @@ public class RoommateSearch {
     private User user;
 
     @Column(length = 50)
-    private String searchStatus;
+    private Integer searchStatus;
 
     @Column
     private Long budgetMin;
@@ -47,11 +47,11 @@ public class RoommateSearch {
         this.user = user;
     }
 
-    public String getSearchStatus() {
+    public Integer getSearchStatus() {
         return searchStatus;
     }
 
-    public void setSearchStatus(String searchStatus) {
+    public void setSearchStatus(Integer searchStatus) {
         this.searchStatus = searchStatus;
     }
 
