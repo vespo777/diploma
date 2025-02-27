@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import '../styles/navbar.css';
 import { useAuth } from "../contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../imgs/logo.jpg";
+import '../styles/navbar.css';
+
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -19,7 +20,7 @@ const Navbar = () => {
   };
 
   return (
-    <motion.nav 
+    <motion.nav
       className="navbar"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -33,27 +34,27 @@ const Navbar = () => {
       </div>
 
       <div className="nav-links">
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className={`nav-link ${isActive('/') ? 'active' : ''}`}
         >
           Home Page
         </Link>
-        <button 
+        <button
           className={`nav-link ${showSearch ? 'active' : 'search-button'}`}
           onClick={() => setShowSearch(!showSearch)}
           style={{ background: 'none', border: 'none', cursor: 'pointer' }}
         >
           Search
         </button>
-        <Link 
-          to="/add-listing" 
+        <Link
+          to="/add-listing"
           className={`nav-link ${isActive('/add-listing') ? 'active' : ''}`}
         >
           Add an Announcement
         </Link>
-          <Link 
-            to="/faq" 
+          <Link
+            to="/faq"
             className={`nav-link ${isActive('/faq') ? 'active' : ''}`}
           >
             FAQ
@@ -64,12 +65,12 @@ const Navbar = () => {
         {user ? (
           <>
             {/* <span className="user-email">{user.email}</span> */}
-            <Link 
-            to="/profile" 
+            <Link
+            to="/profile"
             className={`user-email ${isActive('/profile') ? 'active' : ''}`}>
             {user.email}
           </Link>
-            <motion.button 
+            <motion.button
               className="logout-button"
               onClick={handleLogout}
               whileHover={{ scale: 1.05 }}
@@ -80,14 +81,14 @@ const Navbar = () => {
           </>
         ) : (
           <div className="auth-buttons">
-            <Link 
-              to="/login" 
+            <Link
+              to="/login"
               className={`nav-link login ${isActive('/login') ? 'active' : ''}`}
             >
               Login
             </Link>
-            <Link 
-              to="/register" 
+            <Link
+              to="/register"
               className={`nav-link register : ''}`}
             >
               Register
@@ -98,7 +99,7 @@ const Navbar = () => {
 
       <AnimatePresence>
         {showSearch && (
-          <motion.div 
+          <motion.div
             className="search-section"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -114,7 +115,7 @@ const Navbar = () => {
             }}
           >
             <div style={{ position: 'relative' }}>
-              <button 
+              <button
                 onClick={() => setShowSearch(false)}
                 style={{
                   position: 'absolute',
@@ -131,12 +132,12 @@ const Navbar = () => {
                 ×
               </button>
               <div className="search-links">
-                <Link 
-                  to="/roommates" 
+                <Link
+                  to="/roommates"
                   className={`search-link ${isActive('/roommates') ? 'active' : ''}`}
                   onClick={() => setShowSearch(false)}
                 >
-                  <motion.div 
+                  <motion.div
                     className="search-card"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -146,12 +147,12 @@ const Navbar = () => {
                   </motion.div>
                 </Link>
 
-                <Link 
-                  to="/apartments" 
+                <Link
+                  to="/apartments"
                   className={`search-link ${isActive('/apartments') ? 'active' : ''}`}
                   onClick={() => setShowSearch(false)}
                 >
-                  <motion.div 
+                  <motion.div
                     className="search-card"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

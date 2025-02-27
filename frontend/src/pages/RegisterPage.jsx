@@ -37,6 +37,7 @@ const RegisterPage = () => {
     return errors;
   };
 
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -67,13 +68,12 @@ const RegisterPage = () => {
     }
 
     try {
-      console.log("RegisterPage, form Data:", requestData);
-
       await register(requestData);
+      console.log("Сохранённый токен:", localStorage.getItem("token"));
       setSuccess("Registration successful! Redirecting to home page...");
       setTimeout(() => {
         navigate("/anceta-page");
-      }, 2000);
+      }, 1000);
     } catch (err) {
       setError(err.message || "Failed to create an account");
     }

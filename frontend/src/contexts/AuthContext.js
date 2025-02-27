@@ -33,10 +33,7 @@ export const AuthProvider = ({ children }) => {
         const errorText = await response.text();
         throw new Error(errorText || 'Login failed');
       }
-
-      // Получаем токен как текст
       const token = await response.text();
-      // Убираем "Bearer " из начала токена, если он есть
       const cleanToken = token.replace('Bearer ', '');
       localStorage.setItem('token', cleanToken);
 
@@ -73,13 +70,28 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (response.ok) {
+        const data = await response.text(); // Получаем JSON с userId и token
+        console.log("Ответ сервера:", data);
+
         const mockUser = {
           email: userData.email,
           name: userData.name,
-          surname: userData.surname
+          surname: userData.surname,
+          userId: data.userId // Используем userId из ответа сервера!
         };
+
         setUser(mockUser);
         localStorage.setItem('user', JSON.stringify(mockUser));
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.userId); // Теперь будет корректный userId
+        console.log("ID", data.userId);
+
+        if (!data.userId) {
+          console.error("Ошибка: userId не пришел с сервера.");
+        } else {
+          localStorage.setItem("userId", data.userId);
+        }
+
         return { success: true };
       } else {
         const errorText = await response.text();
