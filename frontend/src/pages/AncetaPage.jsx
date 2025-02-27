@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "../styles/AncetaPage.css";
 import {useNavigate} from "react-router-dom";
-import {useAuth} from "../contexts/AuthContext";
+
+
+
+const API_URL = 'http://localhost:8080';
 
 const regions = [
     "Almaty Region",
@@ -20,14 +23,15 @@ const regions = [
     "Kyzylorda Region",
     "Akmola Region",
 ];
-const AncetaPage = ({}) => {
 
-    const { user } = useAuth();
+const AncetaPage = () => {
+
     const navigate = useNavigate();
-    const ID = localStorage.getItem("userId");
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
 
-    let integer_min = 0;
-    let integer_max = 450000;
+    const integer_min = 0;
+    const integer_max = 450000;
     const [step, setStep] = useState(1);
 
 
@@ -67,18 +71,20 @@ const AncetaPage = ({}) => {
             isPhoneVisible: false,
         },
     });
+    // Section key mapping updated to match backend endpoints
     const sectionKeyMapping = {
         1: "personal-info",
         2: "social-info",
         3: "roommate-search",
         4: "roommate-preferences",
         5: "location-details",
-        6: "contacts",
+        6: "contacts"
     };
 
     useEffect(() => {
         if (!user) {
             navigate('/login');
+            return;
         }
     }, [user, navigate]);
 
@@ -86,7 +92,6 @@ const AncetaPage = ({}) => {
         const { name, value, type, checked } = e.target;
         const section = name.split('.')[0];
         const key = name.split('.')[1];
-
 
         setFormData((prev) => ({
             ...prev,
@@ -101,46 +106,77 @@ const AncetaPage = ({}) => {
         e.preventDefault();
         const sectionKey = sectionKeyMapping[step];
         if (!sectionKey) {
-            console.error("Некорректный шаг: sectionKey не определен");
+            console.error("Invalid step: sectionKey is undefined");
             return;
         }
-        const sectionData = formData[sectionKey.replace("-", "_")];
-        console.log("Токен:", localStorage.getItem("token"));
-        
-        
-        
+
+        const token = localStorage.getItem('token');
+        const currentUserStr = localStorage.getItem('user');
+        const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null;
+        const userId = currentUser?.userId;
+
+        if (!token || !userId) {
+            console.error("No token or userId found");
+            return;
+        }
+
+        const sectionDataKey = sectionKey.replace("-", "_");
+        let sectionData = { ...formData[sectionDataKey] };
+
+        if (sectionKey === 'personal-info') {
+            sectionData = {
+                gender: sectionData.gender,
+                birthDate: sectionData.birthDate,
+                nationality: sectionData.nationality,
+                religion: sectionData.religion
+            };
+        }
+
         try {
-            console.log(sectionKey, sectionData, "Section Key and Data");
-            const response = await fetch(`http://localhost:8080/user/${sectionKey}/${ID}`, {
+            const authToken = `Bearer ${token}`;
+
+            console.log('Sending request:', {
+                url: `${API_URL}/user/${sectionKey}/${userId}`,
+                token: authToken,
+                data: sectionData
+            });
+
+            const response = await fetch(`${API_URL}/user/${sectionKey}/${userId}`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
+                    'Authorization': authToken,
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(sectionData)
             });
-        
+
             if (!response.ok) {
-                throw new Error(`Ошибка: ${response.status}`);
+                const errorText = await response.text();
+                console.log('Error response:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: Object.fromEntries(response.headers),
+                    errorText: errorText
+                });
+                throw new Error(`Error: ${response.status} - ${errorText}`);
             }
-        
+
             const data = await response.json();
-            console.log(`${sectionKey} успешно обновлено:`, data);
-            setStep(step + 1);
-        
+            console.log('Success response:', data);
+
+            if (step < 6) {
+                setStep(step + 1);
+            } else {
+                navigate('/');
+            }
+
         } catch (error) {
-            console.error("Ошибка при обновлении анкеты:", error.message);
+            console.error("Error updating form:", error);
         }
     };
 
-
-
     return (
-
         <div className={"anceta-card-wrapper"}>
-
-
             <form onSubmit={handleSubmit} className="anceta-form">
                 {step === 1 && (
                     <>
@@ -158,7 +194,6 @@ const AncetaPage = ({}) => {
                         <input type="text" name="personal_info.nationality" value={formData.personal_info.nationality} onChange={handleChange} placeholder="Nationality"/>
                         <h3>Date of Birth</h3>
                         <input type="date" name="personal_info.birthDate" value={formData.personal_info.birthDate} onChange={handleChange} />
-
                     </>
                 )}
 
@@ -337,7 +372,7 @@ const AncetaPage = ({}) => {
                                     Is your phone number visible:
                                     <input
                                         type="checkbox"
-                                        name="contacts.isPhoneVisible"
+                                        name="contacts_info.isPhoneVisible"
                                         checked={formData.contacts_info.isPhoneVisible}
                                         onChange={handleChange}
                                     />
@@ -351,10 +386,7 @@ const AncetaPage = ({}) => {
                 <button type="button" disabled={step === 1} onClick={() => setStep(step - 1)}>Back</button>
                 <button type="submit">{step < 6 ? "Save and next Page" : "Finish"}</button>
             </form>
-
         </div>
-
-
     );
 };
 

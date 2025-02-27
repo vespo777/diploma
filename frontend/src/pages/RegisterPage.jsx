@@ -69,7 +69,6 @@ const RegisterPage = () => {
 
     try {
       await register(requestData);
-      console.log("Сохранённый токен:", localStorage.getItem("token"));
       setSuccess("Registration successful! Redirecting to home page...");
       setTimeout(() => {
         navigate("/anceta-page");

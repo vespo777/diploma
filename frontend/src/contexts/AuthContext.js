@@ -1,9 +1,11 @@
+import { useNavigate } from 'react-router-dom';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 const API_URL = 'http://localhost:8080';
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -11,9 +13,16 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
 
-    if (storedUser && token) {
+    if (storedUser && token && userId) {
       setUser(JSON.parse(storedUser));
+    } else {
+      // Clear everything if either token or user is missing
+      setUser(null);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('userId');
     }
     setLoading(false);
   }, []);
@@ -33,17 +42,21 @@ export const AuthProvider = ({ children }) => {
         const errorText = await response.text();
         throw new Error(errorText || 'Login failed');
       }
+
       const token = await response.text();
-      const cleanToken = token.replace('Bearer ', '');
-      localStorage.setItem('token', cleanToken);
+      // Убираем префикс Bearer перед сохранением
+      const cleanToken = token.replace(/^Bearer\s+/i, '');
+      console.log('Clean token:', cleanToken); // Debug log
 
-      // Создаем объект пользователя
-      const mockUser = {
-        email: email
+      const userObject = {
+        email: email,
+        userId: null
       };
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
 
+      localStorage.setItem('token', cleanToken); // Сохраняем чистый токен
+      localStorage.setItem('user', JSON.stringify(userObject));
+
+      setUser(userObject);
       return { success: true };
     } catch (error) {
       console.error('Login error:', error);
@@ -69,34 +82,53 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify(requestData),
       });
 
-      if (response.ok) {
-        const data = await response.text(); // Получаем JSON с userId и token
-        console.log("Ответ сервера:", data);
-
-        const mockUser = {
-          email: userData.email,
-          name: userData.name,
-          surname: userData.surname,
-          userId: data.userId // Используем userId из ответа сервера!
-        };
-
-        setUser(mockUser);
-        localStorage.setItem('user', JSON.stringify(mockUser));
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userId", data.userId); // Теперь будет корректный userId
-        console.log("ID", data.userId);
-
-        if (!data.userId) {
-          console.error("Ошибка: userId не пришел с сервера.");
-        } else {
-          localStorage.setItem("userId", data.userId);
-        }
-
-        return { success: true };
-      } else {
+      if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || 'Registration failed');
       }
+
+      const data = await response.json();
+      
+      // Сразу делаем логин после регистрации
+      const loginResponse = await fetch(`${API_URL}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          email: userData.email,
+          password: userData.rawPassword
+        }),
+      });
+
+      if (!loginResponse.ok) {
+        throw new Error('Auto login after registration failed');
+      }
+
+      const token = await loginResponse.text();
+      const cleanToken = token.replace(/^Bearer\s+/i, '');
+
+      // Создаем объект пользователя с userId из регистрации
+      const userObject = {
+        email: userData.email,
+        userId: data.userId
+      };
+
+      // Сохраняем данные
+      localStorage.setItem('token', cleanToken);
+      localStorage.setItem('user', JSON.stringify(userObject));
+      localStorage.setItem('userId', data.userId.toString());
+
+      // Проверяем сохраненные данные
+      console.log('Stored after registration:', {
+        token: cleanToken,
+        user: userObject,
+        userId: data.userId
+      });
+
+      setUser(userObject);
+      return { success: true };
     } catch (error) {
       console.error('Registration error:', error);
       throw error;
@@ -107,6 +139,8 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('userId');
+    navigate('/login');
   };
 
   const value = {
