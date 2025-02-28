@@ -42,39 +42,40 @@ const AncetaPage = () => {
             nationality: "",
             religion: "",
         },
-        social_info:{
+        social_details:{
             schoolName: "",
             universityName: "",
-            speciality: "",
+            universitySpecialty: "",
             smoking: false,
             drinking: false,
             company: "",
             profession: "",
         },
         roommate_search:{
-            budget_min: integer_min,
-            budget_max: integer_max,
-            status: "",
+            budgetMin: integer_min,
+            budgetMax: integer_max,
+            searchStatus: 3,
+            scoreTest: 0
+
         },
         roommate_preferences:{
             wakeUpTime: "",
             sleepTime: "",
             pets: "",
         },
-        location_info:{
-            cityCurrent: "",
+        location_details:{
+            currentCity: "",
             regionFrom: "",
         },
-        contacts_info:{
+        contacts:{
             callNumber: "",
             telegramNickname: "",
-            isPhoneVisible: false,
         },
     });
     // Section key mapping updated to match backend endpoints
     const sectionKeyMapping = {
         1: "personal-info",
-        2: "social-info",
+        2: "social-details",
         3: "roommate-search",
         4: "roommate-preferences",
         5: "location-details",
@@ -155,7 +156,7 @@ const AncetaPage = () => {
             }
 
 
-            const data = await response.json();
+            const data = await response.text();
             console.log('Success response:', data);
 
             if (step < 6) {
@@ -199,8 +200,8 @@ const AncetaPage = () => {
                             <label>School Name:</label>
                             <input
                                 type="text"
-                                name="social_info.schoolName"
-                                value={formData.social_info.schoolName}
+                                name="social_details.schoolName"
+                                value={formData.social_details.schoolName}
                                 onChange={handleChange}
                             />
                         </div>
@@ -208,17 +209,34 @@ const AncetaPage = () => {
                             <label>University Name:</label>
                             <input
                                 type="text"
-                                name="social_info.universityName"
-                                value={formData.social_info.universityName}
+                                name="social_details.universityName"
+                                value={formData.social_details.universityName}
                                 onChange={handleChange}
                             />
                         </div>
                         <div>
-                            <label>Speciality:</label>
+                            <label>University Speciality:</label>
                             <input
                                 type="text"
-                                name="social_info.speciality"
-                                value={formData.social_info.speciality}
+                                name="social_details.universitySpecialty"
+                                value={formData.social_details.universitySpecialty}
+                                onChange={handleChange}
+                            />
+                        </div> <div>
+                            <label>Prefession:</label>
+                            <input
+                                type="text"
+                                name="social_details.profession"
+                                value={formData.social_details.profession}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div>
+                            <label>Company where you working:</label>
+                            <input
+                                type="text"
+                                name="social_details.company"
+                                value={formData.social_details.company}
                                 onChange={handleChange}
                             />
                         </div>
@@ -227,8 +245,8 @@ const AncetaPage = () => {
                                 Smoking:
                                 <input
                                     type="checkbox"
-                                    name="social_info.smoking"
-                                    checked={formData.social_info.smoking}
+                                    name="social_details.smoking"
+                                    checked={formData.social_details.smoking}
                                     onChange={handleChange}
                                 />
                             </label>
@@ -238,8 +256,8 @@ const AncetaPage = () => {
                                 Drinking:
                                 <input
                                     type="checkbox"
-                                    name="social_info.drinking"
-                                    checked={formData.social_info.drinking}
+                                    name="social_details.drinking"
+                                    checked={formData.social_details.drinking}
                                     onChange={handleChange}
                                 />
                             </label>
@@ -253,8 +271,8 @@ const AncetaPage = () => {
                             <label>Min budget:</label>
                             <input
                                 type="number"
-                                name="roommate_search.budget_min"
-                                value={formData.roommate_search.budget_min}
+                                name="roommate_search.budgetMin"
+                                value={formData.roommate_search.budgetMin}
                                 onChange={handleChange}
                                 required
                             />
@@ -262,14 +280,14 @@ const AncetaPage = () => {
                             <label>Max budget:</label>
                             <input
                                 type="number"
-                                name="roommate_search.budget_max"
-                                value={formData.roommate_search.budget_max}
+                                name="roommate_search.budgetMax"
+                                value={formData.roommate_search.budgetMax}
                                 onChange={handleChange}
                                 required
                             />
 
                             <label>Search Status</label>
-                            <select name="roommate_search.status" value={formData.roommate_search.status} onChange={handleChange}>
+                            <select name="roommate_search.searchStatus" value={formData.roommate_search.searchStatus} onChange={handleChange}>
                                 <option value="1">I am roommate and I don't have an apartment</option>
                                 <option value="2">I am roommate and I have an apartment</option>
                                 <option value="3">Not searching</option>
@@ -278,59 +296,27 @@ const AncetaPage = () => {
                         </>
                 )}
 
-                {step === 4 && (
-                    <>
-                        <h2>Location Information</h2>
-                        <div>
-                            <label>City Current:</label>
-                            <select
-                                name="location_info.cityCurrent"
-                                value={formData.location_info.cityCurrent}
-                                onChange={handleChange}
-                            >
-                                <option value="">Select City</option>
-                                <option value="Almaty">Almaty</option>
-                                <option value="Nur-Sultan">Nur-Sultan</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>Region From:</label>
-                            <select
-                                name="location_info.regionFrom"
-                                value={formData.location_info.regionFrom}
-                                onChange={handleChange}
-                            >
-                                <option value="">Select Region</option>
-                                {regions.map((region, index) => (
-                                    <option key={index} value={region}>
-                                        {region}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </>
-                )}
                 {step === 5 && (
                     <>
                         <h2>Roommate Preferences</h2>
-                    <div>
-                        <label>Wake Up Time:</label>
-                        <input
-                            type="time"
-                            name="roommate_preferences.wakeUpTime"
-                            value={formData.roommate_preferences.wakeUpTime}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div>
-                        <label>Sleep Time:</label>
-                        <input
-                            type="time"
-                            name="roommate_preferences.sleepTime"
-                            value={formData.roommate_preferences.sleepTime}
-                            onChange={handleChange}
-                        />
-                    </div>
+                        <div>
+                            <label>Wake Up Time:</label>
+                            <input
+                                type="time"
+                                name="roommate_preferences.wakeUpTime"
+                                value={formData.roommate_preferences.wakeUpTime}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div>
+                            <label>Sleep Time:</label>
+                            <input
+                                type="time"
+                                name="roommate_preferences.sleepTime"
+                                value={formData.roommate_preferences.sleepTime}
+                                onChange={handleChange}
+                            />
+                        </div>
                         <div>
                             <label>Pets:</label>
                             <input
@@ -343,6 +329,39 @@ const AncetaPage = () => {
                     </>
                 )}
 
+                {step === 4 && (
+                    <>
+                        <h2>Location Information</h2>
+                        <div>
+                            <label>City Current:</label>
+                            <select
+                                name="location_details.currentCity"
+                                value={formData.location_details.currentCity}
+                                onChange={handleChange}
+                            >
+                                <option value="">Select City</option>
+                                <option value="Almaty">Almaty</option>
+                                <option value="Nur-Sultan">Nur-Sultan</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Region From:</label>
+                            <select
+                                name="location_details.regionFrom"
+                                value={formData.location_details.regionFrom}
+                                onChange={handleChange}
+                            >
+                                <option value="">Select Region</option>
+                                {regions.map((region, index) => (
+                                    <option key={index} value={region}>
+                                        {region}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </>
+                )}
+
                 {step === 6 && (
                     <>
                         <h2>Contacts Information</h2>
@@ -350,30 +369,18 @@ const AncetaPage = () => {
                             <label>Call Number:</label>
                             <input
                                 type="text"
-                                name="contacts_info.callNumber"
-                                value={formData.contacts_info.callNumber}
+                                name="contacts.callNumber"
+                                value={formData.contacts.callNumber}
                                 onChange={handleChange}
                             />
                             <label>Telegram nickname:</label>
                             <input
                                 type="text"
-                                name="contacts_info.telegramNickname"
-                                value={formData.contacts_info.telegramNickname}
+                                name="contacts.telegramNickname"
+                                value={formData.contacts.telegramNickname}
                                 onChange={handleChange}
                                 placeholder="Telegram nickname"></input>
                         </div>
-                            <div>
-                                <label>
-                                    Is your phone number visible:
-                                    <input
-                                        type="checkbox"
-                                        name="contacts_info.isPhoneVisible"
-                                        checked={formData.contacts_info.isPhoneVisible}
-                                        onChange={handleChange}
-                                    />
-                                </label>
-                            </div>
-
                     </>
 
                 )}
