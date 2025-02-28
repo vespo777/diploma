@@ -1,10 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { mockListings } from '../mockData/listings';
 import '../styles/HomePage.css';
 
 const HomePage = () => {
+  const navigate = useNavigate();
+
+  const storedValue1 = localStorage.getItem('confirmCode');
+  const userStr = localStorage.getItem('user');
+  const user = userStr ? JSON.parse(userStr) : null;
+  const storedValue2 = user ? user.userId : null
+
+  useEffect(() => {
+      console.log('Проверяем storedValue:', storedValue1, storedValue2);
+      if (Number(storedValue1) === storedValue2) {
+        setTimeout(() => {
+          alert("You need to fill Anceta!");
+          navigate("/anceta-page");
+        }, 3000);
+      }
+  }, [storedValue2, storedValue1, navigate]);
 
   return (
     <div className="home-container">
@@ -66,4 +83,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage; 
+export default HomePage;

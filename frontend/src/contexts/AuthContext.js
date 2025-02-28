@@ -1,9 +1,12 @@
+import { useNavigate } from 'react-router-dom';
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import getUserFromToken from "../utils/Decode";
 
 const AuthContext = createContext();
 const API_URL = 'http://localhost:8080';
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -11,9 +14,14 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('token');
+    console.log(storedUser, token);
 
     if (storedUser && token) {
       setUser(JSON.parse(storedUser));
+    } else {
+      setUser(null);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
     }
     setLoading(false);
   }, []);
@@ -34,19 +42,18 @@ export const AuthProvider = ({ children }) => {
         throw new Error(errorText || 'Login failed');
       }
 
-      // Получаем токен как текст
       const token = await response.text();
-      // Убираем "Bearer " из начала токена, если он есть
-      const cleanToken = token.replace('Bearer ', '');
-      localStorage.setItem('token', cleanToken);
+      localStorage.setItem('token', token);
 
-      // Создаем объект пользователя
-      const mockUser = {
-        email: email
+      const decodedToken = getUserFromToken();
+      const userObject = {
+        email: email,
+        userId: decodedToken.user_id
       };
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
 
+      localStorage.setItem('user', JSON.stringify(userObject));
+
+      setUser(userObject);
       return { success: true };
     } catch (error) {
       console.error('Login error:', error);
@@ -72,19 +79,17 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify(requestData),
       });
 
-      if (response.ok) {
-        const mockUser = {
-          email: userData.email,
-          name: userData.name,
-          surname: userData.surname
-        };
-        setUser(mockUser);
-        localStorage.setItem('user', JSON.stringify(mockUser));
-        return { success: true };
-      } else {
+      const data = await response.json();
+      localStorage.setItem('confirmCode', data.userId);
+
+      if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || 'Registration failed');
       }
+
+
+
+      return { success: true};
     } catch (error) {
       console.error('Registration error:', error);
       throw error;
@@ -95,6 +100,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    navigate('/login');
   };
 
   const value = {

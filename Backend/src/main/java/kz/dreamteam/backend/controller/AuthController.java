@@ -2,6 +2,7 @@ package kz.dreamteam.backend.controller;
 
 import kz.dreamteam.backend.model.LoginBody;
 import kz.dreamteam.backend.model.RegisterBody;
+import kz.dreamteam.backend.model.User;
 import kz.dreamteam.backend.service.AuthService;
 import kz.dreamteam.backend.service.PasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class AuthController {
 //    @Operation(description = "Аутентификация системного пользователя",
 //            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = SessionResponse.class)))})
 //    @ApiResponseCodes({ExtendedResultCode.USER_NOT_FOUND})
-    public ResponseEntity<String> register(@RequestBody RegisterBody body) {
+    public ResponseEntity<User> register(@RequestBody RegisterBody body) {
         return this.passwordService.register(body);
     }
 

@@ -1,7 +1,7 @@
 package kz.dreamteam.backend.model.dto;
 
 public class UpdateRoommateSearchDto {
-    private String searchStatus;
+    private Integer searchStatus;
     private Long budgetMin;
     private Long budgetMax;
     private Integer scoreTest;
@@ -11,7 +11,7 @@ public class UpdateRoommateSearchDto {
     }
 
     // Parameterized constructor
-    public UpdateRoommateSearchDto(String searchStatus, Long budgetMin, Long budgetMax, Integer scoreTest) {
+    public UpdateRoommateSearchDto(Integer searchStatus, Long budgetMin, Long budgetMax, Integer scoreTest) {
         this.searchStatus = searchStatus;
         this.budgetMin = budgetMin;
         this.budgetMax = budgetMax;
@@ -19,11 +19,11 @@ public class UpdateRoommateSearchDto {
     }
 
     // Getters and Setters
-    public String getSearchStatus() {
+    public Integer getSearchStatus() {
         return searchStatus;
     }
 
-    public void setSearchStatus(String searchStatus) {
+    public void setSearchStatus(Integer searchStatus) {
         this.searchStatus = searchStatus;
     }
 

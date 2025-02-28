@@ -19,19 +19,18 @@ const ResetPasswordConfirmPage = () => {
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('resetPasswordEmail');
-    
+
     if (!email || email !== savedEmail) {
-      console.log("Email mismatch or not found", { 
-        stateEmail: email, 
-        savedEmail: savedEmail 
+      console.log("Email mismatch or not found", {
+        stateEmail: email,
+        savedEmail: savedEmail
       });
       navigate('/reset-password');
       return;
     }
-    
+
     console.log("Resetting password for email:", email);
   }, [email, navigate]);
-
   const validatePassword = (password) => {
     const minLength = 8;
     const hasUpperCase = /[A-Z]/.test(password);
@@ -93,7 +92,7 @@ const ResetPasswordConfirmPage = () => {
       if (response.ok) {
         // Очищаем сохраненный email после успешного сброса
         localStorage.removeItem('resetPasswordEmail');
-        navigate('/login', { 
+        navigate('/login', {
           state: { message: "Password has been successfully reset. Please login with your new password." }
         });
       } else {
@@ -234,4 +233,4 @@ const ResetPasswordConfirmPage = () => {
   );
 };
 
-export default ResetPasswordConfirmPage; 
+export default ResetPasswordConfirmPage;

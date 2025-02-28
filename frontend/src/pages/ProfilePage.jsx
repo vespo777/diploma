@@ -1,478 +1,167 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
-import defaultAvatar from "../imgs/default-avatar.jpeg";
-import "../styles/ProfilePage.css";
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+
+const API_URL = 'http://localhost:8080';
+const regions = [
+  "Almaty Region",
+  "Nur-Sultan Region",
+  "Shymkent Region",
+  "East-Kazakhstan Region",
+  "West-Kazakhstan Region",
+  "South-Kazakhstan Region",
+  "North-Kazakhstan Region",
+  "Karaganda Region",
+  "Atyrau Region",
+  "Aktobe Region",
+  "Kostanay Region",
+  "Pavlodar Region",
+  "Mangystau Region",
+  "Kyzylorda Region",
+  "Akmola Region",
+];
 
 const ProfilePage = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [userId, setUserId] = useState(null);
-  const [userData, setUserData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    birthDate: '',
-    sex: '',
-    preferences: {
-      smoking: false,
-      drinking: false,
-      prefersDorm: false,
-      sports: '',
-      religion: '',
-      wakeUpTime: '',
-      sleepTime: '',
-      university: '',
-      workPlace: '',
-      school: '',
-      cityFrom: '',
-      currentCity: '',
-      prefersApartment: false,
-      lifePlans: '',
-    }
-  });
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
+    if (!user || !user.userId) return;
 
-    const fetchUserData = async () => {
-      try {
-        console.log('Fetching user data...');
-        const response = await fetch('http://localhost:8080/profile', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+     const responce = fetch(`${API_URL}/profile`, {
+      method: 'GET',
+      headers: { 'Authorization': `${localStorage.getItem('token')}` }
+    })
+        .then(res => res.ok ? res.json() : Promise.reject('Failed to load profile'))
+        .then(data => setUserData(data))
+        .catch(setError)
+        .finally(() => setLoading(false));
 
-        if (response.ok) {
-          const data = await response.json();
 
-          // Подробное логирование всех объектов
-          console.log('personal information:', data.personal_info);
-          console.log('locationDetails:', data.locationDetails);
-          console.log('roommatePreferences:', data.roommatePreferences);
+  }, [user]);
 
-          // Сохраняем предыдущие значения preferences при обновлении
-          setUserData(prevData => ({
-            firstName: data.name || prevData.firstName,
-            lastName: data.surname || prevData.lastName,
-            email: data.email || prevData.email,
-            birthDate: data.birthDate || prevData.birthDate,
-            sex: data.sex || prevData.sex,
-            preferences: {
-              smoking: data.socialDetails?.smoking ?? prevData.preferences.smoking,
-              drinking: data.socialDetails?.drinking ?? prevData.preferences.drinking,
-              prefersDorm: data.roommatePreferences?.prefersDorm ?? prevData.preferences.prefersDorm,
-              prefersApartment: data.roommatePreferences?.prefersApartment ?? prevData.preferences.prefersApartment,
-              sports: data.socialDetails?.sports || prevData.preferences.sports,
-              religion: data.socialDetails?.religion || prevData.preferences.religion,
-              wakeUpTime: data.roommatePreferences?.wakeTime || prevData.preferences.wakeUpTime,
-              sleepTime: data.roommatePreferences?.sleepTime || prevData.preferences.sleepTime,
-              university: data.locationDetails?.university || prevData.preferences.university,
-              workPlace: data.locationDetails?.workplace || prevData.preferences.workPlace,
-              school: data.locationDetails?.school || prevData.preferences.school,
-              cityFrom: data.locationDetails?.cityFrom || prevData.preferences.cityFrom,
-              currentCity: data.locationDetails?.currentCity || prevData.preferences.currentCity,
-              lifePlans: data.socialDetails?.lifePlans || prevData.preferences.lifePlans
-            }
-          }));
-
-          setUserId(data.userId);
-        } else {
-          console.error('Failed to fetch user data:', response.status);
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
-    fetchUserData();
-  }, [user, navigate]);
-
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (section, field, value) => {
     setUserData(prev => ({
       ...prev,
-      [name]: value
-    }));
-  };
-
-  const handlePreferenceChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setUserData(prev => ({
-      ...prev,
-      preferences: {
-        ...prev.preferences,
-        [name]: type === 'checkbox' ? checked : value
+      [section]: {
+        ...prev[section],
+        [field]: value
       }
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      console.log('Current userId state:', userId);
-      if (!userId) {
-        console.error('User ID is not available');
-        alert('User ID is not available. Please try logging in again.');
-        return;
-      }
-
-      const updateData = {
-        name: userData.firstName,
-        surname: userData.lastName,
-        email: userData.email,
-        sex: userData.sex,
-        smoking: userData.preferences.smoking,
-        drinking: userData.preferences.drinking,
-        religion: userData.preferences.religion,
-        sports: userData.preferences.sports,
-        lifePlans: userData.preferences.lifePlans,
-        cityFrom: userData.preferences.cityFrom,
-        currentCity: userData.preferences.currentCity,
-        school: userData.preferences.school,
-        university: userData.preferences.university,
-        workplace: userData.preferences.workPlace,
-        prefersDorm: userData.preferences.prefersDorm,
-        prefersApartment: userData.preferences.prefersApartment,
-        wakeTime: userData.preferences.wakeUpTime,
-        sleepTime: userData.preferences.sleepTime
-      };
-
-      console.log('User ID:', userId);
-      console.log('Отправляемые данные:', updateData);
-
-      const response = await fetch(`http://localhost:8080/users/${userId}`, {
+      const response = await fetch(`${API_URL}/profile/${user.userId}`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `${localStorage.getItem('token')}`
         },
-        body: JSON.stringify(updateData)
+        body: JSON.stringify(userData)
       });
-
-      if (response.ok) {
-        setIsEditing(false);
-        alert('Profile updated successfully!');
-      } else {
-        const errorData = await response.json();
-        console.error('Error updating profile:', errorData);
-        alert('Failed to update profile: ' + (errorData.message || 'Unknown error'));
-      }
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      alert('Failed to update profile');
+      if (!response.ok) throw new Error('Failed to update profile');
+      alert('Profile updated successfully');
+    } catch (err) {
+      alert(err.message);
     }
   };
+  const formatTime = (time) => (time ? time + ":00" : "");
 
-  if (!user) {
-    navigate("/login");
-    return null;
-  }
+  const handleTimeChange = (key, value) => {
+    setUserData((prev) => ({
+      ...prev,
+      roommatePreferences: {
+        ...prev.roommatePreferences,
+        [key]: formatTime(value),
+      },
+    }));
+  };
+
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!userData) return <p>No user data found</p>;
 
   return (
-    <motion.div
-      className="profile-container"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="profile-header">
-        <h1>My Profile</h1>
-        <button
-          className="edit-button"
-          onClick={() => setIsEditing(!isEditing)}
-        >
-          {isEditing ? 'Cancel' : 'Edit Profile'}
-        </button>
-      </div>
-
-      <motion.div
-        className="profile-content"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <div className="avatar-section">
-          <div className="avatar-container">
-            <img
-              src={previewUrl || defaultAvatar}
-              alt="Profile"
-              className="avatar-image"
-            />
-            {isEditing && (
-              <div className="avatar-overlay">
-                <label htmlFor="avatar-upload" className="avatar-upload-label">
-                  Change Photo
-                  <input
-                    id="avatar-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleAvatarChange}
-                    style={{ display: 'none' }}
-                  />
-                </label>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="profile-form">
-          <section className="info-section">
-            <h2>Basic Information</h2>
-            <div className="form-row">
-              <div className="form-group">
-                <label>First Name</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={userData.firstName}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                />
-              </div>
-              <div className="form-group">
-                <label>Last Name</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={userData.lastName}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label>Email</label>
-              <input
-                type="email"
-                name="email"
-                value={userData.email}
-                disabled
-              />
-            </div>
+      <div>
+        <h2>Edit Profile</h2>
+        <form onSubmit={handleSubmit}>
+          <h3>Personal Info</h3>
+          <input type="date" value={userData.personalInfo.birthDate ?? ""} onChange={(e) => handleChange('personalInfo', 'birthDate', e.target.value)} />
+          <select value={userData.personalInfo.gender} onChange={(e) => handleChange('personalInfo.gender', e.target.value)}>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+            <option value="O">Other</option>
+          </select>
+          <input type="text" placeholder="nationality" value={userData.personalInfo.nationality ?? ""} onChange={(e) => handleChange('personalInfo', 'nationality', e.target.value)} />
+          <input type="text" placeholder="religion" value={userData.personalInfo.religion ?? ""} onChange={(e) => handleChange('personalInfo', 'religion', e.target.value)} />
 
 
-            <div className="form-row">
-              <div className="form-group">
-                <label>Birth Date</label>
-                <input
-                  type="date"
-                  name="birthDate"
-                  value={userData.birthDate}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                />
-              </div>
-              <div className="form-group">
-                <label>Sex</label>
-                <select
-                  name="sex"
-                  value={userData.sex}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                >
-                  <option value="M">Male</option>
-                  <option value="F">Female</option>
-                </select>
-              </div>
-            </div>
-          </section>
 
-          <section className="info-section">
-            <h2>Preferences</h2>
-            <div className="preferences-grid">
-              <div className="preference-item">
-                <label>
-                  <input
-                    type="checkbox"
-                    name="smoking"
-                    checked={userData.preferences.smoking}
-                    onChange={handlePreferenceChange}
-                    disabled={!isEditing}
-                  />
-                  Smoking
-                </label>
-              </div>
-              <div className="preference-item">
-                <label>
-                  <input
-                    type="checkbox"
-                    name="drinking"
-                    checked={userData.preferences.drinking}
-                    onChange={handlePreferenceChange}
-                    disabled={!isEditing}
-                  />
-                  Drinking
-                </label>
-              </div>
-              <div className="preference-item">
-                <label>
-                  <input
-                    type="checkbox"
-                    name="prefersDorm"
-                    checked={userData.preferences.prefersDorm}
-                    onChange={handlePreferenceChange}
-                    disabled={!isEditing}
-                  />
-                  Prefers Dorm
-                </label>
-              </div>
-              <div className="preference-item">
-                <label>
-                  <input
-                    type="checkbox"
-                    name="prefersApartment"
-                    checked={userData.preferences.prefersApartment}
-                    onChange={handlePreferenceChange}
-                    disabled={!isEditing}
-                  />
-                  Prefers Apartment
-                </label>
-              </div>
-            </div>
+          <h3>Social Details</h3>
+          <input type="text" placeholder="School Name" value={userData.socialDetails.schoolName ?? ""} onChange={(e) => handleChange('socialDetails', 'schoolName', e.target.value)} />
+          <input type="text" placeholder="University Name" value={userData.socialDetails.universityName ?? ""} onChange={(e) => handleChange('socialDetails', 'universityName', e.target.value)} />
+          <input type="text" placeholder="University Speciality" value={userData.socialDetails.universitySpecialty ?? ""} onChange={(e) => handleChange('socialDetails', 'universitySpecialty', e.target.value)} />
+          <input type="text" placeholder="Company" value={userData.socialDetails.company ?? ""} onChange={(e) => handleChange('socialDetails', 'company', e.target.value)} />
+          <input type="text" placeholder="Position" value={userData.socialDetails.profession ?? ""} onChange={(e) => handleChange('socialDetails', 'profession', e.target.value)} />
 
-            <div className="form-row">
-              <div className="form-group">
-                <label>Wake Up Time</label>
-                <input
-                  type="time"
-                  name="wakeUpTime"
-                  value={userData.preferences.wakeUpTime}
-                  onChange={handlePreferenceChange}
-                  disabled={!isEditing}
-                />
-              </div>
-              <div className="form-group">
-                <label>Sleep Time</label>
-                <input
-                  type="time"
-                  name="sleepTime"
-                  value={userData.preferences.sleepTime}
-                  onChange={handlePreferenceChange}
-                  disabled={!isEditing}
-                />
-              </div>
-            </div>
+          <h3>Roommate Search</h3>
+          <input type="number" value={userData.roommateSearch.budgetMin ?? 15000} onChange={(e) => handleChange('roommateSearch', 'budgetMin', Number(e.target.value))} />
+          <input type="number" value={userData.roommateSearch.budgetMax ?? 450000} onChange={(e) => handleChange('roommateSearch', 'budgetMax', Number(e.target.value))} />
+          <label>Search Status</label>
+          <select value={userData.roommateSearch.searchStatus} onChange={(e) => handleChange('roommateSearch.searchStatus', e.target.value)}>
+            <option value="1">I am roommate and I don't have an apartment</option>
+            <option value="2">I am roommate and I have an apartment</option>
+            <option value="3">Not searching</option>
+          </select>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label>Study Place</label>
-                <input
-                  type="text"
-                  name="university"
-                  value={userData.preferences.university}
-                  onChange={handlePreferenceChange}
-                  disabled={!isEditing}
-                />
-              </div>
-              <div className="form-group">
-                <label>Work Place</label>
-                <input
-                  type="text"
-                  name="workPlace"
-                  value={userData.preferences.workPlace}
-                  onChange={handlePreferenceChange}
-                  disabled={!isEditing}
-                />
-              </div>
-              <div className="form-group">
-                <label>Sports</label>
-                <input
-                  type="text"
-                  name="sports"
-                  value={userData.preferences.sports}
-                  onChange={handlePreferenceChange}
-                  disabled={!isEditing}
-                />
-              </div>
-            </div>
+          <h3>Roommate Preferences</h3>
+          <label>Wake up time</label>
+          <input
+              type="time"
+              value={userData.roommatePreferences.wakeUpTime}
+              onChange={(e) => handleTimeChange("wakeUpTime", e.target.value)}
+          />
+          <label>Sleep Time</label>
+          <input
+              type="time"
+              value={userData.roommatePreferences.sleepTime}
+              onChange={(e) => handleTimeChange("sleepTime", e.target.value)}
+          />
+          <input type="text" placeholder="Pets" value={userData.roommatePreferences.pets ?? ""} onChange={(e) => handleChange('roommatePreferences', 'pets', e.target.value)} />
 
-            <div className="form-group">
-              <label>School</label>
-              <input
-                type="text"
-                name="school"
-                value={userData.preferences.school}
-                onChange={handlePreferenceChange}
-                disabled={!isEditing}
-              />
-            </div>
+         <h3>LocationDetails</h3>
+          <label>Current City:</label>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label>City From</label>
-                <input
-                  type="text"
-                  name="cityFrom"
-                  value={userData.preferences.cityFrom}
-                  onChange={handlePreferenceChange}
-                  disabled={!isEditing}
-                />
-              </div>
-              <div className="form-group">
-                <label>Current City</label>
-                <input
-                  type="text"
-                  name="currentCity"
-                  value={userData.preferences.currentCity}
-                  onChange={handlePreferenceChange}
-                  disabled={!isEditing}
-                />
-              </div>
-              <div className="form-group">
-                <label>Religion</label>
-                <input
-                  type="text"
-                  name="religion"
-                  value={userData.preferences.religion}
-                  onChange={handlePreferenceChange}
-                  disabled={!isEditing}
-                />
-              </div>
-            </div>
+          <select value={userData.locationDetails.currentCity} onChange={(e) => handleChange('locationDetails', 'currentCity', e.target.value)}>
+            <option value="Almaty">Almaty</option>
+            <option value="Nur-Sultan">Nur-Sultan</option>
+          </select>
 
+          <label>Region From:</label>
+          <select
+              name="location_details.regionFrom"
+              value={userData.locationDetails.regionFrom}
+              onChange={(e) => handleChange('locationDetails', 'regionFrom',  e.target.value)}
+          >
+            <option value="">Select Region</option>
+            {regions.map((region, index) => (
+                <option key={index} value={region}>
+                  {region}
+                </option>
+            ))}
+          </select>
 
-            <div className="form-group">
-              <label>Life Plans</label>
-              <textarea
-                name="lifePlans"
-                value={userData.preferences.lifePlans}
-                onChange={handlePreferenceChange}
-                disabled={!isEditing}
-                rows="4"
-              />
-            </div>
-          </section>
+          <h3>Contacts</h3>
+          <input type="text" placeholder="Phone number" value={userData.contacts.callNumber ?? ""} onChange={(e) => handleChange('contacts', 'callNumber', e.target.value)} />
+          <input type="text" placeholder="Telegram nickname" value={userData.contacts.telegramNickname ?? ""} onChange={(e) => handleChange('contacts', 'telegramNickname', e.target.value)} />
 
-          {isEditing && (
-            <motion.button
-              type="submit"
-              className="save-button"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Save Changes
-            </motion.button>
-          )}
+          <button type="submit">Save</button>
         </form>
-      </motion.div>
-    </motion.div>
+      </div>
   );
 };
 

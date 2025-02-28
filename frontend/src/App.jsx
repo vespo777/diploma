@@ -14,6 +14,8 @@ import FAQPage from './pages/Help';
 import ProfilePage from './pages/ProfilePage';
 import ProfileIDPage from './pages/ProfileIDPage'
 import AncetaPage from './pages/AncetaPage';
+import NotFoundPage from './pages/NotFoundPage';
+
 import './index.css';
 import './styles/navbar.css';
 import './styles/HomePage.css';
@@ -39,6 +41,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/profile/:id" element={<ProfileIDPage />} />
             <Route path="/anceta-page" element={<AncetaPage />} />
+            <Route path="/*" element={<NotFoundPage />} />
           </Routes>
         </div>
       </AuthProvider>

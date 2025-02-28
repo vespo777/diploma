@@ -6,10 +6,7 @@ import kz.dreamteam.backend.model.RoommatePreferences;
 import kz.dreamteam.backend.model.SocialDetails;
 import kz.dreamteam.backend.model.User;
 import kz.dreamteam.backend.model.dto.UpdateUserProfileRequest;
-import kz.dreamteam.backend.repository.LocationDetailsRepository;
-import kz.dreamteam.backend.repository.RoommatePreferencesRepository;
-import kz.dreamteam.backend.repository.SocialDetailsRepository;
-import kz.dreamteam.backend.repository.UserRepository;
+import kz.dreamteam.backend.repository.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,6 +21,7 @@ public class UserService {
     private final SocialDetailsRepository socialDetailsRepository;
     private final LocationDetailsRepository locationDetailsRepository;
     private final RoommatePreferencesRepository roommatePreferencesRepository;
+    private final MlQuestionsAnswersRepository mlQuestionsAnswersRepository;
     private final JwtService jwtService;
 
 
@@ -31,14 +29,22 @@ public class UserService {
                        SocialDetailsRepository socialDetailsRepository,
                        LocationDetailsRepository locationDetailsRepository,
                        RoommatePreferencesRepository roommatePreferencesRepository,
+                       MlQuestionsAnswersRepository mlQuestionsAnswersRepository,
                        JwtService jwtService){
         this.userRepository = userRepository;
         this.socialDetailsRepository = socialDetailsRepository;
         this.locationDetailsRepository = locationDetailsRepository;
         this.roommatePreferencesRepository = roommatePreferencesRepository;
+        this.mlQuestionsAnswersRepository = mlQuestionsAnswersRepository;
         this.jwtService = jwtService;
     }
 
+
+    public ResponseEntity<Boolean> checkMlQuestionsAnswers(Long userId) {
+        boolean result = mlQuestionsAnswersRepository.findByUserId(userId).isPresent();
+
+        return ResponseEntity.ok(result);
+    }
 
     public ResponseEntity<?> getCurrentUser(String token) {
         Long userId = jwtService.getUserIdFromToken(token);
@@ -117,6 +123,9 @@ public class UserService {
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userRepository.findAll());
     }
+
+
+
 
 
 

@@ -55,7 +55,8 @@ public class SecurityConfiguration {
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
-                        .anyRequest().authenticated() // Остальные запросы требуют авторизации
+//                        .anyRequest().authenticated() // Остальные запросы требуют авторизации
+                        .anyRequest().permitAll() // Остальные запросы требуют авторизации
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Добавляем фильтр
 
