@@ -116,7 +116,7 @@ select.auth-input:focus {
   }
   to {
     opacity: 100;
-    
+
     transform: translateY(0);
   }
 }
@@ -276,7 +276,7 @@ label input[type="checkbox"] {
 /* Или более специфичный селектор для вашего случая */
 .auth-container .auth-box input[type="checkbox"] {
   margin-right: 8px;
-} 
+}
 
 .password-requirements {
   font-size: 0.8em;
@@ -340,4 +340,9 @@ label input[type="checkbox"] {
 .auth-input[type="password"],
 .auth-input[type="text"] {
   padding-right: 40px;
+}
+
+.not-found{
+  text-align: center;
+  padding-top: 20%;
 }

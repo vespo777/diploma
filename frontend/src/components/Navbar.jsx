@@ -64,7 +64,6 @@ const Navbar = () => {
       <div className="nav-auth">
         {user ? (
           <>
-            {/* <span className="user-email">{user.email}</span> */}
             <Link
             to="/profile"
             className={`user-email ${isActive('/profile') ? 'active' : ''}`}>

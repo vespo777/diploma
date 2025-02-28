@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
@@ -7,7 +7,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { user, register } = useAuth();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -36,6 +36,12 @@ const RegisterPage = () => {
 
     return errors;
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
 
   const handleChange = (e) => {
@@ -69,10 +75,10 @@ const RegisterPage = () => {
 
     try {
       await register(requestData);
-      setSuccess("Registration successful! Redirecting to home page...");
+      setSuccess("Registration successful! Redirecting to sign in page...");
       setTimeout(() => {
-        navigate("/anceta-page");
-      }, 1000);
+        navigate("/login");
+      }, 2000);
     } catch (err) {
       setError(err.message || "Failed to create an account");
     }

@@ -111,11 +111,14 @@ const AncetaPage = () => {
         }
 
         const token = localStorage.getItem('token');
-        const currentUserStr = localStorage.getItem('user');
-        const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null;
-        const userId = currentUser?.userId;
+        const userStr = localStorage.getItem('user');
+        const user = userStr ? JSON.parse(userStr) : null;
+        const number = user ? user.userId : null;
+        const userId = number.toString();
+
 
         if (!token || !userId) {
+            console.log(token, userId);
             console.error("No token or userId found");
             return;
         }
@@ -133,18 +136,13 @@ const AncetaPage = () => {
         }
 
         try {
-            const authToken = `Bearer ${token}`;
-
-            console.log('Sending request:', {
-                url: `${API_URL}/user/${sectionKey}/${userId}`,
-                token: authToken,
-                data: sectionData
-            });
+            const authToken = `${token}`;
 
             const response = await fetch(`${API_URL}/user/${sectionKey}/${userId}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': authToken,
+                    "Accept": "application/json",
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(sectionData)
@@ -152,14 +150,10 @@ const AncetaPage = () => {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.log('Error response:', {
-                    status: response.status,
-                    statusText: response.statusText,
-                    headers: Object.fromEntries(response.headers),
-                    errorText: errorText
-                });
-                throw new Error(`Error: ${response.status} - ${errorText}`);
+                console.error("Ошибка обновления:", errorText);
+                throw new Error(`Ошибка: ${response.status} - ${errorText}`);
             }
+
 
             const data = await response.json();
             console.log('Success response:', data);
@@ -167,11 +161,12 @@ const AncetaPage = () => {
             if (step < 6) {
                 setStep(step + 1);
             } else {
+                localStorage.removeItem('confirmCode')
                 navigate('/');
             }
 
         } catch (error) {
-            console.error("Error updating form:", error);
+            console.error(error);
         }
     };
 
