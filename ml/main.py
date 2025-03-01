@@ -19,7 +19,6 @@ column_names = [
     "OPN1", "OPN2", "OPN3", "OPN4", "OPN5", "OPN6", "OPN7", "OPN8", "OPN9", "OPN10"
 ]
 
-# Define input schema
 class UserResponse(BaseModel):
     answers: list  # List of user responses
 
