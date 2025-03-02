@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import getUserFromToken from "../utils/Decode";
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 const API_URL = 'http://localhost:8080';
 
 export const AuthProvider = ({ children }) => {

@@ -59,7 +59,7 @@ const AncetaPage = () => {
 
         },
         roommate_preferences:{
-            wakeUpTime: "",
+            wakeTime: "",
             sleepTime: "",
             pets: "",
         },
@@ -77,8 +77,8 @@ const AncetaPage = () => {
         1: "personal-info",
         2: "social-details",
         3: "roommate-search",
-        4: "roommate-preferences",
-        5: "location-details",
+        5: "roommate-preferences",
+        4: "location-details",
         6: "contacts"
     };
 
@@ -127,13 +127,13 @@ const AncetaPage = () => {
         const sectionDataKey = sectionKey.replace("-", "_");
         let sectionData = { ...formData[sectionDataKey] };
 
-        if (sectionKey === 'personal-info') {
+        if (sectionKey === 'roommate-preferences') {
             sectionData = {
-                gender: sectionData.gender,
-                birthDate: sectionData.birthDate,
-                nationality: sectionData.nationality,
-                religion: sectionData.religion
+                wakeTime: sectionData.wakeTime,
+                sleepTime: sectionData.sleepTime,
+                pets: sectionData.pets
             };
+            console.log(sectionData);
         }
 
         try {
@@ -303,8 +303,8 @@ const AncetaPage = () => {
                             <label>Wake Up Time:</label>
                             <input
                                 type="time"
-                                name="roommate_preferences.wakeUpTime"
-                                value={formData.roommate_preferences.wakeUpTime}
+                                name="roommate_preferences.wakeTime"
+                                value={formData.roommate_preferences.wakeTime}
                                 onChange={handleChange}
                             />
                         </div>

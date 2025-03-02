@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
+
 import defaultAvatar from '../imgs/default-avatar.jpeg';
 import '../styles/RoommatesPage.css';
 
@@ -20,7 +22,7 @@ const RoommatesPage = () => {
       try {
         const response = await fetch('http://localhost:8080/users', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `${localStorage.getItem('token')}`
           }
         });
         const data = await response.json();
@@ -38,10 +40,10 @@ const RoommatesPage = () => {
 
   useEffect(() => {
     const filtered = users.filter(user => {
-      const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+      const fullName = `${user.personalInfo.name} ${user.personalInfo.surname}`.toLowerCase();
       const matchesSearch = fullName.includes(searchTerm.toLowerCase());
-      const userPrice = user.preferences?.desiredPrice || 0;
-      const matchesPrice = userPrice >= Number(priceRange.min) && 
+      const userPrice = user.roommateSearch?.budgetMin || 0;
+      const matchesPrice = userPrice >= Number(priceRange.min) &&
                           userPrice <= Number(priceRange.max);
       return matchesSearch && matchesPrice;
     });
@@ -111,11 +113,13 @@ const RoommatesPage = () => {
                 <img src={user.avatarUrl || defaultAvatar} alt={`${user.firstName}'s avatar`} />
               </div>
               <div className="roommate-info">
-                <h3>{user.name} {user.surname}</h3>
+                <h3>{user.personalInfo.name} {user.personalInfo.surname}</h3>
                 <p className="price-info">
-                  Desired Price: {user.preferences?.desiredPrice || 'Poka ne sdelaly'}
+                  Budget Min(Tenge): {user.roommateSearch?.budgetMin}
                 </p>
               </div>
+              <Link to={`/profile/${user.userId}`}>More</Link>
+
             </div>
           ))}
         </div>
@@ -124,4 +128,4 @@ const RoommatesPage = () => {
   );
 };
 
-export default RoommatesPage; 
+export default RoommatesPage;

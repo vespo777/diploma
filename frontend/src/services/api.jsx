@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'http://your-api-url.com', // Replace with your API URL
+  baseURL: 'http://localhost:8080', // Replace with your API URL
 });
 
 // Authentication

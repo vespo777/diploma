@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import "../styles/ProfilePage.css"
 
 const API_URL = 'http://localhost:8080';
 const regions = [
@@ -86,9 +87,9 @@ const ProfilePage = () => {
   if (!userData) return <p>No user data found</p>;
 
   return (
-      <div>
+      <div className="profile-container">
         <h2>Edit Profile</h2>
-        <form onSubmit={handleSubmit}>
+        <form className="profile-content" onSubmit={handleSubmit}>
           <h3>Personal Info</h3>
           <input type="date" value={userData.personalInfo.birthDate ?? ""} onChange={(e) => handleChange('personalInfo', 'birthDate', e.target.value)} />
           <select value={userData.personalInfo.gender} onChange={(e) => handleChange('personalInfo.gender', e.target.value)}>
@@ -122,7 +123,7 @@ const ProfilePage = () => {
           <label>Wake up time</label>
           <input
               type="time"
-              value={userData.roommatePreferences.wakeUpTime}
+              value={userData.roommatePreferences.wakeTime}
               onChange={(e) => handleTimeChange("wakeUpTime", e.target.value)}
           />
           <label>Sleep Time</label>
@@ -159,7 +160,7 @@ const ProfilePage = () => {
           <input type="text" placeholder="Phone number" value={userData.contacts.callNumber ?? ""} onChange={(e) => handleChange('contacts', 'callNumber', e.target.value)} />
           <input type="text" placeholder="Telegram nickname" value={userData.contacts.telegramNickname ?? ""} onChange={(e) => handleChange('contacts', 'telegramNickname', e.target.value)} />
 
-          <button type="submit">Save</button>
+          <button className="save-button" type="submit">Save</button>
         </form>
       </div>
   );

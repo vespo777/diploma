@@ -5,6 +5,8 @@ import { useAuth } from "../contexts/AuthContext";
 import "../styles/LoginRegister.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
+
+
 const RegisterPage = () => {
   const navigate = useNavigate();
   const { user, register } = useAuth();
