@@ -7,6 +7,7 @@ import kz.dreamteam.backend.model.graph.UserNode;
 import kz.dreamteam.backend.repository.*;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -59,9 +60,7 @@ public class GraphSearchService {
         importanceCoef.put("university_name", 15.0);
     }
 
-//    public void init() {
-//        initializeCoefficients();
-//    }
+
 
     private double calcAge(UserNode A, UserNode B) {
         double diff = Math.abs(A.age - B.age);
@@ -95,7 +94,8 @@ public class GraphSearchService {
     }
 
     private double calcSleepTime(UserNode A, UserNode B) {
-        int diff = Math.abs(A.sleepTime - B.sleepTime);
+        long diff = Math.abs(Duration.between(A.sleepTime, B.sleepTime).toHours()); // Разница в часах
+
         if (diff <= 1) return importanceCoef.getOrDefault("sleep_time", 0.0);
         if (diff == 2) return 0.5 * importanceCoef.getOrDefault("sleep_time", 0.0);
         return 0;
@@ -166,50 +166,52 @@ public class GraphSearchService {
     }
 
 
-    public void upload_to_DB() {
+    public void uploadToDB() {
     }
 
-//    public void download_from_DB() {
-//
-//        List<User> users = userRepository.findAllByOrderByIdAsc();
-//
-//
-//        for (User user : users) {
-//            int userId = user.getUserId().intValue();
-//            UserNode newUserNode = new UserNode();
-//
-//            PersonalInfo personalInfo = personalInfoRepository.findById(user.getUserId())
-//                    .orElseThrow(() -> new RuntimeException("Personal info not found for userId: " + userId));
-//
-//            RoommatePreferences roommatePreferences = roommatePreferencesRepository.findById(user.getUserId())
-//                    .orElseThrow(() -> new RuntimeException("Roommate preferences not found for userId: " + userId));
-//
-//            RoommateSearch roommateSearch = roommateSearchRepository.findById(user.getUserId())
-//                    .orElseThrow(() -> new RuntimeException("Roommate search not found for userId: " + userId));
-//
-//            SocialDetails socialDetails = socialDetailsRepository.findById(user.getUserId())
-//                    .orElseThrow(() -> new RuntimeException("Social details not found for userId: " + userId));
-//
-//            LocationDetails locationDetails = locationDetailsRepository.findById(user.getUserId())
-//                    .orElseThrow(() -> new RuntimeException("Location details not found for userId: " + userId));
-//
-//
-//            newUserNode.setId(userId);
-//            newUserNode.setAge(convertToAge(personalInfo.getBirthDate()));
-//            newUserNode.setInterests();
-//            newUserNode.setRegionFrom(locationDetails.getRegionFrom());
+    public void downloadFromDB() {
+
+        List<User> users = userRepository.findAllByOrderByUserIdAsc();
+
+
+        for (User user : users) {
+            int userId = user.getUserId().intValue();
+            UserNode newUserNode = new UserNode();
+
+            PersonalInfo personalInfo = personalInfoRepository.findById(user.getUserId())
+                    .orElseThrow(() -> new RuntimeException("Personal info not found for userId: " + userId));
+
+            RoommatePreferences roommatePreferences = roommatePreferencesRepository.findById(user.getUserId())
+                    .orElseThrow(() -> new RuntimeException("Roommate preferences not found for userId: " + userId));
+
+            RoommateSearch roommateSearch = roommateSearchRepository.findById(user.getUserId())
+                    .orElseThrow(() -> new RuntimeException("Roommate search not found for userId: " + userId));
+
+            SocialDetails socialDetails = socialDetailsRepository.findById(user.getUserId())
+                    .orElseThrow(() -> new RuntimeException("Social details not found for userId: " + userId));
+
+            LocationDetails locationDetails = locationDetailsRepository.findById(user.getUserId())
+                    .orElseThrow(() -> new RuntimeException("Location details not found for userId: " + userId));
+
+
+            newUserNode.setId(userId);
+            newUserNode.setAge(convertToAge(personalInfo.getBirthDate()));
+            newUserNode.setInterests(Collections.emptyList());
+            newUserNode.setRegionFrom(locationDetails.getRegionFrom());
 //            newUserNode.setLanguages();
-//            newUserNode.setReligion(personalInfo.getReligion());
-//            newUserNode.setPetsStatus(roommatePreferences.getPets());
-//            newUserNode.setSleepTime(roommatePreferences.getSleepTime());
-//            newUserNode.setBudgetMax(roommateSearch.getBudgetMax().intValue());
-//            newUserNode.setPersonalityType(roommateSearch.getScoreTest());
-//            newUserNode.setProfession(socialDetails.getUniversitySpecialty());
-//            newUserNode.setDrinking(socialDetails.getDrinking());
-//            newUserNode.setSmoking(socialDetails.getSmoking());
-//            newUserNode.setUniversityName(socialDetails.getUniversityName());
-//        }
-//    }
+            newUserNode.setReligion(personalInfo.getReligion());
+            newUserNode.setPetsStatus(roommatePreferences.getPets());
+            newUserNode.setSleepTime(roommatePreferences.getSleepTime());
+            newUserNode.setBudgetMax(roommateSearch.getBudgetMax().intValue());
+            newUserNode.setPersonalityType(roommateSearch.getScoreTest());
+            newUserNode.setProfession(socialDetails.getUniversitySpecialty());
+            newUserNode.setDrinking(socialDetails.getDrinking());
+            newUserNode.setSmoking(socialDetails.getSmoking());
+            newUserNode.setUniversityName(socialDetails.getUniversityName());
+
+            addNewUser(newUserNode);
+        }
+    }
 
     public int convertToAge(LocalDate birthDate) {
         return  (int) ChronoUnit.YEARS.between(birthDate, LocalDate.now());

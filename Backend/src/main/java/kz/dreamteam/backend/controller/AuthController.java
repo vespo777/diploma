@@ -31,7 +31,7 @@ public class AuthController {
 //    @Operation(description = "Аутентификация системного пользователя",
 //            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = SessionResponse.class)))})
 //    @ApiResponseCodes({ExtendedResultCode.USER_NOT_FOUND})
-    public ResponseEntity<User> register(@RequestBody RegisterBody body) {
+    public ResponseEntity<?> register(@RequestBody RegisterBody body) {
         return this.passwordService.register(body);
     }
 

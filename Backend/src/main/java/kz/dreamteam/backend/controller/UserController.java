@@ -57,6 +57,11 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping("/recommended-users")
+    public ResponseEntity<List<User>> getRecommendedUsers() {
+        return userService.getAllUsers();
+    }
+
 
     @GetMapping("/check-ml-questions")
     public ResponseEntity<Boolean> checkMlQuestions(@RequestParam Long userId) {

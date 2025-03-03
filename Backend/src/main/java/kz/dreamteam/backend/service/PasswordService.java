@@ -102,8 +102,17 @@ public class PasswordService {
 
     }
 
+    public boolean isEmailAvailable(String email) {
+        return !userRepository.existsByEmail(email);
+    }
+
     @Transactional
-    public ResponseEntity<User> register(RegisterBody request) {
+    public ResponseEntity<?> register(RegisterBody request) {
+
+        if(!isEmailAvailable(request.getEmail())) {
+            return ResponseEntity.badRequest().body("Email is already taken");
+        }
+
         try {
             var user = new User();
             user.setEmail(request.getEmail());
