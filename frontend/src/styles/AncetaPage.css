@@ -1,41 +1,31 @@
 .anceta-card-wrapper {
-    background: white;
+    background: #333334;
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px rgba(0, 0, 0, 0.1);
     padding: 2rem;
     max-width: 800px;
-    margin: 2rem auto;
+    margin: 100px auto;
 }
 
-.anceta-header h1 {
-    color: #2d3748;
-    font-size: 2rem;
-    margin: 0;
-}
-.anceta-form {
-    margin-top: 2rem;
-    padding: 2rem;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
 
-}
 .anceta-form label {
-    color: #718096;
     font-size: 0.9rem;
-    font-weight: bold;
+    font-weight: lighter;
     display: block;
     margin-bottom: 0.5rem;
+    color: #ffffff;
 }
 .anceta-form input {
+    margin-top: 0.5rem;
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    background: #7f7c7c;
+    color: #ffffff;
 }
 .anceta-form textarea {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid #ccc;
+    color: #fff;
 }
 .anceta-form button {
     padding: 0.5rem 1rem;
@@ -70,9 +60,13 @@
     cursor: not-allowed;
 }
 .anceta-form h2{
-    color: #2d3748;
+    color: #ffffff;
     font-size: 2rem;
-    margin: auto;
+    text-align: center;
 }
 
+.selector{
+    text-align: center;
+
+}
 

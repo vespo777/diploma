@@ -1,15 +1,14 @@
 .navbar {
-  background: #2D2D2D;
+  background: #FFF;
   padding: 0.5rem 2rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  border-bottom: #ebebeb 1px solid;
   align-items: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: -5px;
   z-index: 1000;
   font-size: 15px;
-  font-weight: 600;
 }
 
 .nav-brand {
@@ -20,13 +19,12 @@
 }
 
 .nav-brand img {
-  height: 30px;  /* Adjust this value to match your desired logo size */
+  height: 30px;
   width: auto;
 }
 
 .brand-link {
-
-  color: white;
+  color: #000000;
   text-decoration: none;
   font-size: 1.3rem;
   font-weight: bold;
@@ -53,12 +51,12 @@
 }
 
 .nav-link {
-  color: white;
+  color: #222020;
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   transition: all 0.3s ease;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .nav-link:hover {
@@ -86,7 +84,7 @@
 }
 
 .user-email {
-  color: white;
+  color: #222020;
   opacity: 0.9;
   font-size: 0.9rem;
   text-decoration: none;
@@ -108,9 +106,9 @@
 }
 
 .logout-button {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(76, 67, 67, 0.1);
   border: none;
-  color: white;
+  color: #222020;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   cursor: pointer;
@@ -119,7 +117,7 @@
 }
 
 .logout-button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(36, 36, 36, 0.2);
 }
 
 
@@ -152,13 +150,13 @@
   border: none;
   padding: 8px 15px;
   font-size: 14px;
-  color: white;
+  color: #222020;
   outline: none;
   width: 100%;
 }
 
 .search-input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
+  color: #8d8d8d;
 }
 
 .search-button {
@@ -169,7 +167,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #222020;
   transition: all 0.3s ease;
   width: 10%;
   height: 10%;
@@ -215,6 +213,7 @@
 
 .search-section {
   margin-bottom: 20px;
+  background: #bfc6d4;
 }
 
 .search-section h2 {

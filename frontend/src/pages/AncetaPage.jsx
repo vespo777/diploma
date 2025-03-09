@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../styles/AncetaPage.css";
 import {useNavigate} from "react-router-dom";
-
+import WalkingAssistant from "../components/pixi/Extensions";
 
 
 const API_URL = 'http://localhost:8080';
@@ -173,11 +173,12 @@ const AncetaPage = () => {
 
     return (
         <div className={"anceta-card-wrapper"}>
+            <WalkingAssistant />
             <form onSubmit={handleSubmit} className="anceta-form">
                 {step === 1 && (
                     <>
                         <h2>Personal Information</h2>
-                        <select
+                        <select className="selector"
                             name="personal_info.gender"
                             value={formData.personal_info.gender}
                             onChange={handleChange}>
@@ -186,10 +187,10 @@ const AncetaPage = () => {
                             <option value="F">Female</option>
                             <option value="O">Other</option>
                         </select>
-                        <input type="text" name="personal_info.religion" value={formData.personal_info.religion} onChange={handleChange} placeholder="Religion"/>
-                        <input type="text" name="personal_info.nationality" value={formData.personal_info.nationality} onChange={handleChange} placeholder="Nationality"/>
+                        <input type="text" name="personal_info.religion" value={formData.personal_info.religion} onChange={handleChange} placeholder="Religion" required/>
+                        <input type="text" name="personal_info.nationality" value={formData.personal_info.nationality} onChange={handleChange} placeholder="Nationality" required/>
                         <h3>Date of Birth</h3>
-                        <input type="date" name="personal_info.birthDate" value={formData.personal_info.birthDate} onChange={handleChange} />
+                        <input type="date" name="personal_info.birthDate" value={formData.personal_info.birthDate} onChange={handleChange} required/>
                     </>
                 )}
 
@@ -203,6 +204,7 @@ const AncetaPage = () => {
                                 name="social_details.schoolName"
                                 value={formData.social_details.schoolName}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                         <div>
@@ -212,6 +214,7 @@ const AncetaPage = () => {
                                 name="social_details.universityName"
                                 value={formData.social_details.universityName}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                         <div>
@@ -221,6 +224,7 @@ const AncetaPage = () => {
                                 name="social_details.universitySpecialty"
                                 value={formData.social_details.universitySpecialty}
                                 onChange={handleChange}
+                                required
                             />
                         </div> <div>
                             <label>Prefession:</label>
@@ -229,6 +233,7 @@ const AncetaPage = () => {
                                 name="social_details.profession"
                                 value={formData.social_details.profession}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                         <div>
@@ -287,12 +292,11 @@ const AncetaPage = () => {
                             />
 
                             <label>Search Status</label>
-                            <select name="roommate_search.searchStatus" value={formData.roommate_search.searchStatus} onChange={handleChange}>
+                            <select name="roommate_search.searchStatus" value={formData.roommate_search.searchStatus} onChange={handleChange} required>
                                 <option value="1">I am roommate and I don't have an apartment</option>
                                 <option value="2">I am roommate and I have an apartment</option>
                                 <option value="3">Not searching</option>
                             </select>
-
                         </>
                 )}
 
@@ -306,6 +310,7 @@ const AncetaPage = () => {
                                 name="roommate_preferences.wakeTime"
                                 value={formData.roommate_preferences.wakeTime}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                         <div>
@@ -315,6 +320,7 @@ const AncetaPage = () => {
                                 name="roommate_preferences.sleepTime"
                                 value={formData.roommate_preferences.sleepTime}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                         <div>
@@ -324,6 +330,7 @@ const AncetaPage = () => {
                                 name="roommate_preferences.pets"
                                 value={formData.roommate_preferences.pets}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                     </>
@@ -338,6 +345,7 @@ const AncetaPage = () => {
                                 name="location_details.currentCity"
                                 value={formData.location_details.currentCity}
                                 onChange={handleChange}
+                                required
                             >
                                 <option value="">Select City</option>
                                 <option value="Almaty">Almaty</option>
@@ -350,6 +358,7 @@ const AncetaPage = () => {
                                 name="location_details.regionFrom"
                                 value={formData.location_details.regionFrom}
                                 onChange={handleChange}
+                                required
                             >
                                 <option value="">Select Region</option>
                                 {regions.map((region, index) => (
@@ -372,6 +381,7 @@ const AncetaPage = () => {
                                 name="contacts.callNumber"
                                 value={formData.contacts.callNumber}
                                 onChange={handleChange}
+                                required
                             />
                             <label>Telegram nickname:</label>
                             <input
@@ -380,6 +390,7 @@ const AncetaPage = () => {
                                 value={formData.contacts.telegramNickname}
                                 onChange={handleChange}
                                 placeholder="Telegram nickname"></input>
+                                required
                         </div>
                     </>
 

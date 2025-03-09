@@ -115,7 +115,7 @@ const RoommatesPage = () => {
               <div className="roommate-info">
                 <h3>{user.personalInfo.name} {user.personalInfo.surname}</h3>
                 <p className="price-info">
-                  Budget Min(Tenge): {user.roommateSearch?.budgetMin}
+                  Minimal Budget: {user.roommateSearch?.budgetMin} T
                 </p>
               </div>
               <Link to={`/profile/${user.userId}`}>More</Link>

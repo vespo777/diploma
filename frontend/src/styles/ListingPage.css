@@ -7,10 +7,6 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-body {
-  background: linear-gradient(135deg, #ffffff 0%, #d6d4d4 100%);
-}
-
 .listing-gallery {
   margin-bottom: 30px;
 }
@@ -176,4 +172,4 @@ body {
   .key-features {
     flex-wrap: wrap;
   }
-} 
+}
