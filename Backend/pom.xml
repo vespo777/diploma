@@ -136,6 +136,14 @@
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
+<!--		SendGrid serialization-->
+		<dependency>
+			<groupId>com.sendgrid</groupId>
+			<artifactId>sendgrid-java</artifactId>
+			<version>4.9.3</version>
+		</dependency>
+
+
 
 
 
