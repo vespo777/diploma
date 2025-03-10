@@ -3,8 +3,11 @@ package kz.dreamteam.backend.service;
 import kz.dreamteam.backend.model.*;
 import kz.dreamteam.backend.model.graph.Pair;
 import kz.dreamteam.backend.model.graph.UserNode;
-//import kz.dreamteam.backend.model.graph.Graph;
 import kz.dreamteam.backend.repository.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -14,6 +17,8 @@ import java.util.*;
 
 @Service
 public class GraphSearchService {
+    private static final Logger log = LoggerFactory.getLogger(GraphSearchService.class);
+
     private Map<Integer, UserNode> users = new HashMap<>();
     private Map<String, Double> importanceCoef = new HashMap<>();
     private Map<Integer, List<Pair<Double, Integer>>> graph = new HashMap<>();
@@ -24,7 +29,6 @@ public class GraphSearchService {
     private final RoommatePreferencesRepository roommatePreferencesRepository;
     private final PersonalInfoRepository personalInfoRepository;
     private final RoommateSearchRepository roommateSearchRepository;
-    private final ContactsRepository contactsRepository;
 
     private GraphSearchService(UserRepository userRepository,
                                SocialDetailsRepository socialDetailsRepository,
@@ -39,8 +43,8 @@ public class GraphSearchService {
         this.roommatePreferencesRepository = roommatePreferencesRepository;
         this.personalInfoRepository = personalInfoRepository;
         this.roommateSearchRepository = roommateSearchRepository;
-        this.contactsRepository = contactsRepository;
         initializeCoefficients();
+        downloadFromDB();
     }
 
 
@@ -48,7 +52,7 @@ public class GraphSearchService {
         importanceCoef.put("age", 10.0);
         importanceCoef.put("interests", 20.0);
         importanceCoef.put("region_from", 10.0);
-        importanceCoef.put("languages", 10.0);
+//        importanceCoef.put("languages", 10.0);
         importanceCoef.put("religion", 5.0);
         importanceCoef.put("pets_status", 10.0);
         importanceCoef.put("sleep_time", 20.0);
@@ -68,32 +72,57 @@ public class GraphSearchService {
     }
 
     private double calcInterests(UserNode A, UserNode B) {
-        long count = A.interests.stream().filter(B.interests::contains).count();
-        return (double) count / Math.min(5, Math.min(A.interests.size(), B.interests.size())) * importanceCoef.getOrDefault("interests", 0.0);
+        List<String> interestsA = Optional.ofNullable(A.interests).orElse(Collections.emptyList());
+        List<String> interestsB = Optional.ofNullable(B.interests).orElse(Collections.emptyList());
+
+        long count = interestsA.stream().filter(interestsB::contains).count();
+
+        int minSize = Math.min(5, Math.min(interestsA.size(), interestsB.size()));
+        if (minSize == 0) return 0.0; // Avoid division by zero
+
+        return (double) count / minSize * importanceCoef.getOrDefault("interests", 0.0);
     }
 
+
+
     private double calcRegionFrom(UserNode A, UserNode B) {
+        if (A.regionFrom == null || B.regionFrom == null) return 0.0;
+
         if (A.regionFrom.equals(B.regionFrom)) {
             return importanceCoef.getOrDefault("region_from", 0.0);
         } else if (A.regionFrom.charAt(0) == B.regionFrom.charAt(0)) {
             return 0.5 * importanceCoef.getOrDefault("region_from", 0.0);
         }
-        return 0;
+
+        return 0.0;
     }
 
-    private double calcLanguage(UserNode A, UserNode B) {
-        return A.languages.stream().anyMatch(B.languages::contains) ? importanceCoef.getOrDefault("languages", 0.0) : 0;
-    }
+
+//    private double calcLanguage(UserNode A, UserNode B) {
+//        return A.languages.stream().anyMatch(B.languages::contains) ? importanceCoef.getOrDefault("languages", 0.0) : 0;
+//    }
 
     private double calcReligion(UserNode A, UserNode B) {
-        return A.religion.equals(B.religion) ? importanceCoef.getOrDefault("religion", 0.0) : 0;
+        if (Objects.equals(A.religion, B.religion)) {
+            return importanceCoef.getOrDefault("religion", 0.0);
+        }
+        return 0.0;
     }
 
     private double calcPetsStatus(UserNode A, UserNode B) {
-        return (A.petsStatus.equals("dont_have_baribir") || B.petsStatus.equals("dont_have_baribir") || A.petsStatus.equals(B.petsStatus)) ? importanceCoef.getOrDefault("pets_status", 0.0) : 0;
+        if (Objects.equals(A.petsStatus, "dont_have_baribir") ||
+                Objects.equals(B.petsStatus, "dont_have_baribir") ||
+                Objects.equals(A.petsStatus, B.petsStatus)) {
+            return importanceCoef.getOrDefault("pets_status", 0.0);
+        }
+        return 0.0;
     }
 
     private double calcSleepTime(UserNode A, UserNode B) {
+        if (A.sleepTime == null || B.sleepTime == null) {
+            log.warn("calcSleepTime: Один из параметров sleepTime равен null (A={}, B={})", A.sleepTime, B.sleepTime);
+            return 0; // Если время сна неизвестно, считаем, что несовместимость 100%
+        }
         long diff = Math.abs(Duration.between(A.sleepTime, B.sleepTime).toHours()); // Разница в часах
 
         if (diff <= 1) return importanceCoef.getOrDefault("sleep_time", 0.0);
@@ -114,7 +143,9 @@ public class GraphSearchService {
     }
 
     private double calcProfession(UserNode A, UserNode B) {
-        return A.profession.equals(B.profession) ? importanceCoef.getOrDefault("profession", 0.0) : 0;
+        return Objects.equals(A.profession, B.profession)
+                ? importanceCoef.getOrDefault("profession", 0.0)
+                : 0.0;
     }
 
     private double calcDrinking(UserNode A, UserNode B) {
@@ -126,7 +157,9 @@ public class GraphSearchService {
     }
 
     private double calcUniversityName(UserNode A, UserNode B) {
-        return A.universityName.equals(B.universityName) ? importanceCoef.getOrDefault("university_name", 0.0) : 0;
+        return Objects.equals(A.universityName, B.universityName)
+                ? importanceCoef.getOrDefault("university_name", 0.0)
+                : 0.0;
     }
 
     private double calcMatchingLevel(UserNode A, UserNode B) {
@@ -134,7 +167,7 @@ public class GraphSearchService {
                 calcAge(A, B) +
                         calcInterests(A, B) +
                         calcRegionFrom(A, B) +
-                        calcLanguage(A, B) +
+//                        calcLanguage(A, B) +
                         calcReligion(A, B) +
                         calcPetsStatus(A, B) +
                         calcSleepTime(A, B) +
@@ -159,10 +192,29 @@ public class GraphSearchService {
         }
     }
 
-    public List<Pair<Double, Integer>> getUserRecommendations(int userId) {
-        List<Pair<Double, Integer>> res = graph.getOrDefault(userId, new ArrayList<>());
+    public ResponseEntity<List<User>> getUserRecommendations(int userIdP) {
+        List<Pair<Double, Integer>> res = graph.getOrDefault(userIdP, new ArrayList<>());
+
         res.sort((a, b) -> Double.compare(b.getKey(), a.getKey()));
-        return res;
+
+        List<User> recommendedUsers = res.stream()
+                .peek(it -> log.info("Searching for user with ID: {}", it.getValue()))
+                .map(it -> {
+                    Long userId = Long.valueOf(it.getValue());
+                    Optional<User> userOpt = userRepository.findById(userId);
+                    if (userOpt.isEmpty()) {
+                        log.warn("User with ID {} not found!", userId);
+                    }
+                    return userOpt;
+                })
+                .flatMap(Optional::stream)
+                .toList();
+
+        if (recommendedUsers.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        }
+
+        return ResponseEntity.ok(recommendedUsers);
     }
 
 
@@ -171,8 +223,8 @@ public class GraphSearchService {
 
     public void downloadFromDB() {
 
-        List<User> users = userRepository.findAllByOrderByUserIdAsc();
-
+        List<User> users = userRepository.findAll();
+        log.info("Found {} users in database", users.size());
 
         for (User user : users) {
             int userId = user.getUserId().intValue();
@@ -193,29 +245,52 @@ public class GraphSearchService {
             LocationDetails locationDetails = locationDetailsRepository.findById(user.getUserId())
                     .orElseThrow(() -> new RuntimeException("Location details not found for userId: " + userId));
 
-
             newUserNode.setId(userId);
-            newUserNode.setAge(convertToAge(personalInfo.getBirthDate()));
+
+            //setAge
+            LocalDate birthDate = (personalInfo.getBirthDate() != null) ? personalInfo.getBirthDate() : null;
+            if (birthDate == null) {
+                log.warn("Skipping user node creation because birthDate is null");
+                newUserNode.setAge(0); // Или другое значение по умолчанию
+            } else {
+                newUserNode.setAge(convertToAge(birthDate));
+            }
+
             newUserNode.setInterests(Collections.emptyList());
             newUserNode.setRegionFrom(locationDetails.getRegionFrom());
 //            newUserNode.setLanguages();
             newUserNode.setReligion(personalInfo.getReligion());
             newUserNode.setPetsStatus(roommatePreferences.getPets());
             newUserNode.setSleepTime(roommatePreferences.getSleepTime());
-            newUserNode.setBudgetMax(roommateSearch.getBudgetMax().intValue());
-            newUserNode.setPersonalityType(roommateSearch.getScoreTest());
+            if (roommateSearch.getBudgetMax() == null) {
+                log.warn("BudgetMax is null for user: {}", roommateSearch.getUserId());
+                newUserNode.setBudgetMax(0); // Устанавливаем значение по умолчанию (например, 0)
+            } else {
+                newUserNode.setBudgetMax(roommateSearch.getBudgetMax().intValue());
+            }
+            if (roommateSearch.getScoreTest() == null) {
+                log.warn("ScoreTest is null for user: {}", roommateSearch.getUserId());
+                newUserNode.setPersonalityType(0); // Устанавливаем значение по умолчанию (например, 0)
+            } else {
+                newUserNode.setPersonalityType(roommateSearch.getScoreTest());
+            }
             newUserNode.setProfession(socialDetails.getUniversitySpecialty());
-            newUserNode.setDrinking(socialDetails.getDrinking());
-            newUserNode.setSmoking(socialDetails.getSmoking());
-            newUserNode.setUniversityName(socialDetails.getUniversityName());
+            newUserNode.setDrinking(socialDetails.getDrinking() != null ? socialDetails.getDrinking() : false);
+            newUserNode.setSmoking(socialDetails.getSmoking() != null ? socialDetails.getSmoking() : false);
+            newUserNode.setUniversityName(socialDetails.getUniversityName() != null ? socialDetails.getUniversityName() : "Not specified");
+
 
             addNewUser(newUserNode);
         }
     }
 
     public int convertToAge(LocalDate birthDate) {
-        return  (int) ChronoUnit.YEARS.between(birthDate, LocalDate.now());
+        if (birthDate == null) {
+            return 0; // Если дата рождения неизвестна, возвращаем 0
+        }
+        return (int) ChronoUnit.YEARS.between(birthDate, LocalDate.now());
     }
+
 
 }
 

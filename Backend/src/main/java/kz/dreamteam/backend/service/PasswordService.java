@@ -22,6 +22,7 @@ public class PasswordService {
     private final PersonalInfoRepository personalInfoRepository;
     private final RoommateSearchRepository roommateSearchRepository;
     private final ContactsRepository contactsRepository;
+    private final GraphSearchService graphSearchService;
 
 
     public PasswordService(UserRepository userRepository,
@@ -31,6 +32,7 @@ public class PasswordService {
                            PersonalInfoRepository personalInfoRepository,
                            RoommateSearchRepository roommateSearchRepository,
                            ContactsRepository contactsRepository,
+                           GraphSearchService graphSearchService,
                            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.socialDetailsRepository = socialDetailsRepository;
@@ -40,6 +42,7 @@ public class PasswordService {
         this.roommateSearchRepository = roommateSearchRepository;
         this.contactsRepository = contactsRepository;
         this.passwordEncoder = passwordEncoder;
+        this.graphSearchService = graphSearchService;
 
     }
 

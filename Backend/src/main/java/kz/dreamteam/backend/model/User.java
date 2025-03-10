@@ -123,5 +123,21 @@ public class User {
     public void setProfilePhotoPath(String profilePhotoPath) {
         this.profilePhotoPath = profilePhotoPath;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", email='" + email + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
+                ", profilePhotoPath='" + profilePhotoPath + '\'' +
+                ", personalInfo=" + personalInfo +
+                ", roommateSearch=" + roommateSearch +
+                ", socialDetails=" + socialDetails +
+                ", locationDetails=" + locationDetails +
+                ", roommatePreferences=" + roommatePreferences +
+                ", contacts=" + contacts +
+                '}';
+    }
 }
 

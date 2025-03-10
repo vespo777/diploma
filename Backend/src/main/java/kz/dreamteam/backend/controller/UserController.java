@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import kz.dreamteam.backend.model.User;
 import kz.dreamteam.backend.model.dto.UpdateUserProfileRequest;
 import kz.dreamteam.backend.service.DjangoClientService;
+import kz.dreamteam.backend.service.GraphSearchService;
 import kz.dreamteam.backend.service.JwtService;
 import kz.dreamteam.backend.service.UserService;
 import org.slf4j.Logger;
@@ -22,11 +23,16 @@ public class UserController {
     private final JwtService jwtService;
     private final UserService userService;
     private final DjangoClientService djangoClientService;
+    private final GraphSearchService graphSearchService;
 
-    public UserController(JwtService jwtService, UserService userService, DjangoClientService djangoClientService){
+    public UserController(JwtService jwtService,
+                          UserService userService,
+                          DjangoClientService djangoClientService,
+                          GraphSearchService graphSearchService){
         this.jwtService = jwtService;
         this.userService = userService;
         this.djangoClientService = djangoClientService;
+        this.graphSearchService = graphSearchService;
     }
 
 
@@ -58,8 +64,8 @@ public class UserController {
     }
 
     @GetMapping("/recommended-users")
-    public ResponseEntity<List<User>> getRecommendedUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<User>> getRecommendedUsers(@RequestParam int userId) {
+        return graphSearchService.getUserRecommendations(userId);
     }
 
 

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -55,15 +54,11 @@ public class UserService {
         return ResponseEntity.ok(user);
     }
 
-    public ResponseEntity<?> getUserById(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
+    public ResponseEntity<User> getUserById(Long userId) {
 
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("User with ID " + userId + " not found");
-        }
+        return userRepository.findById(userId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
 
