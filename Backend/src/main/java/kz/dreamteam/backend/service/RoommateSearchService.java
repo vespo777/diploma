@@ -23,6 +23,7 @@ public class RoommateSearchService {
         if (updateRequest.getBudgetMin() != null) roommateSearch.setBudgetMin(updateRequest.getBudgetMin());
         if (updateRequest.getBudgetMax() != null) roommateSearch.setBudgetMax(updateRequest.getBudgetMax());
         if (updateRequest.getScoreTest() != null) roommateSearch.setScoreTest(updateRequest.getScoreTest());
+        if (updateRequest.getStartDate() != null) roommateSearch.setStartDate(updateRequest.getStartDate());
 
         roommateSearchRepository.save(roommateSearch);
 

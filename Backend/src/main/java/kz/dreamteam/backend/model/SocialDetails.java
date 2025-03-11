@@ -2,6 +2,9 @@ package kz.dreamteam.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import kz.dreamteam.backend.util.JsonConverter;
+
+import java.util.List;
 
 @Entity
 public class SocialDetails {
@@ -23,6 +26,9 @@ public class SocialDetails {
     private Boolean smoking;
     private String company;
     private String profession;
+    @Column(columnDefinition = "jsonb")
+    @Convert(converter = JsonConverter.class)
+    private List<String> interests;
 
 
     public SocialDetails() {
@@ -101,6 +107,14 @@ public class SocialDetails {
 
     public void setProfession(String profession) {
         this.profession = profession;
+    }
+
+    public List<String> getInterests() {
+        return interests;
+    }
+
+    public void setInterests(List<String> interests) {
+        this.interests = interests;
     }
 }
 

@@ -30,7 +30,6 @@ public class RoommatePreferences {
 
     // Getters and setters
 
-
     public Long getUserId() {
         return userId;
     }

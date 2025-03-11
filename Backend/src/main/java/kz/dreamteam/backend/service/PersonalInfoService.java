@@ -26,7 +26,6 @@ public class PersonalInfoService {
         if (updateRequest.getBirthDate() != null) personalInfo.setBirthDate(updateRequest.getBirthDate());
         if (updateRequest.getGender() != null) personalInfo.setGender(updateRequest.getGender());
         if (updateRequest.getReligion() != null) personalInfo.setReligion(updateRequest.getReligion());
-        if (updateRequest.getNationality() != null) personalInfo.setNationality(updateRequest.getNationality());
 
         personalInfoRepository.save(personalInfo);
 

@@ -2,12 +2,10 @@ package kz.dreamteam.backend.controller;
 
 import kz.dreamteam.backend.model.LoginBody;
 import kz.dreamteam.backend.model.RegisterBody;
-import kz.dreamteam.backend.model.User;
 import kz.dreamteam.backend.service.AuthService;
 import kz.dreamteam.backend.service.PasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
