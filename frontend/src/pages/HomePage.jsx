@@ -14,7 +14,6 @@ const HomePage = () => {
   const storedValue2 = user ? user.userId : null
 
   useEffect(() => {
-      console.log('Проверяем storedValue:', storedValue1, storedValue2);
       if (Number(storedValue1) === storedValue2) {
         setTimeout(() => {
           alert("You need to fill Anceta!");

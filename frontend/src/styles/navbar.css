@@ -213,13 +213,15 @@
 
 .search-section {
   margin-bottom: 20px;
-  background: #bfc6d4;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .search-section h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: #d6d6d6;
+  color: #000000;
   font-size: 40px;
 }
 
@@ -237,7 +239,7 @@
 }
 
 .search-card {
-  background: white;
+  background: #f2f2f2;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -245,15 +247,13 @@
 }
 
 .search-card h3 {
-  margin: 0;
-  color: #2d3748;
+  color: #3a3939;
   font-size: 24px;
-  margin-bottom: 10px;
 }
 
 .search-card p {
   margin: 0;
-  color: #718096;
+  color: #a7a7a7;
 }
 
 @media (max-width: 768px) {

@@ -108,7 +108,6 @@ const Navbar = () => {
               top: '100%',
               left: 0,
               right: 0,
-              background: '#2D2D2D',
               padding: '20px',
               zIndex: 1000
             }}
@@ -122,10 +121,9 @@ const Navbar = () => {
                   top: '20px',
                   background: 'none',
                   border: 'none',
-                  color: 'white',
-                  fontSize: '24px',
+                  color: 'black',
+                  fontSize: '30px',
                   cursor: 'pointer',
-                  padding: '5px 10px'
                 }}
               >
                 ×

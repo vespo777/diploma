@@ -6,22 +6,165 @@ import WalkingAssistant from "../components/pixi/Extensions";
 
 const API_URL = 'http://localhost:8080';
 
+const universities = [
+    "Al-Farabi Kazakh National University",
+    "Abai Kazakh National Pedagogical University",
+    "Satbayev University (Kazakh National Research Technical University)",
+    "Asfendiyarov Kazakh National Medical University",
+    "Kurmagazy Kazakh National Conservatory",
+    "KIMEP University",
+    "Turan University",
+    "Kazakhstan-British Technical University",
+    "L.N. Gumilyov Eurasian National University",
+    "Astana Medical University",
+    "S. Seifullin Kazakh Agrotechnical University",
+    "Nazarbayev University"
+];
+
 const regions = [
-    "Almaty Region",
-    "Nur-Sultan Region",
-    "Shymkent Region",
-    "East-Kazakhstan Region",
-    "West-Kazakhstan Region",
-    "South-Kazakhstan Region",
-    "North-Kazakhstan Region",
-    "Karaganda Region",
-    "Atyrau Region",
-    "Aktobe Region",
-    "Kostanay Region",
-    "Pavlodar Region",
-    "Mangystau Region",
-    "Kyzylorda Region",
-    "Akmola Region",
+    "Астана city",
+    "Алматы city",
+    "Шымкент city",
+    "Алматы region",
+    "Актобе region",
+    "Атырау region",
+    "Ақмола region",
+    "West Kazakhstan region",
+    "East Kazakhstan region",
+    "Zhambyl region",
+    "Karaganda region",
+    "Kostanai region",
+    "Kyzylorda region",
+    "Mangystau region",
+    "North Kazakhstan region",
+    "Pavlodar region",
+    "Turkestan region",
+    "Abay region",
+    "Zhetysu region",
+    "Ulytau region"
+];
+
+const professions = [
+    "Civil Engineer",
+    "Architect",
+    "Electrical Engineer",
+    "Mechanical Engineer",
+    "Chemical Engineer",
+    "Aerospace Engineer",
+    "Petroleum Engineer",
+    "Mining Engineer",
+    "Process Engineer",
+    "Telecommunications Engineer",
+
+    "Programmer",
+    "Software Developer",
+    "Web Developer",
+    "System Administrator",
+    "Cybersecurity Specialist",
+    "Database Administrator",
+    "UX/UI Designer",
+    "DevOps Engineer",
+    "Data Scientist",
+    "QA Engineer (Tester)",
+
+    "General Practitioner",
+    "Surgeon",
+    "Pediatrician",
+    "Dentist",
+    "Nurse",
+    "Pharmacist",
+    "Psychiatrist",
+    "Veterinarian",
+    "Physiotherapist",
+    "Radiologist",
+
+    "Teacher",
+    "University Lecturer",
+    "Researcher",
+    "Kindergarten Teacher",
+    "Coach/Instructor",
+    "Librarian",
+    "Educational Psychologist",
+    "Social Educator",
+    "Speech Therapist",
+    "Methodologist",
+
+    "Accountant",
+    "Financial Analyst",
+    "Auditor",
+    "Bank Employee",
+    "Economist",
+    "Sales Manager",
+    "Marketing Specialist",
+    "HR Specialist",
+    "Business Analyst",
+    "Management Consultant",
+
+    "Lawyer",
+    "Attorney",
+    "Judge",
+    "Prosecutor",
+    "Notary",
+    "Police Officer",
+    "Firefighter",
+    "Military Serviceman",
+    "Customs Officer",
+    "Diplomat",
+
+    "Pilot",
+    "Train Operator",
+    "Driver",
+    "Logistics Specialist",
+    "Dispatcher",
+    "Sailor",
+    "Flight Attendant",
+    "Vehicle Mechanic",
+    "Crane Operator",
+    "Freight Specialist",
+
+    "Chef",
+    "Waiter",
+    "Bartender",
+    "Hairdresser",
+    "Cosmetologist",
+    "Hotel Administrator",
+    "Travel Agent",
+    "Fitness Trainer",
+    "Massage Therapist",
+    "Animator",
+
+    "Artist",
+    "Musician",
+    "Actor",
+    "Director",
+    "Designer",
+    "Photographer",
+    "Journalist",
+    "Writer",
+    "Dancer",
+    "Fashion Designer",
+
+    "Agronomist",
+    "Farmer",
+    "Ecologist",
+    "Zootechnician",
+    "Forester",
+    "Gardener",
+    "Fish Farmer",
+    "Meteorologist",
+    "Geologist",
+    "Hydrologist",
+
+    "Blockchain Developer",
+    "AI Specialist",
+    "Digital Marketing Expert",
+    "VR/AR Developer",
+    "Additive Manufacturing Specialist",
+    "Bioengineer",
+    "Geneticist",
+    "Renewable Energy Engineer",
+    "Robotics Engineer",
+    "Nanotechnology Specialist"
 ];
 
 const AncetaPage = () => {
@@ -119,7 +262,6 @@ const AncetaPage = () => {
 
 
         if (!token || !userId) {
-            console.log(token, userId);
             console.error("No token or userId found");
             return;
         }
@@ -127,14 +269,6 @@ const AncetaPage = () => {
         const sectionDataKey = sectionKey.replace("-", "_");
         let sectionData = { ...formData[sectionDataKey] };
 
-        if (sectionKey === 'roommate-preferences') {
-            sectionData = {
-                wakeTime: sectionData.wakeTime,
-                sleepTime: sectionData.sleepTime,
-                pets: sectionData.pets
-            };
-            console.log(sectionData);
-        }
 
         try {
             const authToken = `${token}`;
@@ -155,10 +289,6 @@ const AncetaPage = () => {
                 throw new Error(`Ошибка: ${response.status} - ${errorText}`);
             }
 
-
-            const data = await response.text();
-            console.log('Success response:', data);
-
             if (step < 6) {
                 setStep(step + 1);
             } else {
@@ -178,19 +308,32 @@ const AncetaPage = () => {
                 {step === 1 && (
                     <>
                         <h2>Personal Information</h2>
+                        <input type="text" name="personal_info.nationality" value={formData.personal_info.nationality} onChange={handleChange} placeholder="Nationality" required/>
+                        <h3>Date of Birth</h3>
+                        <input type="date" name="personal_info.birthDate" value={formData.personal_info.birthDate} onChange={handleChange} required/>
                         <select className="selector"
-                            name="personal_info.gender"
-                            value={formData.personal_info.gender}
-                            onChange={handleChange}>
+                                name="personal_info.gender"
+                                value={formData.personal_info.gender}
+                                onChange={handleChange}
+                                required
+                        >
                             <option value="">Select Gender</option>
                             <option value="M">Male</option>
                             <option value="F">Female</option>
                             <option value="O">Other</option>
                         </select>
-                        <input type="text" name="personal_info.religion" value={formData.personal_info.religion} onChange={handleChange} placeholder="Religion" required/>
-                        <input type="text" name="personal_info.nationality" value={formData.personal_info.nationality} onChange={handleChange} placeholder="Nationality" required/>
-                        <h3>Date of Birth</h3>
-                        <input type="date" name="personal_info.birthDate" value={formData.personal_info.birthDate} onChange={handleChange} required/>
+                        <select className="selector"
+                                name="personal_info.religion"
+                                value={formData.personal_info.religion}
+                                onChange={handleChange}
+                                required
+                        >
+                            <option value="">Select Religion</option>
+                            <option value="Islam">Islam</option>
+                            <option value="Christian">Christian</option>
+                            <option value="Buddhism">Buddhism</option>
+                            <option value="Don't care">Don't care</option>
+                        </select>
                     </>
                 )}
 
@@ -204,18 +347,25 @@ const AncetaPage = () => {
                                 name="social_details.schoolName"
                                 value={formData.social_details.schoolName}
                                 onChange={handleChange}
+                                placeholder="type name of your school . . ."
                                 required
                             />
                         </div>
                         <div>
-                            <label>University Name:</label>
-                            <input
-                                type="text"
-                                name="social_details.universityName"
-                                value={formData.social_details.universityName}
-                                onChange={handleChange}
-                                required
-                            />
+                            <label>University:</label>
+                            <select
+                            name="social_details.universityName"
+                            value={formData.social_details.universityName}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">Select University</option>
+                            {universities.map((universityName, index) => (
+                                <option key={index} value={universityName}>
+                                    {universityName}
+                                </option>
+                            ))}
+                        </select>
                         </div>
                         <div>
                             <label>University Speciality:</label>
@@ -224,30 +374,38 @@ const AncetaPage = () => {
                                 name="social_details.universitySpecialty"
                                 value={formData.social_details.universitySpecialty}
                                 onChange={handleChange}
+                                placeholder="type your university speciality . . ."
                                 required
                             />
                         </div> <div>
                             <label>Prefession:</label>
-                            <input
-                                type="text"
+                            <select
                                 name="social_details.profession"
                                 value={formData.social_details.profession}
                                 onChange={handleChange}
                                 required
-                            />
+                            >
+                                <option value="">Select Profession</option>
+                                {professions.map((profession, index) => (
+                                    <option key={index} value={profession}>
+                                        {profession}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <div>
-                            <label>Company where you working:</label>
+                            <label>Company</label>
                             <input
                                 type="text"
                                 name="social_details.company"
                                 value={formData.social_details.company}
+                                placeholder="type company name where you working . . ."
                                 onChange={handleChange}
                             />
                         </div>
                         <div>
                             <label>
-                                Smoking:
+                                Smoking
                                 <input
                                     type="checkbox"
                                     name="social_details.smoking"
@@ -258,7 +416,7 @@ const AncetaPage = () => {
                         </div>
                         <div>
                             <label>
-                                Drinking:
+                                Drinking
                                 <input
                                     type="checkbox"
                                     name="social_details.drinking"
@@ -325,13 +483,13 @@ const AncetaPage = () => {
                         </div>
                         <div>
                             <label>Pets:</label>
-                            <input
-                                type="text"
-                                name="roommate_preferences.pets"
-                                value={formData.roommate_preferences.pets}
-                                onChange={handleChange}
-                                required
-                            />
+                            <select name="roommate_search.pets" value={formData.roommate_search.pets} onChange={handleChange} required>
+                                <option value="dont_have_dont_want">I dont have & dont want</option>
+                                <option value="dont_have_doesnt_matter">I dont have & doesn't matter</option>
+                                <option value="have_cat">I have a cat</option>
+                                <option value="have_dog">I have a dog</option>
+                                <option value="other_animal">Other animal</option>
+                            </select>
                         </div>
                     </>
                 )}
@@ -381,6 +539,7 @@ const AncetaPage = () => {
                                 name="contacts.callNumber"
                                 value={formData.contacts.callNumber}
                                 onChange={handleChange}
+                                placeholder="type your call number . . ."
                                 required
                             />
                             <label>Telegram nickname:</label>
@@ -389,8 +548,10 @@ const AncetaPage = () => {
                                 name="contacts.telegramNickname"
                                 value={formData.contacts.telegramNickname}
                                 onChange={handleChange}
-                                placeholder="Telegram nickname"></input>
+                                placeholder="type your telegram nickname . . . "
                                 required
+                            />
+
                         </div>
                     </>
 
