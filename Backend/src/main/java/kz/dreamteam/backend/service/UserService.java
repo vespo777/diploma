@@ -1,12 +1,11 @@
 package kz.dreamteam.backend.service;
 
 import jakarta.transaction.Transactional;
-import kz.dreamteam.backend.model.LocationDetails;
-import kz.dreamteam.backend.model.RoommatePreferences;
-import kz.dreamteam.backend.model.SocialDetails;
-import kz.dreamteam.backend.model.User;
+import kz.dreamteam.backend.model.*;
 import kz.dreamteam.backend.model.dto.UpdateUserProfileRequest;
 import kz.dreamteam.backend.repository.*;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,7 @@ public class UserService {
     private final SocialDetailsRepository socialDetailsRepository;
     private final LocationDetailsRepository locationDetailsRepository;
     private final RoommatePreferencesRepository roommatePreferencesRepository;
+    private final PersonalInfoRepository personalInfoRepository;
     private final MlQuestionsAnswersRepository mlQuestionsAnswersRepository;
     private final JwtService jwtService;
 
@@ -28,12 +28,14 @@ public class UserService {
                        SocialDetailsRepository socialDetailsRepository,
                        LocationDetailsRepository locationDetailsRepository,
                        RoommatePreferencesRepository roommatePreferencesRepository,
+                       PersonalInfoRepository personalInfoRepository,
                        MlQuestionsAnswersRepository mlQuestionsAnswersRepository,
                        JwtService jwtService){
         this.userRepository = userRepository;
         this.socialDetailsRepository = socialDetailsRepository;
         this.locationDetailsRepository = locationDetailsRepository;
         this.roommatePreferencesRepository = roommatePreferencesRepository;
+        this.personalInfoRepository = personalInfoRepository;
         this.mlQuestionsAnswersRepository = mlQuestionsAnswersRepository;
         this.jwtService = jwtService;
     }
@@ -54,63 +56,52 @@ public class UserService {
         return ResponseEntity.ok(user);
     }
 
-    public ResponseEntity<User> getUserById(Long userId) {
+//    @Cacheable(value = "users", key = "#userId")
+    public User getUserById(Long userId) {
 
         return userRepository.findById(userId)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-
     @Transactional
-    public ResponseEntity<String> updateUserProfile(Long userId, UpdateUserProfileRequest updateRequest) {
+//    @CacheEvict(value = "users", key = "#userId")
+    public String updateUserProfile(Long userId, UpdateUserProfileRequest updateRequest) {
         try {
             // Обновление данных пользователя
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new NoSuchElementException("User not found"));
-
-//            user.setName(updateRequest.getName());
-//            user.setSurname(updateRequest.getSurname());
-//            user.setEmail(updateRequest.getEmail());
-////            user.setDateOfBirth(updateRequest);
-//            user.setSex(updateRequest.getSex());
+            user.setProfilePhotoPath("newnewnew");
             userRepository.save(user);
+
+            // Обновление личные данные профиля
+            PersonalInfo personalInfo = personalInfoRepository.findById(userId)
+                    .orElseThrow(() -> new NoSuchElementException("Personal info not found"));
+            personalInfo.setName("Updated");
+
+            personalInfoRepository.save(personalInfo);
 
             // Обновление социального профиля
             SocialDetails socialDetails = socialDetailsRepository.findById(userId)
                     .orElseThrow(() -> new NoSuchElementException("Social details not found"));
 
-//            socialDetails.setSmoking(updateRequest.getSmoking());
-//            socialDetails.setDrinking(updateRequest.getDrinking());
-//            socialDetails.setReligion(updateRequest.getReligion());
-//            socialDetails.setSports(updateRequest.getSports());
-//            socialDetails.setLifePlans(updateRequest.getLifePlans());
             socialDetailsRepository.save(socialDetails);
 
             // Обновление информации о местоположении
             LocationDetails locationDetails = locationDetailsRepository.findById(userId)
                     .orElseThrow(() -> new NoSuchElementException("Location details not found"));
 
-//            locationDetails.setCityFrom(updateRequest.getCityFrom());
-//            locationDetails.setCurrentCity(updateRequest.getCurrentCity());
-//            locationDetails.setSchool(updateRequest.getSchool());
-//            locationDetails.setUniversity(updateRequest.getUniversity());
-//            locationDetails.setWorkplace(updateRequest.getWorkplace());
             locationDetailsRepository.save(locationDetails);
 
             // Обновление предпочтений по сожителям
             RoommatePreferences roommatePreferences = roommatePreferencesRepository.findById(userId)
                     .orElseThrow(() -> new NoSuchElementException("Roommate preferences not found"));
 
-//            roommatePreferences.setPrefersDorm(updateRequest.getPrefersDorm());
-//            roommatePreferences.setPrefersApartment(updateRequest.getPrefersApartment());
-//            roommatePreferences.setWakeTime(updateRequest.getWakeTime());
-//            roommatePreferences.setSleepTime(updateRequest.getSleepTime());
+
             roommatePreferencesRepository.save(roommatePreferences);
 
-            return ResponseEntity.ok("User profile updated successfully");
+            return "User profile updated successfully";
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Update failed: " + e.getMessage());
+            return "Update failed: " + e.getMessage();
         }
     }
 

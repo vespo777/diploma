@@ -48,14 +48,14 @@ public class UserController {
 
     @GetMapping("/profile/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable Long userId) {
-        return this.userService.getUserById(userId);
+        return ResponseEntity.ok(this.userService.getUserById(userId));
     }
 
     @PutMapping("/profile/{userId}")
     public ResponseEntity<String> updateProfile(
             @PathVariable Long userId,
             @RequestBody UpdateUserProfileRequest updateRequest) {
-        return userService.updateUserProfile(userId, updateRequest);
+        return ResponseEntity.ok(userService.updateUserProfile(userId, updateRequest));
     }
 
     @GetMapping("/users")

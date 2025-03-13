@@ -37,7 +37,7 @@ public class EmailService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         Random random = new Random();
-        String resetCode = String.valueOf(100000 + random.nextInt(900000));
+        String resetCode = "Your verification code for password reset: " + (100000 + random.nextInt(900000));
 
         String requestBody = "from=" + senderEmail +
                 "&to=" + to +
