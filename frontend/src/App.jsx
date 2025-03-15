@@ -14,7 +14,9 @@ import FAQPage from './pages/Help';
 import ProfilePage from './pages/ProfilePage';
 import ProfileIDPage from './pages/ProfileIDPage'
 import AncetaPage from './pages/AncetaPage';
+import MLQPage from './pages/MLQPage';
 import NotFoundPage from './pages/NotFoundPage';
+
 
 import './index.css';
 import './styles/navbar.css';
@@ -42,6 +44,7 @@ function App() {
             <Route path="/profile/:id" element={<ProfileIDPage />} />
             <Route path="/anceta-page" element={<AncetaPage />} />
             <Route path="/*" element={<NotFoundPage />} />
+            <Route path="ml-questions" element={<MLQPage />} />
           </Routes>
         </div>
       </AuthProvider>

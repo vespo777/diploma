@@ -22,9 +22,9 @@ const Navbar = () => {
   return (
     <motion.nav
       className="navbar"
-      initial={{ y: -100 }}
+      initial={{ y: 8 }}
       animate={{ y: 0 }}
-      transition={{ type: "spring", stiffness: 120 }}
+      transition={{ type: "spring", stiffness: 200 }}
     >
       <div className="nav-brand">
         <img src={logo} alt="logo" />
