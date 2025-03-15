@@ -14,9 +14,10 @@
     font-size: 0.9rem;
     font-weight: lighter;
     color: #222020;
-    display: inline-flex;
+    display: block;
     flex-direction: row-reverse;
     align-items: center;
+    margin-top: 1rem;
     gap: 10px;
     margin-right: 10px;
 }
@@ -27,6 +28,7 @@
     border: none;
     border-radius: 13px;
 }
+
 .anceta-form textarea {
     width: 100%;
     padding: 0.5rem;
@@ -56,6 +58,14 @@
     border-radius: 5px;
     cursor: not-allowed;
 }
+
+.save-button-interests{
+    width: 25% !important;
+    background: #7d7d7d !important;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 30px !important;
+}
 .anceta-form h2{
     color: #222020;
     text-align: center;
@@ -83,7 +93,6 @@
     background: #efefef;
     margin-right: 1rem;
     text-align: center;
-    margin-top: 1rem;
     border-radius: 13px;
     border: none;
 }

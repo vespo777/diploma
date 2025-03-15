@@ -123,6 +123,13 @@
   color: #2d3748;
 }
 
+.problems-wrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .feature p {
   color: #718096;
 }

@@ -167,6 +167,138 @@ const professions = [
     "Nanotechnology Specialist"
 ];
 
+const interests = [
+    "Drawing and painting",
+    "Photography",
+    "Video creation and editing",
+    "Playing musical instruments",
+    "Singing and vocals",
+    "Writing and literature",
+    "Calligraphy",
+    "Sculpting and ceramics",
+    "Wood carving",
+    "Graphic design",
+    "Jewelry making",
+    "Sewing and tailoring",
+    "Knitting",
+    "Embroidery",
+    "Quilling",
+    "Scrapbooking",
+    "Decoupage",
+    "Floristry",
+    "Soap making",
+    "Candle making",
+
+    // Physical Activities and Sports
+    "Running",
+    "Swimming",
+    "Yoga",
+    "Dancing (ballroom, contemporary, folk)",
+    "Cycling",
+    "Hiking",
+    "Mountaineering and rock climbing",
+    "Team sports (football, basketball, volleyball)",
+    "Tennis",
+    "Martial arts",
+    "Fitness",
+    "Golf",
+    "Snowboarding/Skiing",
+    "Surfing",
+    "Parkour",
+    "Equestrian sports",
+    "Rowing",
+    "Archery",
+    "Fencing",
+    "Fishing",
+
+    // Intellectual Hobbies
+    "Reading",
+    "Chess/Checkers",
+    "Learning foreign languages",
+    "Programming",
+    "Solving puzzles and crosswords",
+    "Board games",
+    "Collecting (stamps, coins, books)",
+    "Astronomy",
+    "History and archaeology",
+    "Philosophy",
+    "Psychology",
+    "Science and experiments",
+    "Mathematics and logic puzzles",
+    "Robotics",
+    "Genealogy and family history research",
+
+    // Culinary Hobbies
+    "Cooking",
+    "Baking",
+    "BBQ and grilling",
+    "Wine tasting",
+    "Cocktail making",
+    "Cheese making",
+    "Brewing",
+    "Canning and preserving",
+    "Chocolate making",
+    "Fruit and vegetable carving",
+
+    // Technology and Digital Hobbies
+    "Video gaming",
+    "3D modeling and printing",
+    "Mobile app development",
+    "Blogging and social media",
+    "Podcasting",
+    "Web design",
+    "Electronics construction",
+    "Computer simulation",
+    "Drone piloting",
+    "VR/AR development",
+
+    // Nature and Environment
+    "Gardening",
+    "Indoor plant care",
+    "Birdwatching",
+    "Geocaching",
+    "Tourism",
+    "Camping",
+    "Environmental activism",
+    "Meteorology",
+    "Geology",
+    "Astrophotography",
+
+    // Social and Community Interests
+    "Volunteering",
+    "Charity work",
+    "Participation in public organizations",
+    "Political activism",
+    "Public speaking and debates",
+    "Mental health and meditation",
+    "Spiritual practices",
+    "Teaching and mentoring",
+    "Event organization",
+    "Joining hobby clubs",
+
+    // Unique and Niche Hobbies
+    "Amateur radio communication",
+    "Magic tricks and illusionism",
+    "Paranormal investigations",
+    "Miniature creation",
+    "Cynology and dog training",
+    "Historical reenactment",
+    "Numismatics",
+    "Philately",
+    "Model building (ships, planes)",
+    "Diorama creation",
+    "Survivalism",
+    "Costume play and cosplay",
+    "Genealogy",
+    "Pilgrimage",
+    "Restoration of antique items",
+    "Learning programming languages",
+    "Treasure hunting with a metal detector",
+    "Stargazing",
+    "Comic book creation",
+    "Extreme sports"
+];
+
 const AncetaPage = () => {
 
     const navigate = useNavigate();
@@ -177,12 +309,14 @@ const AncetaPage = () => {
     const integer_max = 450000;
     const [step, setStep] = useState(1);
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+
 
     const [formData, setFormData] = useState({
         personal_info:{
             birthDate: "",
             gender: "",
-            nationality: "",
             religion: "",
         },
         social_details:{
@@ -193,12 +327,14 @@ const AncetaPage = () => {
             drinking: false,
             company: "",
             profession: "",
+            interests: []
         },
         roommate_search:{
             budgetMin: integer_min,
             budgetMax: integer_max,
             searchStatus: 3,
-            scoreTest: 0
+            scoreTest: 0,
+            startDate: "",
 
         },
         roommate_preferences:{
@@ -215,7 +351,6 @@ const AncetaPage = () => {
             telegramNickname: "",
         },
     });
-    // Section key mapping updated to match backend endpoints
     const sectionKeyMapping = {
         1: "personal-info",
         2: "social-details",
@@ -228,7 +363,6 @@ const AncetaPage = () => {
     useEffect(() => {
         if (!user) {
             navigate('/login');
-            return;
         }
     }, [user, navigate]);
 
@@ -301,6 +435,21 @@ const AncetaPage = () => {
         }
     };
 
+    const handleInterestsChange = (interest) => {
+        setFormData((prev) => {
+            const currentInterests = prev.social_details.interests;
+            return {
+                ...prev,
+                social_details: {
+                    ...prev.social_details,
+                    interests: currentInterests.includes(interest)
+                        ? currentInterests.filter((i) => i !== interest)
+                        : [...currentInterests, interest]
+                }
+            };
+        });
+    };
+
     return (
         <div className={"anceta-card-wrapper"}>
             <WalkingAssistant />
@@ -308,7 +457,6 @@ const AncetaPage = () => {
                 {step === 1 && (
                     <>
                         <h2>Personal Information</h2>
-                        <input type="text" name="personal_info.nationality" value={formData.personal_info.nationality} onChange={handleChange} placeholder="Nationality" required/>
                         <h3>Date of Birth</h3>
                         <input type="date" name="personal_info.birthDate" value={formData.personal_info.birthDate} onChange={handleChange} required/>
                         <select className="selector"
@@ -392,6 +540,29 @@ const AncetaPage = () => {
                                     </option>
                                 ))}
                             </select>
+                        <div>
+                            <button type="button" className="save-button-interests"  onClick={() => setIsModalOpen(true)}>Select Interests</button>
+                            <p>Selected Interests: {formData.social_details.interests.join(", ")}</p>
+
+                            {isModalOpen && (
+                                <div className="modal">
+                                    <div className="modal-content">
+                                        <h3>Select Your Interests</h3>
+                                        {interests.map((interest, index) => (
+                                            <label key={index}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.social_details.interests.includes(interest)}
+                                                    onChange={() => handleInterestsChange(interest)}
+                                                />
+                                                {interest}
+                                            </label>
+                                        ))}
+                                        <button type="button" onClick={() => setIsModalOpen(false)}>Save</button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                         </div>
                         <div>
                             <label>Company</label>
@@ -455,7 +626,9 @@ const AncetaPage = () => {
                                 <option value="2">I am roommate and I have an apartment</option>
                                 <option value="3">Not searching</option>
                             </select>
-                        </>
+                        <input type="date" name="roommate_search.startDate" value={formData.startDate.birthDate} onChange={handleChange} placeholder="When are you planning to live together?" required/>
+
+                    </>
                 )}
 
                 {step === 5 && (

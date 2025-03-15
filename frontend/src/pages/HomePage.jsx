@@ -1,8 +1,5 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { mockListings } from '../mockData/listings';
 import '../styles/HomePage.css';
 
 const HomePage = () => {
@@ -25,56 +22,67 @@ const HomePage = () => {
   return (
     <div className="home-container">
       <section className="hero-section">
-        <h1>Find Your Perfect Home</h1>
-        <p>Discover thousands of properties that match your preferences</p>
+        <h1>Connect with your dream-roommates</h1>
+        <p>We solve problems with finding a roommate</p>
       </section>
+
+      {/*<section className="listings-section">*/}
+      {/*  <h2>Featured Listings</h2>*/}
+      {/*  <div className="listings-grid">*/}
+      {/*    {mockListings.map((listing) => (*/}
+      {/*      <motion.div*/}
+      {/*        key={listing.id}*/}
+      {/*        className="listing-card"*/}
+      {/*        whileHover={{ scale: 1.03 }}*/}
+      {/*        transition={{ duration: 0.2 }}*/}
+      {/*      >*/}
+      {/*        <Link to={`/listing/${listing.id}`} className="listing-link">*/}
+      {/*          <img src={listing.images[0]} alt={listing.title} />*/}
+      {/*          <div className="listing-content">*/}
+      {/*            <h3>{listing.title}</h3>*/}
+      {/*            <p className="listing-location">{listing.location}</p>*/}
+      {/*            <p className="listing-description">{listing.description}</p>*/}
+      {/*            <div className="listing-details">*/}
+      {/*              <span>🛏 {listing.bedrooms} beds</span>*/}
+      {/*              <span>🚿 {listing.bathrooms} baths</span>*/}
+      {/*              <span>📏 {listing.area}m²</span>*/}
+      {/*            </div>*/}
+      {/*            <p className="listing-price">{listing.price}₸/month</p>*/}
+      {/*          </div>*/}
+      {/*        </Link>*/}
+      {/*      </motion.div>*/}
+      {/*    ))}*/}
+      {/*  </div>*/}
+      {/*</section>*/}
 
       <section className="listings-section">
-        <h2>Featured Listings</h2>
-        <div className="listings-grid">
-          {mockListings.map((listing) => (
-            <motion.div
-              key={listing.id}
-              className="listing-card"
-              whileHover={{ scale: 1.03 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Link to={`/listing/${listing.id}`} className="listing-link">
-                <img src={listing.images[0]} alt={listing.title} />
-                <div className="listing-content">
-                  <h3>{listing.title}</h3>
-                  <p className="listing-location">{listing.location}</p>
-                  <p className="listing-description">{listing.description}</p>
-                  <div className="listing-details">
-                    <span>🛏 {listing.bedrooms} beds</span>
-                    <span>🚿 {listing.bathrooms} baths</span>
-                    <span>📏 {listing.area}m²</span>
-                  </div>
-                  <p className="listing-price">{listing.price}₸/month</p>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+        <h2>Problems like</h2>
+        <div className="problems-wrapper">
+          <ul>
+            <li>no platforms for active cohabitants in need</li>
+              <li>different daily routines</li>
+              <li>late payment</li>
+            <li>communication problems</li>
+            <li> noise</li>
+            <li>cleanliness</li>
+            <li>different cultures</li>
+          </ul>
         </div>
       </section>
-
       <section className="about-section">
-        <h2>Why Choose Us?</h2>
+        <h2>Will be resolved in this way:</h2>
         <div className="features-grid">
           <div className="feature">
-            <span className="feature-icon">🏠</span>
-            <h3>Wide Selection</h3>
-            <p>Thousands of verified listings across the country</p>
+            <h3>Personal information Anketa</h3>
           </div>
           <div className="feature">
-            <span className="feature-icon">🔒</span>
-            <h3>Secure Platform</h3>
-            <p>Safe and secure transactions with verified users</p>
+            <h3>identify personality type with  ML algos</h3>
           </div>
           <div className="feature">
-            <span className="feature-icon">💬</span>
-            <h3>24/7 Support</h3>
-            <p>Our dedicated team is always here to help</p>
+            <h3>Find and create teams</h3>
+          </div>
+          <div className="feature">
+            <h3>Find roommate</h3>
           </div>
         </div>
       </section>
