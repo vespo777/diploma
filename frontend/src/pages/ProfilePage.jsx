@@ -28,19 +28,22 @@ const ProfilePage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!user || !user.userId) return;
+    if (!user?.userId) return;
 
-     const responce = fetch(`${API_URL}/profile`, {
+    setLoading(true);
+
+    fetch(`${API_URL}/profile`, {
       method: 'GET',
-      headers: { 'Authorization': `${localStorage.getItem('token')}` }
+      headers: {
+        'Authorization': ` ${localStorage.getItem('token')}`
+      }
     })
         .then(res => res.ok ? res.json() : Promise.reject('Failed to load profile'))
         .then(data => setUserData(data))
-        .catch(setError)
+        .catch(err => setError(err))
         .finally(() => setLoading(false));
 
-
-  }, [user]);
+  }, [user?.userId]);
 
   const handleChange = (section, field, value) => {
     setUserData(prev => ({
@@ -97,7 +100,6 @@ const ProfilePage = () => {
             <option value="F">Female</option>
             <option value="O">Other</option>
           </select>
-          <input type="text" placeholder="nationality" value={userData.personalInfo.nationality ?? ""} onChange={(e) => handleChange('personalInfo', 'nationality', e.target.value)} />
           <input type="text" placeholder="religion" value={userData.personalInfo.religion ?? ""} onChange={(e) => handleChange('personalInfo', 'religion', e.target.value)} />
 
 

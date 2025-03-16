@@ -1,5 +1,6 @@
 import { useEffect, useState} from "react";
 import { useParams } from "react-router-dom";
+import ConnectionButton from "../components/Connection";
 import "../styles/ProfilePage.css"
 
 const API_URL = "http://localhost:8080";
@@ -9,6 +10,8 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const token  = localStorage.getItem("token");
+  const userMe = JSON.parse(localStorage.getItem("user"));
+  const myId = userMe?.userId;
 
 
   useEffect(() => {
@@ -29,7 +32,6 @@ const Profile = () => {
         if (!response.ok) throw new Error("Ошибка загрузки профиля");
 
         const data = await response.json();
-        console.log(data);
         setUser(data);
       } catch (error) {
         console.error("Ошибка при загрузке профиля:", error);
@@ -41,7 +43,10 @@ const Profile = () => {
     fetchUser();
   }, [id, token]);
 
-  if (loading) return <p>Загрузка...</p>;
+  if (loading) return <p style = {{
+    textAlign: "center",
+    color: "white",
+  }}>Загрузка...</p>;
   if (!user) return <p>Пользователь не найден</p>;
 
   return (
@@ -55,7 +60,9 @@ const Profile = () => {
           <h3>Preferences</h3>
           <p>Wake Up Time: {user.roommatePreferences.wakeTime}</p>
           <p>Sleep Time: {user.roommatePreferences.sleepTime}</p>
-          <button className="save-button" type="submit">Connect</button>
+          {myId && myId !== id && (
+              <ConnectionButton currentUserId={myId} otherUserId={id} />
+          )}
         </div>
       </div>
   );

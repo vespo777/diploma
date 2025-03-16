@@ -11,6 +11,9 @@
   margin-bottom: 2rem;
 }
 
+.profile-content label{
+  display: block;
+}
 .profile-header h1 {
   color: #2d3748;
   font-size: 2rem;
@@ -135,7 +138,7 @@
   padding: 1rem;
   border-radius: 6px;
   border: 1px solid #e2e8f0;
-  
+
 }
 
 .preference-item label {
@@ -309,4 +312,4 @@ select.living-preference:disabled {
 
 .save-success {
   animation: saveSuccess 0.3s ease;
-} 
+}
