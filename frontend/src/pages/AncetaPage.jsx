@@ -626,7 +626,8 @@ const AncetaPage = () => {
                                 <option value="2">I am roommate and I have an apartment</option>
                                 <option value="3">Not searching</option>
                             </select>
-                        <input type="date" name="roommate_search.startDate" value={formData.startDate.birthDate} onChange={handleChange} placeholder="When are you planning to live together?" required/>
+                        <label>When are you planning to live together?</label>
+                        <input type="date" name="roommate_search.startDate" value={formData.roommate_search.startDate} onChange={handleChange} required/>
 
                     </>
                 )}
