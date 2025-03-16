@@ -4,9 +4,6 @@ import jakarta.transaction.Transactional;
 import kz.dreamteam.backend.model.*;
 import kz.dreamteam.backend.model.dto.UpdateUserProfileRequest;
 import kz.dreamteam.backend.repository.*;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

@@ -1,5 +1,6 @@
 package kz.dreamteam.backend.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import kz.dreamteam.backend.model.*;
 import kz.dreamteam.backend.repository.*;
@@ -10,10 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+
 
 @Service
 public class PasswordService {
     private static final Logger log = LoggerFactory.getLogger(PasswordService.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final SocialDetailsRepository socialDetailsRepository;
@@ -85,13 +89,13 @@ public class PasswordService {
             locationDetails.setUser(user); // Link to the user
             locationDetailsRepository.save(locationDetails); // Save empty entry
         } catch (Exception e) { log.error("Error in createEmptyLocationDetails", e); }
-
     }
 
     private void createEmptySocialDetails(User user) {
         try {
             SocialDetails socialDetails = new SocialDetails();
             socialDetails.setUser(user); // Link to the user
+            socialDetails.setInterests(Collections.emptyList());
             socialDetailsRepository.save(socialDetails); // Save empty entry
         } catch (Exception e) { log.error("Error in createEmptySocialDetails", e); }
     }

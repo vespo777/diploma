@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import kz.dreamteam.backend.util.JsonConverter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,9 +27,8 @@ public class SocialDetails {
     private Boolean smoking;
     private String company;
     private String profession;
-    @Column(columnDefinition = "jsonb")
     @Convert(converter = JsonConverter.class)
-    private List<String> interests;
+    private List<String> interests  = new ArrayList<>();
 
 
     public SocialDetails() {
