@@ -9,7 +9,10 @@ const ConnectionButton = ({ currentUserId, otherUserId }) => {
     useEffect(() => {
         if (!currentUserId || !otherUserId) return;
 
-        const fetchStatus = async () => {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        (async () => {
             try {
                 const res = await fetch(
                     `${API_URL}/connections/is-connected?userId1=${currentUserId}&userId2=${otherUserId}`,
@@ -17,32 +20,34 @@ const ConnectionButton = ({ currentUserId, otherUserId }) => {
                         headers: {
                             Authorization: `${localStorage.getItem("token")}`,
                         },
+                        signal,
                     }
                 );
-                if (!res.ok) throw new Error("Ошибка проверки статуса");
+                if (!res.ok) throw new Error(`Ошибка проверки статуса: ${res.status}`);
                 const data = await res.json();
-                setStatus(data.status); // "connected", "pending", "received", "none"
+                setStatus(data);
             } catch (error) {
+                if (error.name === "AbortError") return; // Если запрос отменён — игнорируем ошибку
                 console.error("Ошибка при проверке статуса:", error);
             }
-        };
+        })();
 
-        fetchStatus();
+        return () => controller.abort(); // Отмена запроса при изменении зависимостей
     }, [currentUserId, otherUserId]);
+
 
     const sendRequest = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`${API_URL}/connections/send`, {
+            const response = await fetch(`${API_URL}/connections/send?senderId=${currentUserId}&receiverId=${otherUserId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `${localStorage.getItem("token")}`,
                 },
-                body: JSON.stringify({ receiverId: Number(otherUserId), senderId: currentUserId }),
             });
 
-            if (!res.ok) throw new Error("Ошибка при отправке запроса");
+            if (!response.ok) throw new Error("Ошибка при обработке запроса");
             setStatus("pending");
         } catch (error) {
             console.error("Ошибка при отправке запроса:", error);
@@ -74,7 +79,7 @@ const ConnectionButton = ({ currentUserId, otherUserId }) => {
 
     return (
         <div>
-            {status === "connected" ? (
+            {status === true ? (
                 <button className="bg-gray-400 text-white px-4 py-2 rounded" disabled>
                     ✔ Connected
                 </button>

@@ -38,7 +38,7 @@ const Navbar = () => {
         if (!response.ok) throw new Error("Ошибка загрузки уведомлений");
 
         const data = await response.json();
-        setNotifications(data); // Сохраняем список запросов на коннект
+        setNotifications(data);
       } catch (error) {
         console.error("Ошибка при загрузке уведомлений:", error);
       }
@@ -103,7 +103,6 @@ const Navbar = () => {
               <img src={search} alt="search icon" />
             </button>
 
-            {/* Анимация появления кнопок */}
             <AnimatePresence>
               {showSearch && (
                   <motion.div
@@ -145,10 +144,10 @@ const Navbar = () => {
                         {notifications.length > 0 ? (
                             notifications.map((notif, index) => (
                                 <div key={index} className="notification-item">
-                                  <p><strong>{notif.senderName}</strong> хочет добавить вас в друзья</p>
+                                  <p><strong>{notif.personalInfo.name} {notif.personalInfo.surname}</strong> хочет добавить вас в друзья</p>
                                   <div className="notification-actions">
-                                    <button className="accept-btn" onClick={() => handleAnswer(notif.senderId, true)}>Принять</button>
-                                    <button className="decline-btn" onClick={() => handleAnswer(notif.senderId, false)}>Отклонить</button>
+                                    <button className="accept-btn" onClick={() => handleAnswer(notif.userId, true)}>Принять</button>
+                                    <button className="decline-btn" onClick={() => handleAnswer(notif.userId, false)}>Отклонить</button>
                                   </div>
                                 </div>
                             ))

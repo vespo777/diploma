@@ -15,6 +15,7 @@ import ProfilePage from './pages/ProfilePage';
 import ProfileIDPage from './pages/ProfileIDPage'
 import AncetaPage from './pages/AncetaPage';
 import MLQPage from './pages/MLQPage';
+import useAuthCheck from './hooks/AuthCheck';
 import NotFoundPage from './pages/NotFoundPage';
 
 
@@ -28,6 +29,7 @@ function App() {
   return (
     <Router>
       <AuthProvider>
+        <AuthCheckWrapper />
         <div className="App">
           <Navbar />
           <Routes>
@@ -50,6 +52,11 @@ function App() {
       </AuthProvider>
     </Router>
   );
+}
+
+function AuthCheckWrapper() {
+  useAuthCheck();
+  return null;
 }
 
 export default App;
