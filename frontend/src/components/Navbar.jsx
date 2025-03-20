@@ -120,7 +120,7 @@ const Navbar = () => {
 
 
 
-          <Link to="/add-listing" className={`nav-link ${isActive('/add-listing') ? 'active' : ''}`}>Add an Announcement</Link>
+          <Link to="/add-listing" className={`nav-link ${isActive('/add-listing') ? 'active' : ''}`}>Teams</Link>
           <Link to="/faq" className={`nav-link ${isActive('/faq') ? 'active' : ''}`}>FAQ</Link>
         </div>
 
@@ -132,7 +132,6 @@ const Navbar = () => {
               style={{ background: 'none', border: 'none', cursor: 'pointer' }}
           >
             <img src={hasNewNotifications ? notificationTrue : notificationFalse} alt="notification icon" className="notification-icon" />
-            {hasNewNotifications && <span className="notification-indicator"></span>}
           </button>
 
           {user ? (
