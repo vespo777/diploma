@@ -1,5 +1,6 @@
 package kz.dreamteam.backend.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import kz.dreamteam.backend.model.*;
 import kz.dreamteam.backend.repository.*;
@@ -10,10 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+
 
 @Service
 public class PasswordService {
     private static final Logger log = LoggerFactory.getLogger(PasswordService.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final SocialDetailsRepository socialDetailsRepository;
@@ -22,6 +26,7 @@ public class PasswordService {
     private final PersonalInfoRepository personalInfoRepository;
     private final RoommateSearchRepository roommateSearchRepository;
     private final ContactsRepository contactsRepository;
+    private final GraphSearchService graphSearchService;
 
 
     public PasswordService(UserRepository userRepository,
@@ -31,6 +36,7 @@ public class PasswordService {
                            PersonalInfoRepository personalInfoRepository,
                            RoommateSearchRepository roommateSearchRepository,
                            ContactsRepository contactsRepository,
+                           GraphSearchService graphSearchService,
                            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.socialDetailsRepository = socialDetailsRepository;
@@ -40,6 +46,7 @@ public class PasswordService {
         this.roommateSearchRepository = roommateSearchRepository;
         this.contactsRepository = contactsRepository;
         this.passwordEncoder = passwordEncoder;
+        this.graphSearchService = graphSearchService;
 
     }
 
@@ -82,13 +89,13 @@ public class PasswordService {
             locationDetails.setUser(user); // Link to the user
             locationDetailsRepository.save(locationDetails); // Save empty entry
         } catch (Exception e) { log.error("Error in createEmptyLocationDetails", e); }
-
     }
 
     private void createEmptySocialDetails(User user) {
         try {
             SocialDetails socialDetails = new SocialDetails();
             socialDetails.setUser(user); // Link to the user
+            socialDetails.setInterests(Collections.emptyList());
             socialDetailsRepository.save(socialDetails); // Save empty entry
         } catch (Exception e) { log.error("Error in createEmptySocialDetails", e); }
     }
@@ -102,8 +109,17 @@ public class PasswordService {
 
     }
 
+    public boolean isEmailAvailable(String email) {
+        return !userRepository.existsByEmail(email);
+    }
+
     @Transactional
-    public ResponseEntity<User> register(RegisterBody request) {
+    public ResponseEntity<?> register(RegisterBody request) {
+
+        if(!isEmailAvailable(request.getEmail())) {
+            return ResponseEntity.badRequest().body("Email is already taken");
+        }
+
         try {
             var user = new User();
             user.setEmail(request.getEmail());

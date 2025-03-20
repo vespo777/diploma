@@ -1,66 +1,55 @@
 .anceta-card-wrapper {
-    background: white;
+    background: #ffffff;
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 1px rgba(0, 0, 0, 0.1);
     padding: 2rem;
     max-width: 800px;
-    margin: 2rem auto;
+    margin: 100px auto;
 }
 
-.anceta-header h1 {
-    color: #2d3748;
-    font-size: 2rem;
-    margin: 0;
-}
-.anceta-form {
-    margin-top: 2rem;
-    padding: 2rem;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-
+.anceta-form div{
+    margin: 10px auto;
 }
 .anceta-form label {
-    color: #718096;
     font-size: 0.9rem;
-    font-weight: bold;
+    font-weight: lighter;
+    color: #222020;
     display: block;
-    margin-bottom: 0.5rem;
+    flex-direction: row-reverse;
+    align-items: center;
+    margin-top: 1rem;
+    gap: 10px;
+    margin-right: 10px;
 }
 .anceta-form input {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    background: #efefef;
+    border: none;
+    border-radius: 13px;
 }
+
 .anceta-form textarea {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid #ccc;
+    color: #fff;
 }
 .anceta-form button {
-    padding: 0.5rem 1rem;
-    background: #4a90e2;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #b87a08 0%, #7739b6 100%);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
-    transform: scale(1);
-    margin-top: 1rem;
-    font-size: 1rem;
-    font-weight: bold;
-    display: block;
-    width: 100%;
-    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    margin-top: 20px;
 }
 .anceta-form button:hover {
-    background: #357abd;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s;
-    transform: scale(1.01);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
 }
 .anceta-form button:disabled {
     background: #f7fafc;
@@ -69,10 +58,45 @@
     border-radius: 5px;
     cursor: not-allowed;
 }
+
+.save-button-interests{
+    width: 25% !important;
+    background: #7d7d7d !important;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 30px !important;
+}
 .anceta-form h2{
-    color: #2d3748;
-    font-size: 2rem;
-    margin: auto;
+    color: #222020;
+    text-align: center;
+    font-weight: 500;
+}
+.anceta-form h3{
+    margin-top: 2rem;
+    color: #222020;
+    font-weight: 300;
 }
 
 
+.selector{
+    margin-right: 1rem;
+    text-align: center;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    border-radius: 13px;
+    border: none;
+}
+
+.anceta-form select{
+    max-width: 500px;
+    padding: 0.5rem;
+    background: #efefef;
+    margin-right: 1rem;
+    text-align: center;
+    border-radius: 13px;
+    border: none;
+}
+label input[type="checkbox"] {
+    display: block;
+    justify-content: end;
+}

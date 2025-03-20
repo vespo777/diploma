@@ -2,11 +2,11 @@ package kz.dreamteam.backend.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.*;
+
 
 import java.util.Random;
 
@@ -14,31 +14,41 @@ import java.util.Random;
 @Service
 public class EmailService {
 
+    @Value("${mailgun.api-key}")
+    private String apiKey;
+
+    @Value("${mailgun.domain}")
+    private String domain;
+
+    @Value("${mailgun.sender-email}")
+    private String senderEmail;
+
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
-    private final JavaMailSender mailSender;
-
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
+    public EmailService(){
     }
 
     public void sendEmail(String to) {
+        String url = "https://api.mailgun.net/v3/" + domain + "/messages";
 
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth("api", apiKey);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            Random random = new Random();
+        Random random = new Random();
+        String resetCode = "Your verification code for password reset: " + (100000 + random.nextInt(900000));
 
-            helper.setFrom("roommatefinder47@gmail.com");
-            helper.setTo(to);
-            helper.setSubject("Password reset code");
-            helper.setText(String.valueOf(random.nextInt(900000)), true); // true = поддержка HTML
+        String requestBody = "from=" + senderEmail +
+                "&to=" + to +
+                "&subject=" + "Reset Code Service" +
+                "&text=" + resetCode;
 
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            logger.error("Failed to send email:", e);
-        }
+        HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+
+        logger.info("Mailgun response: {}", response.getBody());
     }
+
 }
 

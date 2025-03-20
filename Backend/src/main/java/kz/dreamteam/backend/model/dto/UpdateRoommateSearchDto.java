@@ -1,10 +1,13 @@
 package kz.dreamteam.backend.model.dto;
 
+import java.time.LocalDate;
+
 public class UpdateRoommateSearchDto {
     private Integer searchStatus;
     private Long budgetMin;
     private Long budgetMax;
     private Integer scoreTest;
+    private LocalDate startDate;
 
     // Default constructor
     public UpdateRoommateSearchDto() {
@@ -49,6 +52,14 @@ public class UpdateRoommateSearchDto {
 
     public void setScoreTest(Integer scoreTest) {
         this.scoreTest = scoreTest;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 }
 

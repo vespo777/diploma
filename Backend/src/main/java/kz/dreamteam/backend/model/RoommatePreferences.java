@@ -2,7 +2,6 @@ package kz.dreamteam.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalTime;
 
@@ -29,7 +28,6 @@ public class RoommatePreferences {
     }
 
     // Getters and setters
-
 
     public Long getUserId() {
         return userId;

@@ -1,7 +1,9 @@
 package kz.dreamteam.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+
 
 
 @Entity
@@ -22,6 +24,7 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
+//    @JsonIgnore
     private PersonalInfo personalInfo;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -122,6 +125,22 @@ public class User {
 
     public void setProfilePhotoPath(String profilePhotoPath) {
         this.profilePhotoPath = profilePhotoPath;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", email='" + email + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
+                ", profilePhotoPath='" + profilePhotoPath + '\'' +
+                ", personalInfo=" + personalInfo +
+                ", roommateSearch=" + roommateSearch +
+                ", socialDetails=" + socialDetails +
+                ", locationDetails=" + locationDetails +
+                ", roommatePreferences=" + roommatePreferences +
+                ", contacts=" + contacts +
+                '}';
     }
 }
 

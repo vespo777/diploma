@@ -27,6 +27,7 @@ public class SocialDetailsService {
         if (updateRequest.getSmoking() != null) socialDetails.setSmoking(updateRequest.getSmoking());
         if (updateRequest.getCompany() != null) socialDetails.setCompany(updateRequest.getCompany());
         if (updateRequest.getProfession() != null) socialDetails.setProfession(updateRequest.getProfession());
+        if (updateRequest.getInterests() != null) socialDetails.setInterests(updateRequest.getInterests());
 
         socialDetailsRepository.save(socialDetails);
 

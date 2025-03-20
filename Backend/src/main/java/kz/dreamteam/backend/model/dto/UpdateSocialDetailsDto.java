@@ -1,6 +1,8 @@
 package kz.dreamteam.backend.model.dto;
 
 
+import java.util.List;
+
 public class UpdateSocialDetailsDto {
     private String schoolName;
     private String universityName;
@@ -9,6 +11,7 @@ public class UpdateSocialDetailsDto {
     private Boolean smoking;
     private String company;
     private String profession;
+    private List<String> interests;
 
     // Default constructor
     public UpdateSocialDetailsDto() {}
@@ -68,6 +71,14 @@ public class UpdateSocialDetailsDto {
 
     public void setProfession(String profession) {
         this.profession = profession;
+    }
+
+    public List<String> getInterests() {
+        return interests;
+    }
+
+    public void setInterests(List<String> interests) {
+        this.interests = interests;
     }
 }
 

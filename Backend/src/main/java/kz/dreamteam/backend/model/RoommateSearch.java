@@ -3,6 +3,8 @@ package kz.dreamteam.backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 
 @Entity
 @Table(name = "roommate_search")
@@ -27,6 +29,9 @@ public class RoommateSearch {
 
     @Column
     private Long budgetMax;
+
+    @Column
+    private LocalDate startDate;
 
     @Column
     private Integer scoreTest;
@@ -77,5 +82,13 @@ public class RoommateSearch {
 
     public void setScoreTest(Integer scoreTest) {
         this.scoreTest = scoreTest;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 }

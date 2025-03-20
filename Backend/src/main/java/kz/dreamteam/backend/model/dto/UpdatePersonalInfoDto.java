@@ -6,7 +6,6 @@ public class UpdatePersonalInfoDto {
     private LocalDate birthDate;
     private Character gender;
     private String religion;
-    private String nationality;
 
     // Constructors
     public UpdatePersonalInfoDto() {}
@@ -16,7 +15,6 @@ public class UpdatePersonalInfoDto {
         this.birthDate = birthDate;
         this.gender = gender;
         this.religion = religion;
-        this.nationality = nationality;
     }
 
     // Getters and Setters
@@ -29,7 +27,5 @@ public class UpdatePersonalInfoDto {
     public String getReligion() { return religion; }
     public void setReligion(String religion) { this.religion = religion; }
 
-    public String getNationality() { return nationality; }
-    public void setNationality(String nationality) { this.nationality = nationality; }
 }
 

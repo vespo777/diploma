@@ -1,5 +1,6 @@
 package kz.dreamteam.backend.model.graph;
 
+import java.time.LocalTime;
 import java.util.List;
 
 public class UserNode {
@@ -10,7 +11,7 @@ public class UserNode {
     public List<String> languages;
     public String religion;
     public String petsStatus;
-    public int sleepTime;
+    public LocalTime sleepTime;
     public int budgetMax;
     public int personalityType;
     public String profession;
@@ -76,11 +77,11 @@ public class UserNode {
         this.petsStatus = petsStatus;
     }
 
-    public int getSleepTime() {
+    public LocalTime getSleepTime() {
         return sleepTime;
     }
 
-    public void setSleepTime(int sleepTime) {
+    public void setSleepTime(LocalTime sleepTime) {
         this.sleepTime = sleepTime;
     }
 

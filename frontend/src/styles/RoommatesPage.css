@@ -51,7 +51,7 @@
 }
 
 .content-area {
-  flex: 1;
+  flex: 1 5 auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -75,8 +75,8 @@
 
 .roommates-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(500px, auto));
+  gap: 30px;
 }
 
 .roommate-card {
@@ -139,4 +139,4 @@
     width: 100%;
     position: static;
   }
-} 
+}

@@ -35,8 +35,6 @@ public class PersonalInfo {
     @Column
     private String religion;
 
-    @Column
-    private String nationality;
 
     public Long getUserId() {
         return userId;
@@ -94,11 +92,4 @@ public class PersonalInfo {
         this.religion = religion;
     }
 
-    public String getNationality() {
-        return nationality;
-    }
-
-    public void setNationality(String nationality) {
-        this.nationality = nationality;
-    }
 }

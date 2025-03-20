@@ -1,0 +1,25 @@
+.assistant {
+    position: fixed;
+    width: 100px;
+    cursor: pointer;
+    text-align: center;
+    user-select: none;
+}
+
+.assistant-img {
+    width: 80px;
+    height: auto;
+}
+
+.message {
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 8px;
+    font-size: 12px;
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}

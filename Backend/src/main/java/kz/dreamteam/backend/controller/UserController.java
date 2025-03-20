@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import kz.dreamteam.backend.model.User;
 import kz.dreamteam.backend.model.dto.UpdateUserProfileRequest;
 import kz.dreamteam.backend.service.DjangoClientService;
+import kz.dreamteam.backend.service.GraphSearchService;
 import kz.dreamteam.backend.service.JwtService;
 import kz.dreamteam.backend.service.UserService;
 import org.slf4j.Logger;
@@ -22,11 +23,16 @@ public class UserController {
     private final JwtService jwtService;
     private final UserService userService;
     private final DjangoClientService djangoClientService;
+    private final GraphSearchService graphSearchService;
 
-    public UserController(JwtService jwtService, UserService userService, DjangoClientService djangoClientService){
+    public UserController(JwtService jwtService,
+                          UserService userService,
+                          DjangoClientService djangoClientService,
+                          GraphSearchService graphSearchService){
         this.jwtService = jwtService;
         this.userService = userService;
         this.djangoClientService = djangoClientService;
+        this.graphSearchService = graphSearchService;
     }
 
 
@@ -42,19 +48,24 @@ public class UserController {
 
     @GetMapping("/profile/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable Long userId) {
-        return this.userService.getUserById(userId);
+        return ResponseEntity.ok(this.userService.getUserById(userId));
     }
 
     @PutMapping("/profile/{userId}")
     public ResponseEntity<String> updateProfile(
             @PathVariable Long userId,
             @RequestBody UpdateUserProfileRequest updateRequest) {
-        return userService.updateUserProfile(userId, updateRequest);
+        return ResponseEntity.ok(userService.updateUserProfile(userId, updateRequest));
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         return userService.getAllUsers();
+    }
+
+    @GetMapping("/recommended-users")
+    public ResponseEntity<List<User>> getRecommendedUsers(@RequestParam int userId) {
+        return graphSearchService.getUserRecommendations(userId);
     }
 
 
