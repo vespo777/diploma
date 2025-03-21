@@ -16,6 +16,7 @@ import ProfileIDPage from './pages/ProfileIDPage'
 import AncetaPage from './pages/AncetaPage';
 import MLQPage from './pages/MLQPage';
 import useAuthCheck from './hooks/AuthCheck';
+import Teams from './pages/Teams';
 import NotFoundPage from './pages/NotFoundPage';
 
 
@@ -47,6 +48,7 @@ function App() {
             <Route path="/anceta-page" element={<AncetaPage />} />
             <Route path="/*" element={<NotFoundPage />} />
             <Route path="ml-questions" element={<MLQPage />} />
+            <Route path="teams" element={<Teams />} />
           </Routes>
         </div>
       </AuthProvider>

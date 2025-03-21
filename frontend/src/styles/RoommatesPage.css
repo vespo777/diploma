@@ -130,7 +130,7 @@
   color: #4a5568;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .roommates-page {
     flex-direction: column;
   }
@@ -138,5 +138,8 @@
   .filter-sidebar {
     width: 100%;
     position: static;
+  }
+  .roommate-card {
+    width: 100%;
   }
 }
