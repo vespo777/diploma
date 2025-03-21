@@ -120,8 +120,11 @@ const Navbar = () => {
 
 
 
-          <Link to="/add-listing" className={`nav-link ${isActive('/add-listing') ? 'active' : ''}`}>Teams</Link>
+          <Link to="/teams" className={`nav-link ${isActive('/teams') ? 'active' : ''}`}>Teams</Link>
           <Link to="/faq" className={`nav-link ${isActive('/faq') ? 'active' : ''}`}>FAQ</Link>
+          {isActive('/apartments') && (
+              <Link to="/add-listing" className="nav-link">Add Apartment</Link>
+          )}
         </div>
 
         <div className="nav-auth">

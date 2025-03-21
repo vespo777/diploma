@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { addListing } from '../services/listingService';
-import '../styles/LoginRegister.css';
 import '../styles/addListingPage.css';
 
 const AddListingPage = () => {
@@ -29,7 +28,7 @@ const AddListingPage = () => {
     smokingAllowed: false,
     parkingAvailable: false
   });
-  
+
   const [error, setError] = useState('');
   const [previewUrls, setPreviewUrls] = useState([]);
   const { user } = useAuth();
@@ -95,7 +94,7 @@ const AddListingPage = () => {
 
   return (
     <div className="auth-container">
-      <motion.div 
+      <motion.div
         className="auth-box listing-box"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -104,7 +103,6 @@ const AddListingPage = () => {
         <h2>Add an Announcement</h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
-          {/* Basic Information */}
           <div className="form-section">
             <h3>Basic Information</h3>
             <div className="input-group">
