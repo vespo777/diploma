@@ -47,6 +47,10 @@ public class User {
     @JsonManagedReference
     private Contacts contacts;
 
+    // TODO: Tileukhan, pls do team_id
+    // user can be in only 1 team, but 1 team can contain Many users ==> OneToMany
+    private TeamId team_id;
+
     public PersonalInfo getPersonalInfo() {
         return personalInfo;
     }
