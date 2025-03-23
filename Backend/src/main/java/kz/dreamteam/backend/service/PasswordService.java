@@ -26,6 +26,7 @@ public class PasswordService {
     private final PersonalInfoRepository personalInfoRepository;
     private final RoommateSearchRepository roommateSearchRepository;
     private final ContactsRepository contactsRepository;
+    private final TeamRepository teamRepository;
     private final GraphSearchService graphSearchService;
 
 
@@ -37,6 +38,7 @@ public class PasswordService {
                            RoommateSearchRepository roommateSearchRepository,
                            ContactsRepository contactsRepository,
                            GraphSearchService graphSearchService,
+                           TeamRepository teamRepository,
                            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.socialDetailsRepository = socialDetailsRepository;
@@ -46,6 +48,7 @@ public class PasswordService {
         this.roommateSearchRepository = roommateSearchRepository;
         this.contactsRepository = contactsRepository;
         this.passwordEncoder = passwordEncoder;
+        this.teamRepository = teamRepository;
         this.graphSearchService = graphSearchService;
 
     }
@@ -79,6 +82,7 @@ public class PasswordService {
         try {
             Contacts contacts = new Contacts();
             contacts.setUser(user); // Link to the user
+            contacts.setNumberVisible(false);
             contactsRepository.save(contacts); // Save empty entry
         } catch (Exception e) { log.error("Error in createEmptyContacts", e); }
     }
@@ -109,6 +113,19 @@ public class PasswordService {
 
     }
 
+    private void createEmptyTeam(User user) {
+        try {
+            Team team = new Team();
+            team.setName(user.getUserId() + " Team");
+            team.setOwner(user);
+
+            user.setTeam(team);
+
+            teamRepository.save(team);
+        } catch (Exception e) { log.error("Error in createEmptyTeam", e); }
+
+    }
+
     public boolean isEmailAvailable(String email) {
         return !userRepository.existsByEmail(email);
     }
@@ -128,6 +145,7 @@ public class PasswordService {
 
             userRepository.save(user);
 
+            createEmptyTeam(user);
             createEmptyPersonalInfo(user, request.getName(), request.getSurname());
             createEmptySocialDetails(user);
             createEmptyRoommateSearch(user);

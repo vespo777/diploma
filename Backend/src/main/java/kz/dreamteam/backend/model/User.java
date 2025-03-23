@@ -47,6 +47,19 @@ public class User {
     @JsonManagedReference
     private Contacts contacts;
 
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    @JsonIgnore
+    private Team team;
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
     public PersonalInfo getPersonalInfo() {
         return personalInfo;
     }

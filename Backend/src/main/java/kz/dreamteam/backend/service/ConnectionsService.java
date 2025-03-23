@@ -35,7 +35,17 @@ public class ConnectionsService {
         return sentConnections.stream()
                 .map(connection -> userRepository.findById(connection.getReceiverId()).orElse(null))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
+    }
+
+    public List<User> getAllMyConnections(Long userId) {
+        List<Connections> myConnections = connectionsRepository.getAllMyConnections(userId);
+        return myConnections.stream()
+                .map(conn -> conn.getSenderId().equals(userId) ? conn.getReceiverId() : conn.getSenderId())
+                .distinct()
+                .map(userIds -> userRepository.findById(userIds).orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     public boolean isTwoUsersConnected(Long userId1, Long userId2) {

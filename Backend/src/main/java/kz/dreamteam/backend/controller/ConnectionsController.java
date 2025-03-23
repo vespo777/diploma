@@ -30,6 +30,12 @@ public class ConnectionsController {
         return ResponseEntity.ok(sentRequests);
     }
 
+    @GetMapping("/my-connections")
+    public ResponseEntity<List<User>> getAllMyConnections(@RequestParam Long userId) {
+        List<User> myConnections = connectionsService.getAllMyConnections(userId);
+        return ResponseEntity.ok(myConnections);
+    }
+
     @GetMapping("/is-connected")
     public ResponseEntity<Boolean> isTwoUsersConnected(
             @RequestParam Long userId1,

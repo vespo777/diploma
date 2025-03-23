@@ -23,4 +23,7 @@ public interface ConnectionsRepository extends JpaRepository<Connections, Long> 
 
     boolean existsBySenderIdAndReceiverIdAndStatus(Long senderId, Long receiverId, String status);
 
+    @Query("SELECT c FROM Connections c WHERE c.senderId = :userId OR c.receiverId = :userId AND c.status = 'ACCEPTED'")
+    List<Connections> getAllMyConnections(@Param("userId") Long userId);
+
 }
