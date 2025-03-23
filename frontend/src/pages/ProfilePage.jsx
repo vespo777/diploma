@@ -342,7 +342,6 @@ const ProfilePage = () => {
 
   const handleSubmit = async (e) => {
 
-    console.log(userData);
     try {
       const response = await fetch(`${API_URL}/profile/${user.userId}`, {
         method: 'PUT',
@@ -390,22 +389,22 @@ const ProfilePage = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
   if (!userData) return <p>No user data found</p>;
-
+  console.log(userData);
   return (
       <div className="profile-container">
         <h2>Your Profile</h2>
         <form className="profile-content" onSubmit={handleSubmit}>
           <h3>Personal Info</h3>
-          <input type="text" value={userData.personalInfo.name} onChange={(e) => handleChange('name', e.target.value)} />
-          <input type="text" value={userData.personalInfo.surname} onChange={(e) => handleChange('surname', e.target.value)} />
-          <input type="date" value={userData.personalInfo.birthDate ?? ""} onChange={(e) => handleChange('personalInfo', 'birthDate', e.target.value)} />
-          <select value={userData.personalInfo.gender} onChange={(e) => handleChange('personalInfo.gender', e.target.value)}>
+          <input type="text" value={userData.personalInfo.name}     onChange={(e) => handleChange('personalInfo', 'name', e.target.value)}/>
+          <input type="text" value={userData.personalInfo.surname} onChange={(e) => handleChange('personalInfo', 'surname', e.target.value)} />
+          <input type="date" value={userData.personalInfo.birthDate} onChange={(e) => handleChange('personalInfo', 'birthDate', e.target.value)} />
+          <select value={userData.personalInfo.gender} onChange={(e) => handleChange('personalInfo', 'gender', e.target.value)}>
             <option value="M">Male</option>
             <option value="F">Female</option>
             <option value="O">Other</option>
           </select>
 
-          <select value={userData.personalInfo.religion} onChange={(e) => handleChange('personalInfo.religion', e.target.value)}>
+          <select value={userData.personalInfo.religion} onChange={(e) => handleChange('personalInfo', 'religion', e.target.value)}>
             <option value="Islam">Islam</option>
             <option value="Christian">Christian</option>
             <option value="Buddhism">Buddhism</option>
@@ -414,11 +413,11 @@ const ProfilePage = () => {
 
 
           <h3>Social Details</h3>
-          <input type="text" placeholder="School Name" value={userData.socialDetails.schoolName ?? ""} onChange={(e) => handleChange('socialDetails', 'schoolName', e.target.value)} />
+          <input type="text" placeholder="School Name" value={userData.socialDetails.schoolName} onChange={(e) => handleChange('socialDetails', 'schoolName', e.target.value)} />
           <select
               name="socialDetails.universityName"
               value={userData.socialDetails.universityName}
-              onChange={(e) => handleChange('socialDetails.universityName', e.target.value)}
+              onChange={(e) => handleChange('socialDetails', 'universityName', e.target.value)}
               required
           >
             {universities.map((universityName, index) => (
@@ -432,10 +431,10 @@ const ProfilePage = () => {
           <select
               name="socialDetails.profession"
               value={userData.socialDetails.profession}
-              onChange={handleChange}
+              onChange={(e) => handleChange('socialDetails', 'profession', e.target.value)}
               required
           >
-            {professions.map((profession, index) => (
+          {professions.map((profession, index) => (
                 <option key={index} value={profession}>
                   {profession}
                 </option>
@@ -445,7 +444,7 @@ const ProfilePage = () => {
           <input type="number" value={userData.roommateSearch.budgetMin ?? 15000} onChange={(e) => handleChange('roommateSearch', 'budgetMin', Number(e.target.value))} />
           <input type="number" value={userData.roommateSearch.budgetMax ?? 450000} onChange={(e) => handleChange('roommateSearch', 'budgetMax', Number(e.target.value))} />
           <label>Search Status</label>
-          <select value={userData.roommateSearch.searchStatus} onChange={(e) => handleChange('roommateSearch.searchStatus', e.target.value)}>
+          <select value={userData.roommateSearch.searchStatus} onChange={(e) => handleChange('roommateSearch', 'searchStatus', e.target.value)}>
             <option value="1">I am roommate and I don't have an apartment</option>
             <option value="2">I am roommate and I have an apartment</option>
             <option value="3">Not searching</option>
@@ -457,8 +456,7 @@ const ProfilePage = () => {
                 type="checkbox"
                 name="socialDetails.smoking"
                 checked={userData.socialDetails.smoking}
-                onChange={handleChange}
-            />
+                onChange={(e) => handleChange('socialDetails', 'smoking', e.target.value)}            />
           </label>
           <label>
             Drinking
@@ -466,8 +464,7 @@ const ProfilePage = () => {
                 type="checkbox"
                 name="socialDetails.drinking"
                 checked={userData.socialDetails.drinking}
-                onChange={handleChange}
-            />
+                onChange={(e) => handleChange('socialDetails', 'drinking', e.target.value)}            />
           </label>
           <button type="button" className="save-button-interests"  onClick={() => setIsModalOpen(true)}>Select Interests</button>
           <p>Selected Interests: {userData.socialDetails.interests.join(", ")}</p>
@@ -496,16 +493,16 @@ const ProfilePage = () => {
           <input
               type="time"
               value={userData.roommatePreferences.wakeTime}
-              onChange={(e) => handleTimeChange("wakeTime", e.target.value)}
+              onChange={(e) => handleTimeChange('roommatePreferences', "wakeTime", e.target.value)}
           />
           <label>Sleep Time</label>
           <input
               type="time"
               value={userData.roommatePreferences.sleepTime}
-              onChange={(e) => handleTimeChange("sleepTime", e.target.value)}
+              onChange={(e) => handleTimeChange('roommatePreferences', "sleepTime", e.target.value)}
           />
           <label>Pets:</label>
-          <select name="roommate_search.pets" value={userData.roommatePreferences.pets} onChange={handleChange} required>
+          <select name="roommate_search.pets" value={userData.roommatePreferences.pets}     onChange={(e) => handleChange('roommatePreferences', 'pets', e.target.value)} required>
             <option value="dont_have_dont_want">I dont have & dont want</option>
             <option value="dont_have_doesnt_matter">I dont have & doesn't matter</option>
             <option value="have_cat">I have a cat</option>
@@ -535,9 +532,15 @@ const ProfilePage = () => {
           </select>
 
           <h3>Contacts</h3>
-          <input type="text" placeholder="Phone number" value={userData.contacts.callNumber ?? ""} onChange={(e) => handleChange('contacts', 'callNumber', e.target.value)} />
-          <ToggleSwitchNumberVisible />
-          <input type="text" placeholder="Telegram nickname" value={userData.contacts.telegramNickname ?? ""} onChange={(e) => handleChange('contacts', 'telegramNickname', e.target.value)} />
+          <input type="text" placeholder="Phone number" value={userData.contacts.callNumber} onChange={(e) => handleChange('contacts', 'callNumber', e.target.value)} />
+          <label>
+            Is your phone number visible?
+            <input
+                type="checkbox"
+                name="contacts.numberVisible"
+                checked={userData.contacts.numberVisible}
+                onChange={(e) => handleChange('contacts', 'numberVisible', e.target.value)} />
+          </label>          <input type="text" placeholder="Telegram nickname" value={userData.contacts.telegramNickname} onChange={(e) => handleChange('contacts', 'telegramNickname', e.target.value)} />
 
           <button className="save-button" type="submit">Save</button>
         </form>
