@@ -3,20 +3,37 @@
     max-width: 600px;
     margin: 0 auto;
   }
-  
+
+
+.join-button {
+  background: #3b82f6;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 15px;
+  transition: background 0.3s ease;
+}
+
+.join-button:hover {
+  background: #2563eb;
+}
+
   .add-listing-form {
     display: flex;
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .add-listing-form input,
   .add-listing-form textarea {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
   }
-  
+
   .add-listing-form button {
     padding: 10px;
     background-color: #007bff;
@@ -25,65 +42,65 @@
     border-radius: 5px;
     cursor: pointer;
   }
-  
+
   .textarea {
     min-height: 120px;
     resize: vertical;
     font-family: inherit;
     padding-top: 12px;
   }
-  
+
   .input-group textarea + .input-icon {
     top: 20px;
     transform: none;
   }
-  
+
   .auth-box {
     max-width: 500px;
   }
-  
+
   .listing-box {
     max-width: 800px !important;
     width: 90% !important;
   }
-  
+
   .form-section {
     margin-bottom: 2rem;
   }
-  
+
   .form-section h3 {
     color: #2d3748;
     margin-bottom: 1rem;
     font-size: 1.1rem;
   }
-  
+
   .input-row {
     display: flex;
     gap: 1rem;
   }
-  
+
   .input-group.half {
     flex: 1;
   }
-  
+
   .checkbox-group {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
     margin-top: 1rem;
   }
-  
+
   .checkbox-group label {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     cursor: pointer;
   }
-  
+
   .file-input {
     padding: 0.5rem !important;
   }
-  
+
   .photo-preview {
     display: flex;
     gap: 1rem;
@@ -91,26 +108,107 @@
     overflow-x: auto;
     padding: 1rem 0;
   }
-  
+
   .photo-preview img {
     width: 100px;
     height: 100px;
     object-fit: cover;
     border-radius: 8px;
   }
-  
+
   .textarea {
     min-height: 100px;
     resize: vertical;
   }
-  
+
+.team-header {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #60a5fa;
+}
+
+.team-subheader {
+  font-size: 18px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #7739b6;
+  text-align: left;
+}
+
+.team-members,
+.all-teams {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.team-member,
+.all-teams li {
+  background: #eeeeee;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+
+
+.no-members {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.invite-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.invite-input {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: #334155;
+  color: white;
+}
+
+.invite-button {
+  background: #3b82f6;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+
+.all-teams li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+}
+
+.all-teams a {
+  color: #b87a08;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.all-teams a:hover {
+  text-decoration: underline;
+}
+
   @media (max-width: 768px) {
     .input-row {
       flex-direction: column;
     }
-    
+
     .checkbox-group {
       grid-template-columns: 1fr;
     }
   }
-  

@@ -18,7 +18,7 @@ const RoommatesPage = () => {
   const [priceRange, setPriceRange] = useState({ min: '0', max: '1000000' });
   const [hasMore, setHasMore] = useState(true);
   const [cityFilter, setCityFilter] = useState('');
-  const [ageRange, setAgeRange] = useState({ min: '18', max: '99' });
+  const [ageRange, setAgeRange] = useState({ min: '0', max: '100' });
   const [genderFilter, setGenderFilter] = useState('');
   const [professionFilter, setProfessionFilter] = useState('');
   const [smokingFilter, setSmokingFilter] = useState(null);

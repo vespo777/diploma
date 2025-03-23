@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import ToggleSwitchNumberVisible from '../components/buttons/Switch'
 import "../styles/ProfilePage.css"
 
 const API_URL = 'http://localhost:8080';
@@ -540,7 +539,8 @@ const ProfilePage = () => {
                 name="contacts.numberVisible"
                 checked={userData.contacts.numberVisible}
                 onChange={(e) => handleChange('contacts', 'numberVisible', e.target.value)} />
-          </label>          <input type="text" placeholder="Telegram nickname" value={userData.contacts.telegramNickname} onChange={(e) => handleChange('contacts', 'telegramNickname', e.target.value)} />
+          </label>
+          <input type="text" placeholder="Telegram nickname" value={userData.contacts.telegramNickname} onChange={(e) => handleChange('contacts', 'telegramNickname', e.target.value)} />
 
           <button className="save-button" type="submit">Save</button>
         </form>
