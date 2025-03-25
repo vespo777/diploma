@@ -1,37 +1,35 @@
 package kz.dreamteam.backend.service;
 
 import jakarta.transaction.Transactional;
-import kz.dreamteam.backend.model.Connections;
+import kz.dreamteam.backend.model.Connection;
 import kz.dreamteam.backend.model.User;
-import kz.dreamteam.backend.model.dto.UpdateSocialDetailsDto;
-import kz.dreamteam.backend.repository.ConnectionsRepository;
+import kz.dreamteam.backend.repository.ConnectionRepository;
 import kz.dreamteam.backend.repository.UserRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
-public class ConnectionsService {
+public class ConnectionService {
 
-    private final ConnectionsRepository connectionsRepository;
+    private final ConnectionRepository connectionRepository;
     private final UserRepository userRepository;
 
-    public ConnectionsService(ConnectionsRepository connectionsRepository,
+    public ConnectionService(ConnectionRepository connectionsRepository,
                               UserRepository userRepository) {
-        this.connectionsRepository = connectionsRepository;
+        this.connectionRepository = connectionsRepository;
         this.userRepository = userRepository;
     }
 
     public List<User> getAllReceivedConnectionRequests(Long userId) {
-        List<Long> senderIds = connectionsRepository.findSenderIdsByReceiverId(userId);
+        List<Long> senderIds = connectionRepository.findSenderIdsByReceiverId(userId);
         return userRepository.findAllById(senderIds);
     }
 
     public List<User> getAllSentConnectionRequests(Long userId) {
-        List<Connections> sentConnections = connectionsRepository.findBySenderId(userId);
+        List<Connection> sentConnections = connectionRepository.findBySenderId(userId);
         return sentConnections.stream()
                 .map(connection -> userRepository.findById(connection.getReceiverId()).orElse(null))
                 .filter(Objects::nonNull)
@@ -39,7 +37,7 @@ public class ConnectionsService {
     }
 
     public List<User> getAllMyConnections(Long userId) {
-        List<Connections> myConnections = connectionsRepository.getAllMyConnections(userId);
+        List<Connection> myConnections = connectionRepository.getAllMyConnections(userId);
         return myConnections.stream()
                 .map(conn -> conn.getSenderId().equals(userId) ? conn.getReceiverId() : conn.getSenderId())
                 .distinct()
@@ -48,9 +46,13 @@ public class ConnectionsService {
                 .toList();
     }
 
-    public boolean isTwoUsersConnected(Long userId1, Long userId2) {
-        return connectionsRepository.existsBySenderIdAndReceiverIdAndStatus(userId1, userId2, "ACCEPTED") ||
-                connectionsRepository.existsBySenderIdAndReceiverIdAndStatus(userId2, userId1, "ACCEPTED");
+    public String isTwoUsersConnected(Long userId1, Long userId2) {
+        Optional<Connection> connection = connectionRepository
+                .findFirstBySenderIdAndReceiverId(userId1, userId2)
+                .or(() -> connectionRepository.findFirstBySenderIdAndReceiverId(userId2, userId1));
+
+        return connection.map(conn -> "Connection exists with status: " + conn.getStatus())
+                .orElse("No connection found.");
     }
 
     @Transactional
@@ -59,21 +61,21 @@ public class ConnectionsService {
             throw new RuntimeException("Sender or receiver not found.");
         }
 
-        if (connectionsRepository.existsBySenderIdAndReceiverId(senderId, receiverId)) {
+        if (connectionRepository.existsBySenderIdAndReceiverId(senderId, receiverId)) {
             throw new RuntimeException("Connection request already exists.");
         }
 
-        Connections connection = new Connections();
+        Connection connection = new Connection();
         connection.setSenderId(senderId);
         connection.setReceiverId(receiverId);
         connection.setStatus("PENDING");
 
-        connectionsRepository.save(connection);
+        connectionRepository.save(connection);
     }
 
     @Transactional
     public void answerConnectionRequest(Long senderId, Long receiverId, Boolean answer) {
-        Connections connection = connectionsRepository
+        Connection connection = (Connection) connectionRepository
                 .findBySenderIdAndReceiverId(senderId, receiverId)
                 .orElseThrow(() -> new RuntimeException("Connection request not found."));
 
@@ -82,7 +84,7 @@ public class ConnectionsService {
         }
 
         connection.setStatus(answer ? "ACCEPTED" : "DECLINED");
-        connectionsRepository.save(connection);
+        connectionRepository.save(connection);
     }
 
 

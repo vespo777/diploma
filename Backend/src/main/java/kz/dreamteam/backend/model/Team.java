@@ -15,17 +15,20 @@ public class Team {
     private Long id;
 
     @OneToOne
-    @MapsId
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonManagedReference
+    @JoinColumn(name = "user_id")
+//    @JsonManagedReference
     private User owner;
 
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "team")
+//    @JsonManagedReference
     private Set<User> members = new HashSet<>();
 
     private String name;
 
+    public void addMember(User user) {
+        members.add(user);
+        user.setTeam(this); // Ensure bidirectional mapping
+    }
     public Long getId() {
         return id;
     }

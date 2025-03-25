@@ -1,9 +1,9 @@
 package kz.dreamteam.backend.controller;
 
 
-import kz.dreamteam.backend.model.Connections;
+import kz.dreamteam.backend.model.Connection;
 import kz.dreamteam.backend.model.User;
-import kz.dreamteam.backend.service.ConnectionsService;
+import kz.dreamteam.backend.service.ConnectionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,34 +13,34 @@ import java.util.List;
 @RequestMapping("/connections")
 public class ConnectionsController {
 
-    private final ConnectionsService connectionsService;
+    private final ConnectionService connectionService;
 
-    public ConnectionsController(ConnectionsService connectionsService) {
-        this.connectionsService = connectionsService;
+    public ConnectionsController(ConnectionService connectionService) {
+        this.connectionService = connectionService;
     }
 
     @GetMapping("/received")
     public ResponseEntity<List<User>> getAllReceivedConnectionRequests(@RequestParam Long userId) {
-        return ResponseEntity.ok(this.connectionsService.getAllReceivedConnectionRequests(userId));
+        return ResponseEntity.ok(this.connectionService.getAllReceivedConnectionRequests(userId));
     }
 
     @GetMapping("/sent")
     public ResponseEntity<List<User>> getAllSentConnectionRequests(@RequestParam Long userId) {
-        List<User> sentRequests = connectionsService.getAllSentConnectionRequests(userId);
+        List<User> sentRequests = connectionService.getAllSentConnectionRequests(userId);
         return ResponseEntity.ok(sentRequests);
     }
 
     @GetMapping("/my-connections")
     public ResponseEntity<List<User>> getAllMyConnections(@RequestParam Long userId) {
-        List<User> myConnections = connectionsService.getAllMyConnections(userId);
+        List<User> myConnections = connectionService.getAllMyConnections(userId);
         return ResponseEntity.ok(myConnections);
     }
 
     @GetMapping("/is-connected")
-    public ResponseEntity<Boolean> isTwoUsersConnected(
+    public ResponseEntity<String> isTwoUsersConnected(
             @RequestParam Long userId1,
             @RequestParam Long userId2) {
-        boolean isConnected = connectionsService.isTwoUsersConnected(userId1, userId2);
+        String isConnected = connectionService.isTwoUsersConnected(userId1, userId2);
         return ResponseEntity.ok(isConnected);
     }
 
@@ -49,7 +49,7 @@ public class ConnectionsController {
             @RequestParam Long senderId,
             @RequestParam Long receiverId) {
 
-        connectionsService.sendConnectionRequest(senderId, receiverId);
+        connectionService.sendConnectionRequest(senderId, receiverId);
         return ResponseEntity.ok("Connection request sent successfully.");
     }
 
@@ -59,7 +59,7 @@ public class ConnectionsController {
             @RequestParam Long receiverId,
             @RequestParam Boolean answer) {
 
-        connectionsService.answerConnectionRequest(senderId, receiverId, answer);
+        connectionService.answerConnectionRequest(senderId, receiverId, answer);
         return ResponseEntity.ok("Connection request " + (answer ? "accepted" : "declined") + " successfully.");
     }
 }

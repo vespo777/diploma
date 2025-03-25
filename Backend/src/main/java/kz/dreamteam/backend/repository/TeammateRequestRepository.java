@@ -19,6 +19,9 @@ public interface TeammateRequestRepository extends JpaRepository<TeammateRequest
     boolean existsBySenderIdAndStatus(Long senderId, RequestStatus status);
     boolean existsByReceiverIdAndStatus(Long receiverId, RequestStatus status);
 
+    void deleteBySenderIdAndReceiverId(Long senderId, Long receiverId);
+
+
     @Modifying
     @Transactional
     @Query("UPDATE TeammateRequest tr SET tr.status = :status, tr.finishedAt = :finishedAt " +
@@ -28,6 +31,16 @@ public interface TeammateRequestRepository extends JpaRepository<TeammateRequest
                               @Param("ownerId") Long ownerId,
                               @Param("status") RequestStatus status,
                               @Param("finishedAt") LocalDateTime finishedAt);
+
+    @Modifying
+    @Query("DELETE FROM TeammateRequest t WHERE t.receiverId = :receiverId AND t.status = :status")
+    void deletePendingRequestsByReceiverId(@Param("receiverId") Long receiverId, @Param("status") RequestStatus status);
+
+    @Modifying
+    @Query("DELETE FROM TeammateRequest t WHERE t.receiverId = :receiverId AND t.senderId = :senderId AND t.status = :status")
+    void deleteRejectedRequestsByReceiverIdandSenderId(@Param("receiverId") Long receiverId,
+                                                       @Param("senderId") Long senderid,
+                                                       @Param("status") RequestStatus status);
 
 
 }

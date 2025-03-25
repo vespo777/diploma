@@ -3,7 +3,7 @@ package kz.dreamteam.backend.model;
 import jakarta.persistence.*;
 
 @Entity
-public class Connections {
+public class Connection {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

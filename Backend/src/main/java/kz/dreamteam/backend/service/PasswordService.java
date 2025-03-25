@@ -50,7 +50,6 @@ public class PasswordService {
         this.passwordEncoder = passwordEncoder;
         this.teamRepository = teamRepository;
         this.graphSearchService = graphSearchService;
-
     }
 
     public String encodePassword(String password) {
@@ -66,6 +65,9 @@ public class PasswordService {
             personalInfo.setSurname(surname);
             personalInfo.setUser(user); // Link to the user
             personalInfoRepository.save(personalInfo); // Save empty entry
+
+            // Обновляем user, чтобы Hibernate подтянул personalInfo
+            user.setPersonalInfo(personalInfo);
         } catch (Exception e) { log.error("Error in createEmptyPersonalInfo", e); }
     }
 
@@ -118,6 +120,7 @@ public class PasswordService {
             Team team = new Team();
             team.setName(user.getUserId() + " Team");
             team.setOwner(user);
+            team.setName("Team_" + user.getPersonalInfo().getName());
 
             user.setTeam(team);
 
@@ -143,15 +146,16 @@ public class PasswordService {
             user.setPasswordHash(encodePassword(request.getRawPassword()));
             user.setProfilePhotoPath("default");
 
-            userRepository.save(user);
 
-            createEmptyTeam(user);
             createEmptyPersonalInfo(user, request.getName(), request.getSurname());
+            createEmptyTeam(user);
             createEmptySocialDetails(user);
             createEmptyRoommateSearch(user);
             createEmptyRoommatePreferences(user);
             createEmptyLocationDetails(user);
             createEmptyContacts(user);
+            userRepository.save(user);
+
 
 
             return ResponseEntity.status(HttpStatus.CREATED).body(user);

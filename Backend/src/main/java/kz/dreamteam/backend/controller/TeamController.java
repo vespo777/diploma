@@ -32,8 +32,8 @@ public class TeamController {
         return ResponseEntity.ok(teamService.getTeam(teamId));
     }
 
-    @PostMapping("/send-request-to-join-team")
-    public ResponseEntity<String> sendRequestToJoinTeam(@RequestParam Long senderId, @RequestParam Long receiverId) {
+    @PostMapping("/send-join-request")
+    public ResponseEntity<String> sendJoinRequest(@RequestParam Long senderId, @RequestParam Long receiverId) {
         return ResponseEntity.ok(this.teamService.sendJoinRequest(senderId, receiverId));
     }
 
@@ -43,19 +43,35 @@ public class TeamController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/answer-to-invite")
-    public ResponseEntity<String> answerToInvite(
-            @RequestParam Long userId,
-            @RequestParam Long teamId,
+    @PostMapping("/answer-to-request")
+    public ResponseEntity<String> answerToRequest(
+            @RequestParam Long senderId,
+            @RequestParam Long receiverId,
             @RequestParam String status) {
 
-        String result = teamService.answerToInvite(userId, teamId, status);
+        String result = teamService.answerToRequest(senderId, receiverId, status);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/answer-to-invite")
+    public ResponseEntity<String> answerToInvite(
+            @RequestParam Long senderId,
+            @RequestParam Long receiverId,
+            @RequestParam String status) {
+
+        String result = teamService.answerToInvite(senderId, receiverId, status);
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/check-is-user-already-in-team")
     public ResponseEntity<Boolean> checkIsUserAlreadyInTeam(@RequestParam Long userId) {
-        return ResponseEntity.ok(teamService.checkIsUserAlreadyInTeam(userId));
+        return ResponseEntity.ok(teamService.isUserInTeam(userId));
+    }
+
+    @PostMapping("/send-invite")
+    public ResponseEntity<String> sendInvite(@RequestParam Long senderId, @RequestParam Long receiverId) {
+        String result = teamService.sendInvite(senderId, receiverId);
+        return ResponseEntity.ok(result);
     }
 
 }

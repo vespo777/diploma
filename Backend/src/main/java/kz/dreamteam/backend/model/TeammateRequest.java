@@ -39,7 +39,6 @@ public class TeammateRequest {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
-        this.status = RequestStatus.PENDING;
     }
 
 
