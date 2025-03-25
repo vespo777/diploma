@@ -15,7 +15,7 @@ public class LocationDetails {
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnore
+//    @JsonIgnore
     private User user;
 
     @Column

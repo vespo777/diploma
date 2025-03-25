@@ -26,6 +26,7 @@ public class PasswordService {
     private final PersonalInfoRepository personalInfoRepository;
     private final RoommateSearchRepository roommateSearchRepository;
     private final ContactsRepository contactsRepository;
+    private final TeamRepository teamRepository;
     private final GraphSearchService graphSearchService;
 
 
@@ -37,6 +38,7 @@ public class PasswordService {
                            RoommateSearchRepository roommateSearchRepository,
                            ContactsRepository contactsRepository,
                            GraphSearchService graphSearchService,
+                           TeamRepository teamRepository,
                            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.socialDetailsRepository = socialDetailsRepository;
@@ -46,8 +48,8 @@ public class PasswordService {
         this.roommateSearchRepository = roommateSearchRepository;
         this.contactsRepository = contactsRepository;
         this.passwordEncoder = passwordEncoder;
+        this.teamRepository = teamRepository;
         this.graphSearchService = graphSearchService;
-
     }
 
     public String encodePassword(String password) {
@@ -63,6 +65,9 @@ public class PasswordService {
             personalInfo.setSurname(surname);
             personalInfo.setUser(user); // Link to the user
             personalInfoRepository.save(personalInfo); // Save empty entry
+
+            // Обновляем user, чтобы Hibernate подтянул personalInfo
+            user.setPersonalInfo(personalInfo);
         } catch (Exception e) { log.error("Error in createEmptyPersonalInfo", e); }
     }
 
@@ -79,6 +84,7 @@ public class PasswordService {
         try {
             Contacts contacts = new Contacts();
             contacts.setUser(user); // Link to the user
+            contacts.setNumberVisible(false);
             contactsRepository.save(contacts); // Save empty entry
         } catch (Exception e) { log.error("Error in createEmptyContacts", e); }
     }
@@ -109,6 +115,20 @@ public class PasswordService {
 
     }
 
+    private void createEmptyTeam(User user) {
+        try {
+            Team team = new Team();
+            team.setName(user.getUserId() + " Team");
+            team.setOwner(user);
+            team.setName("Team_" + user.getPersonalInfo().getName());
+
+            user.setTeam(team);
+
+            teamRepository.save(team);
+        } catch (Exception e) { log.error("Error in createEmptyTeam", e); }
+
+    }
+
     public boolean isEmailAvailable(String email) {
         return !userRepository.existsByEmail(email);
     }
@@ -126,14 +146,16 @@ public class PasswordService {
             user.setPasswordHash(encodePassword(request.getRawPassword()));
             user.setProfilePhotoPath("default");
 
-            userRepository.save(user);
 
             createEmptyPersonalInfo(user, request.getName(), request.getSurname());
+            createEmptyTeam(user);
             createEmptySocialDetails(user);
             createEmptyRoommateSearch(user);
             createEmptyRoommatePreferences(user);
             createEmptyLocationDetails(user);
             createEmptyContacts(user);
+            userRepository.save(user);
+
 
 
             return ResponseEntity.status(HttpStatus.CREATED).body(user);

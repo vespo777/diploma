@@ -5,19 +5,22 @@
   gap: 20px;
 }
 
+.users-container {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+}
+
 .filter-sidebar {
-  width: 300px;
   background: white;
-  padding: 20px;
+  padding: 30px;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   height: fit-content;
   position: sticky;
-  top: 20px;
-}
-
-.filter-section {
-  margin-bottom: 20px;
+  top: 62px;
 }
 
 .filter-section h3 {
@@ -59,7 +62,7 @@
 
 .search-bar {
   width: 100%;
-  padding: 20px;
+  padding: 10px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -67,30 +70,29 @@
 
 .search-bar input {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #e2e8f0;
+  padding: 5px;
   border-radius: 6px;
   font-size: 1rem;
+  border: none;
+  border-bottom: 1px solid #e2e8f0;
 }
-
-.roommates-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(500px, auto));
-  gap: 30px;
+.search-bar input:focus {
+  outline: none;
 }
 
 .roommate-card {
-  background: white;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
-  gap: 15px;
+  margin: 20px;
   transition: transform 0.2s;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .roommate-card:hover {
-  transform: translateY(-2px);
+  background: #efeff0;
+  transition: background-color 0.3s;
 }
 
 .roommate-avatar {
@@ -108,6 +110,7 @@
 
 .roommate-info {
   flex: 1;
+  padding-left: 15px;
 }
 
 .roommate-info h3 {
@@ -130,6 +133,37 @@
   color: #4a5568;
 }
 
+.load-more-btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #2d3748;
+  color: white;
+  cursor: pointer;
+  margin: 20px 0;
+  transition: background 0.3s;
+}
+
+.load-more-btn:hover {
+  background-color: #1a202c;
+}
+
+.reset-btn {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.reset-btn:hover {
+  background-color: #cc0000;
+}
+
 @media (max-width: 767px) {
   .roommates-page {
     flex-direction: column;
@@ -143,3 +177,5 @@
     width: 100%;
   }
 }
+
+

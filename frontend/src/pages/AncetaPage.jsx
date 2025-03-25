@@ -22,13 +22,13 @@ const universities = [
 ];
 
 const regions = [
-    "Астана city",
-    "Алматы city",
-    "Шымкент city",
-    "Алматы region",
-    "Актобе region",
-    "Атырау region",
-    "Ақмола region",
+    "Astana city",
+    "Almaty city",
+    "Shymkent city",
+    "Almaty region",
+    "Aktobe region",
+    "Atyrau region",
+    "Akmola region",
     "West Kazakhstan region",
     "East Kazakhstan region",
     "Zhambyl region",
@@ -572,6 +572,7 @@ const AncetaPage = () => {
                                 value={formData.social_details.company}
                                 placeholder="type company name where you working . . ."
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                         <div>
@@ -657,7 +658,7 @@ const AncetaPage = () => {
                         </div>
                         <div>
                             <label>Pets:</label>
-                            <select name="roommate_search.pets" value={formData.roommate_search.pets} onChange={handleChange} required>
+                            <select name="roommate_preferences.pets" value={formData.roommate_preferences.pets} onChange={handleChange}>
                                 <option value="dont_have_dont_want">I dont have & dont want</option>
                                 <option value="dont_have_doesnt_matter">I dont have & doesn't matter</option>
                                 <option value="have_cat">I have a cat</option>

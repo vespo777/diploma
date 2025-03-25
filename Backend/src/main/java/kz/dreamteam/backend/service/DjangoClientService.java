@@ -28,7 +28,7 @@ public class DjangoClientService {
 
     public DjangoClientService(RoommateSearchRepository roommateSearchRepository, JwtService jwtService) {
         this.webClient = WebClient.builder()
-                .baseUrl("http://127.0.0.1:8000") // Замените на ваш URL Django API
+                .baseUrl("http://127.0.0.1:8000")
                 .defaultHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .build();
         this.roommateSearchRepository = roommateSearchRepository;

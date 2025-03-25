@@ -17,7 +17,7 @@ public class PersonalInfo {
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnore
+//    @JsonIgnore
     private User user;
 
     @Column(length = 50)
