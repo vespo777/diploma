@@ -2,9 +2,11 @@ package kz.dreamteam.backend.model;
 
 
 import jakarta.persistence.*;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 @Entity
 @Table(name = "apartments")
+@Document(indexName = "apartments")
 public class Apartment {
 
     @Id

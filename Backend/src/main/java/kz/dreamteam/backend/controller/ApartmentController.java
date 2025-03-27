@@ -16,6 +16,17 @@ public class ApartmentController {
     @Autowired
     private ApartmentService apartmentService;
 
+    @GetMapping("/search")
+    public List<Apartment> searchApartments(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) Integer minRooms,
+            @RequestParam(required = false) Integer maxRooms,
+            @RequestParam(required = false) Integer minSize,
+            @RequestParam(required = false) Integer maxSize) {
+
+        return apartmentService.searchApartments(query, minRooms, maxRooms, minSize, maxSize);
+    }
+
     // Create a new apartment
     @PostMapping
     public ResponseEntity<Apartment> createApartment(@RequestBody Apartment apartment) {
