@@ -66,8 +66,13 @@ public class UserController {
     }
 
     @GetMapping("/recommended-users")
-    public ResponseEntity<List<UserRecommendationDTO>> getRecommendedUsers(@RequestParam int userId) {
+    public ResponseEntity<List<User>> getRecommendedUsers(@RequestParam int userId) {
         return graphSearchService.getUserRecommendations(userId);
+    }
+
+    @GetMapping("/recommended-users-dto")
+    public ResponseEntity<List<UserRecommendationDTO>> getRecommendedUsersDTO(@RequestParam int userId) {
+        return graphSearchService.getUserRecommendationsDTO(userId);
     }
 
     @GetMapping("/recommended-teams")
@@ -93,8 +98,6 @@ public class UserController {
         String token = authorizationHeader.startsWith("Bearer ")
                 ? authorizationHeader.substring(7)
                 : authorizationHeader;
-
-
 
         return djangoClientService.saveUserClassteredGroup(req.getAnswers(), token);
     }

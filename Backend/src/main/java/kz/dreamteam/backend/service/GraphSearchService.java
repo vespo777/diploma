@@ -192,7 +192,31 @@ public class GraphSearchService {
         }
     }
 
-    public ResponseEntity<List<UserRecommendationDTO>> getUserRecommendations(int userIdP) {
+    public ResponseEntity<List<User>> getUserRecommendations(int userIdP) {
+        List<Pair<Double, Integer>> res = graph.getOrDefault(userIdP, new ArrayList<>());
+
+        res.sort((a, b) -> Double.compare(b.getKey(), a.getKey()));
+
+        List<User> recommendedUsers = res.stream()
+                .peek(it -> log.info("Searching for user with ID: {}", it.getValue()))
+                .map(it -> {
+                    Long userId = Long.valueOf(it.getValue());
+                    Optional<User> userOpt = userRepository.findById(userId);
+                    if (userOpt.isEmpty()) {
+                        log.warn("User with ID {} not found!", userId);
+                    }
+                    return userOpt;
+                })
+                .flatMap(Optional::stream)
+                .toList();
+
+        if (recommendedUsers.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        }
+
+        return ResponseEntity.ok(recommendedUsers);
+    }
+    public ResponseEntity<List<UserRecommendationDTO>> getUserRecommendationsDTO(int userIdP) {
         List<Pair<Double, Integer>> res = graph.getOrDefault(userIdP, new ArrayList<>());
 
         res.sort((a, b) -> Double.compare(b.getKey(), a.getKey()));
@@ -258,8 +282,6 @@ public class GraphSearchService {
     }
 
 
-
-
     public void uploadToDB() {
     }
 
@@ -269,6 +291,11 @@ public class GraphSearchService {
         log.info("Found {} users in database", users.size());
 
         for (User user : users) {
+            // Проверяем, если user уже есть в graph, то пропускаем его
+            if (graph.containsKey(Math.toIntExact(user.getUserId()))) {
+                continue; // Пропускаем текущего пользователя, если его ID уже есть в graph
+            }
+
             int userId = user.getUserId().intValue();
             UserNode newUserNode = new UserNode();
 

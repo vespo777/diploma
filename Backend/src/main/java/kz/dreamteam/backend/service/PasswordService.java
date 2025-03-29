@@ -156,7 +156,7 @@ public class PasswordService {
             createEmptyContacts(user);
             userRepository.save(user);
 
-
+            graphSearchService.downloadFromDB();
 
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
         } catch (Exception e) {
@@ -164,7 +164,5 @@ public class PasswordService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new User());
         }
     }
-
-
 
 }
