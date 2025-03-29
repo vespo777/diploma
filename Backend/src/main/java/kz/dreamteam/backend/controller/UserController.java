@@ -2,8 +2,10 @@ package kz.dreamteam.backend.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import kz.dreamteam.backend.model.Team;
 import kz.dreamteam.backend.model.User;
 import kz.dreamteam.backend.model.dto.UpdateUserProfileRequest;
+import kz.dreamteam.backend.model.dto.UserRecommendationDTO;
 import kz.dreamteam.backend.service.DjangoClientService;
 import kz.dreamteam.backend.service.GraphSearchService;
 import kz.dreamteam.backend.service.JwtService;
@@ -64,8 +66,13 @@ public class UserController {
     }
 
     @GetMapping("/recommended-users")
-    public ResponseEntity<List<User>> getRecommendedUsers(@RequestParam int userId) {
+    public ResponseEntity<List<UserRecommendationDTO>> getRecommendedUsers(@RequestParam int userId) {
         return graphSearchService.getUserRecommendations(userId);
+    }
+
+    @GetMapping("/recommended-teams")
+    public ResponseEntity<List<Team>> getRecommendedTeams(@RequestParam int userId) {
+        return graphSearchService.getTeamRecommendations(userId);
     }
 
 
