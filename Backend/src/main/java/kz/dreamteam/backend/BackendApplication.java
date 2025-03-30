@@ -7,8 +7,8 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = "kz.dreamteam.backend.repository")
-@EnableElasticsearchRepositories(basePackages = "kz.dreamteam.backend.repository.elasticsearch")
+//@EnableJpaRepositories(basePackages = "kz.dreamteam.backend.repository")
+//@EnableElasticsearchRepositories(basePackages = "kz.dreamteam.backend.repository.elasticsearch")
 @EnableCaching
 public class BackendApplication {
 

@@ -7,7 +7,7 @@ import com.vladmihalcea.spring.repository.HibernateRepositoryImpl;
 import kz.dreamteam.backend.model.Apartment;
 import kz.dreamteam.backend.model.User;
 import kz.dreamteam.backend.model.dto.ApartmentDTO;
-import kz.dreamteam.backend.repository.elasticsearch.ApartmentElasticsearchRepository;
+//import kz.dreamteam.backend.repository.elasticsearch.ApartmentElasticsearchRepository;
 import kz.dreamteam.backend.repository.ApartmentsRepository;
 import kz.dreamteam.backend.repository.UserRepository;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -35,17 +35,17 @@ public class ApartmentService {
 
     private final UserRepository userRepository;
 
-    private final ApartmentElasticsearchRepository apartmentElasticsearchRepository;
+//    private final ApartmentElasticsearchRepository apartmentElasticsearchRepository;
 
     public ApartmentService(ApartmentsRepository apartmentsRepository,
                             ElasticsearchOperations elasticsearchOperations,
                             ElasticsearchClient elasticsearchClient,
-                            ApartmentElasticsearchRepository apartmentElasticsearchRepository,
+//                            ApartmentElasticsearchRepository apartmentElasticsearchRepository,
                             UserRepository userRepository) {
         this.apartmentsRepository = apartmentsRepository;
         this.elasticsearchOperations = elasticsearchOperations;
         this.elasticsearchClient = elasticsearchClient;
-        this.apartmentElasticsearchRepository = apartmentElasticsearchRepository;
+//        this.apartmentElasticsearchRepository = apartmentElasticsearchRepository;
         this.userRepository = userRepository;
     }
 
@@ -97,7 +97,7 @@ public class ApartmentService {
         Apartment savedApartment = apartmentsRepository.save(apartment);
 
         // Сохраняем в Elasticsearch
-        apartmentElasticsearchRepository.save(savedApartment);
+//        apartmentElasticsearchRepository.save(savedApartment);
 
         return savedApartment;
     }
@@ -128,7 +128,7 @@ public class ApartmentService {
                     apartmentsRepository.save(apartment);
 
                     // Обновляем запись в Elasticsearch
-                    apartmentElasticsearchRepository.save(apartment); // Используйте репозиторий для Elasticsearch
+//                    apartmentElasticsearchRepository.save(apartment); // Используйте репозиторий для Elasticsearch
 
                     return apartment;
                 })
@@ -141,7 +141,7 @@ public class ApartmentService {
         apartmentsRepository.deleteById(id);
 
         // Удаляем из Elasticsearch
-        apartmentElasticsearchRepository.deleteById(id.toString());
+//        apartmentElasticsearchRepository.deleteById(id.toString());
     }
 
     public void createIndexIfNotExists(String indexName) {
