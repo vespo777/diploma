@@ -10,9 +10,15 @@ const TeamDetail = () => {
     const { id} = useParams(); // Получаем idиз URL
     const navigate = useNavigate();
     const userStr = localStorage.getItem("user");
-    const user = userStr ? JSON.parse(userStr) : null;
-    const [status, setStatus] = useState(null);
+    const [user, setUser] = useState(() => {
+        const userStr = localStorage.getItem("user");
+        return userStr ? JSON.parse(userStr) : null;
+    });    const [status, setStatus] = useState(null);
+    const [connections, setConnections] = useState([]);
+    const [showConnections, setShowConnections] = useState(false);
+    const [isUserInTeam, setIsUserInTeam] = useState(false);
 
+    const [InTeamStatus, setInTeamStatus] = useState(false);
     const [team, setTeam] = useState(null);
     const [members, setMembers] = useState([]);
 
@@ -33,6 +39,40 @@ const TeamDetail = () => {
             console.error("Ошибка загрузки участников:", error);
         }
     }, []);
+
+    const checkIfUserInTeam = useCallback(async () => {
+        if (!user?.userId) return;
+
+        try {
+            const response = await fetch(`${API_URL}/teams/check-is-user-already-in-team?userId=${user.userId}`, {
+                headers: { Authorization: localStorage.getItem("token") },
+            });
+
+            if (!response.ok) throw new Error("Ошибка проверки статуса пользователя");
+
+            const isInTeam = await response.json(); // Предполагаем, что бэкенд возвращает `true` или `false`
+            setIsUserInTeam(isInTeam);
+        } catch (error) {
+            console.error("Ошибка проверки пользователя в команде:", error);
+        }
+    }, [user?.userId]);
+
+
+    const fetchConnections = useCallback(async () => {
+        if (!user?.userId) return;
+        try {
+            const response = await fetch(`${API_URL}/connections/my-connections?userId=${user?.userId}`, {
+                headers: { Authorization: localStorage.getItem("token") },
+            });
+            if (!response.ok) throw new Error("Ошибка загрузки коннекшнов");
+
+            const data = await response.json();
+            setConnections(data);
+        } catch (error) {
+            console.error("Ошибка при загрузке коннекшнов:", error);
+        }
+    }, [user?.userId]);
+
 
     const fetchTeamDetails = useCallback(async () => {
         if (!id || hasFetched.current) return;
@@ -87,10 +127,31 @@ const TeamDetail = () => {
             navigate("/login");
         } else {
             fetchTeamDetails();
+            fetchConnections();
+            checkIfUserInTeam();
+
         }
-    }, [fetchTeamDetails, user, navigate]);
+    }, [user?.userId]);
 
 
+    const handleInvite = async (receiverId) => {
+        if (!user) return alert("Вы не авторизованы!");
+
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) throw new Error("Ошибка: нет токена");
+
+            const response = await fetch(`${API_URL}/teams/send-invite?senderId=${user.userId}&receiverId=${receiverId}`, {
+                method: "POST",
+                headers: { Authorization: token },
+            });
+
+            if (!response.ok) throw new Error("Ошибка при отправке инвайта");
+            alert("Приглашение успешно отправлено!");
+        } catch (error) {
+            console.error("Ошибка:", error);
+        }
+    };
 
     return (
         <div className="auth-container">
@@ -126,7 +187,26 @@ const TeamDetail = () => {
                             ) : (
                                 <p className="no-members">Пока нет участников</p>
                             )}
+                            <li className="team-member">
+                                <button onClick={() => setShowConnections(!showConnections)} className="invite-button">Invite</button>{showConnections && (
+                                <div className="dropdown">
+                                    {connections.length > 0 ? (
+                                        connections.map((conn) => (
+                                            <>
+                                            <Link key={conn.userId} to={`/profile/${conn.userId}`} className="dropdown-item">
+                                                {conn.personalInfo.name} {conn.personalInfo.surname}
+                                            </Link>
+                                            <button onClick={() => handleInvite(conn.userId)}>+</button>
+                                            </>
+                                        ))
+                                    ) : (
+                                        <p className="dropdown-item">No connections found</p>
+                                    )}
+                                </div>
+                            )}
+                            </li>
                         </ul>
+
                         {!members.some(member => member.userId === user?.userId) && (
                             status === "PENDING" ? (
                                 <button className="bg-yellow-400 text-white px-4 py-2 rounded" disabled>

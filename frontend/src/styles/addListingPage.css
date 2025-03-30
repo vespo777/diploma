@@ -4,234 +4,265 @@
     margin: 0 auto;
   }
 
-  .link-owner{
-    text-decoration: none;
-    cursor: pointer;
-    color: black;
-    padding: 7px;
-    border-radius: 7px;
-  }
-  .link-owner:hover{
-    background-color: #eee;
-    transition: background-color 0.5s ease;
-  }
-  .team-details {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    border-bottom: 1px solid gray;
-  }
+.link-owner{
+  text-decoration: none;
+  cursor: pointer;
+  color: black;
+  padding: 7px;
+  border-radius: 7px;
+}
+.link-owner:hover{
+  background-color: #eee;
+  transition: background-color 0.5s ease;
+}
+.team-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px solid gray;
+}
 
 .join-button {
-  background: #3b82f6;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 15px;
-  transition: background 0.3s ease;
+background: #3b82f6;
+color: white;
+padding: 10px 15px;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+font-size: 16px;
+margin-top: 15px;
+transition: background 0.3s ease;
 }
 
 .join-button:hover {
-  background: #2563eb;
+background: #2563eb;
 }
 
-  .add-listing-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
+.add-listing-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
 
-  .add-listing-form input,
-  .add-listing-form textarea {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-  }
+.add-listing-form input,
+.add-listing-form textarea {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
 
-  .add-listing-form button {
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
+.add-listing-form button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
-  .textarea {
-    min-height: 120px;
-    resize: vertical;
-    font-family: inherit;
-    padding-top: 12px;
-  }
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+  font-family: inherit;
+  padding-top: 12px;
+}
 
-  .input-group textarea + .input-icon {
-    top: 20px;
-    transform: none;
-  }
+.input-group textarea + .input-icon {
+  top: 20px;
+  transform: none;
+}
 
-  .auth-box {
-    max-width: 500px;
-  }
+.auth-box {
+  max-width: 500px;
+}
 
-  .listing-box {
-    max-width: 800px !important;
-    width: 90% !important;
-  }
+.listing-box {
+  max-width: 800px !important;
+  width: 90% !important;
+}
 
-  .form-section {
-    margin-bottom: 2rem;
-  }
+.form-section {
+  margin-bottom: 2rem;
+}
 
-  .form-section h3 {
-    color: #2d3748;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-  }
+.form-section h3 {
+  color: #2d3748;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
 
-  .input-row {
-    display: flex;
-    gap: 1rem;
-  }
+.input-row {
+  display: flex;
+  gap: 1rem;
+}
 
-  .input-group.half {
-    flex: 1;
-  }
+.input-group.half {
+  flex: 1;
+}
 
-  .checkbox-group {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-  }
+.checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
 
-  .checkbox-group label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-  }
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
 
-  .file-input {
-    padding: 0.5rem !important;
-  }
+.file-input {
+  padding: 0.5rem !important;
+}
 
-  .photo-preview {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-    overflow-x: auto;
-    padding: 1rem 0;
-  }
+.photo-preview {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  overflow-x: auto;
+  padding: 1rem 0;
+}
 
-  .photo-preview img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 8px;
-  }
+.photo-preview img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
 
-  .textarea {
-    min-height: 100px;
-    resize: vertical;
-  }
+.textarea {
+  min-height: 100px;
+  resize: vertical;
+}
 
 .team-header {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  color: #60a5fa;
+font-size: 24px;
+font-weight: bold;
+margin-bottom: 15px;
+color: #60a5fa;
 }
 
 .team-subheader {
-  font-size: 18px;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  color: #7739b6;
-  text-align: left;
+font-size: 18px;
+margin-top: 20px;
+margin-bottom: 10px;
+color: #7739b6;
+text-align: left;
 }
 
 .team-members,
 .all-teams {
-  list-style: none;
-  padding: 10px;
-  display: flex;
-  justify-content: center;
+list-style: none;
+padding: 10px;
+display: flex;
+justify-content: center;
 }
 
 .team-member,
 .team-member-link{
-  text-decoration: none;
-  color: black;
-  margin: 1px 15px;
-  border-radius: 8px;
-  transition: background 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  background: #efefef;
-  padding: 5px;
+  position: relative;
+text-decoration: none;
+color: black;
+margin: 1px 15px;
+border-radius: 8px;
+transition: background 0.3s ease;
+display: flex;
+flex-direction: column;
+background: #efefef;
+padding: 5px;
 }
 
 
 
 .no-members {
-  font-size: 14px;
-  color: #94a3b8;
+font-size: 14px;
+color: #94a3b8;
 }
 
 .invite-form {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
+display: flex;
+gap: 10px;
+margin-top: 10px;
 }
 
 .invite-input {
-  flex-grow: 1;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-  background: #334155;
-  color: white;
+flex-grow: 1;
+padding: 10px;
+border-radius: 8px;
+border: none;
+outline: none;
+background: #334155;
+color: white;
 }
 
 .invite-button {
-  background: #3b82f6;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s ease;
+background: #cdcdcd;
+color: #2e2e2e;
+font-weight: bold;
+padding: 30px;
+border: none;
+border-radius: 15px;
+cursor: pointer;
+box-shadow: inset 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.invite-button:hover {
+transition: all 0.5s ease-in-out;
 }
 
 
 .all-teams li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 12px;
 }
 
 .all-teams a {
-  color: #b87a08;
-  text-decoration: none;
-  font-weight: bold;
+color: #b87a08;
+text-decoration: none;
+font-weight: bold;
 }
 
 .all-teams a:hover {
-  text-decoration: underline;
+text-decoration: underline;
 }
 
-  @media (max-width: 768px) {
-    .input-row {
-      flex-direction: column;
-    }
+.dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: none;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  z-index: 10;
+  padding: 15px;
+  width: 200px;
+}
 
-    .checkbox-group {
-      grid-template-columns: 1fr;
-    }
+.dropdown-item {
+  padding: 8px 12px;
+  display: block;
+  text-decoration: none;
+  color: black;
+}
+
+.dropdown-item:hover {
+  background: #f0f0f0;
+}
+
+
+@media (max-width: 768px) {
+  .input-row {
+    flex-direction: column;
   }
+
+  .checkbox-group {
+    grid-template-columns: 1fr;
+  }
+}
