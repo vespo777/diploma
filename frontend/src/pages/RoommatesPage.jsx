@@ -104,12 +104,11 @@ const RoommatesPage = () => {
     fetchUsers();
   }, [user]);
 
-  // Функция для подгрузки пользователей
   const loadMoreUsers = () => {
     const newUsers = allUsers.slice(0, visibleUsers.length + PAGE_SIZE);
 
     setVisibleUsers(newUsers);
-    setHasMore(newUsers.length < allUsers.length); // Если загрузили всех, убираем кнопку
+    setHasMore(newUsers.length < allUsers.length);
   };
 
   const filteredUsers = visibleUsers.filter(user => {

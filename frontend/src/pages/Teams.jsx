@@ -32,7 +32,11 @@ const TeamDetail = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                setAllTeams(Object.values(data)); // Преобразуем объект в массив
+                const teamsWithDefaults = Object.values(data).map(team => ({
+                    ...team,
+                    members: Array.isArray(team.members) ? team.members : [],
+                }));
+                setAllTeams(teamsWithDefaults);
             }
         } catch (error) {
             console.error("Ошибка при загрузке списка команд:", error);
@@ -72,6 +76,7 @@ const TeamDetail = () => {
             fetchAllTeams();
         }
     }, [user, navigate, fetchAllTeams]);
+
 
     return (
         <div className="auth-container">
@@ -127,11 +132,15 @@ const TeamDetail = () => {
                             <h5>{team.name}</h5>
 
                             <ul className="team-members">
-                                {team.members.map((member, index) => (
-                                    <li key={index} className="team-member">
-                                        {member.personalInfo.name} {member.personalInfo.surname}
-                                    </li>
-                                ))}
+                                {Array.isArray(team.members) ? (
+                                    team.members.map((member, index) => (
+                                        <li key={index} className="team-member">
+                                            {member.personalInfo?.name} {member.personalInfo?.surname}
+                                        </li>
+                                    ))
+                                ) : (
+                                    <p className="no-members">Нет участников</p>
+                                )}
                             </ul>
 
                             <Link to={`/teams/${team.id}`}>Посмотреть команду</Link>

@@ -17,9 +17,11 @@ const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [connections, setConnections] = useState([]);
   const location = useLocation();
   const token = localStorage.getItem("token");
   const API_URL = "http://localhost:8080";
+
 
 
   useEffect(() => {
@@ -46,6 +48,29 @@ const Navbar = () => {
 
     fetchNotifications();
   }, [token, user?.userId]);
+
+  const handleMyConnections = async (userId) => {
+    if (!user?.userId) {
+      setConnections(null);
+      return;
+    }
+
+
+    try {
+      const responce = await fetch(`${API_URL}/connections/my-connections?userId=${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        }
+      });
+
+      const data = await responce.json();
+      setConnections(data);
+    }catch(err) {
+      console.error(err);
+    }
+  };
 
   const handleAnswer = async (senderId, answer) => {
     if (!user?.userId) return;
@@ -150,6 +175,7 @@ const Navbar = () => {
                                   <div className="notification-actions">
                                     <button className="accept-btn" onClick={() => handleAnswer(notif.userId, true)}>Принять</button>
                                     <button className="decline-btn" onClick={() => handleAnswer(notif.userId, false)}>Отклонить</button>
+                                    <Link to={`/profile/${notif.userId}`}>more</Link>
                                   </div>
                                 </div>
                             ))

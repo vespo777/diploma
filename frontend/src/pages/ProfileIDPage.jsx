@@ -12,6 +12,7 @@ const Profile = () => {
   const token  = localStorage.getItem("token");
   const userMe = JSON.parse(localStorage.getItem("user"));
   const myId = userMe?.userId;
+  console.log(myId);
 
 
   useEffect(() => {

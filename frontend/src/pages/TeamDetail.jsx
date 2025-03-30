@@ -21,7 +21,7 @@ const TeamDetail = () => {
         if (!id || hasFetched.current) return;
         hasFetched.current = true
         try {
-            const response = await fetch(`${API_URL}/teams/get-team-by-userId?userId=${id}`, {
+            const response = await fetch(`${API_URL}/teams/get-team-by-teamId?teamId=${id}`, {
                 headers: { Authorization: localStorage.getItem("token") },
             });
 
@@ -78,11 +78,12 @@ const TeamDetail = () => {
                 {team ? (
                     <>
                         <h2 className="team-header">Команда: {team.name}</h2>
+                        <h5>Owner: {team.owner.personalInfo.name} {team.owner.personalInfo.surname}</h5>
 
                         <h3 className="team-subheader">Участники:</h3>
                         <ul className="team-members">
-                            {members.length > 0 ? (
-                                members.map((member, index) => (
+                            {team.members.length > 0 ? (
+                                team.members.map((member, index) => (
                                     <li key={index} className="team-member">
                                         <p><strong>Имя:</strong> {member.personalInfo?.name} {member.personalInfo?.surname}</p>
                                         <p><strong>Город:</strong> {member.locationDetails?.currentCity}</p>
