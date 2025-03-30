@@ -98,6 +98,8 @@ public class UserController {
                 ? authorizationHeader.substring(7)
                 : authorizationHeader;
 
+        System.out.println("\n\n DEBUG: --- " + req.getAnswers() + "\n\n\n");
+        
         return djangoClientService.saveUserClassteredGroup(req.getAnswers(), token);
     }
 

@@ -411,6 +411,8 @@ const ProfilePage = () => {
           </select>
 
 
+          <h3>Personality type</h3>
+          
           <h3>Social Details</h3>
           <input type="text" placeholder="School Name" value={userData.socialDetails.schoolName} onChange={(e) => handleChange('socialDetails', 'schoolName', e.target.value)} />
           <select

@@ -49,6 +49,10 @@ public class DjangoClientService {
         roommateSearch.setScoreTest(Integer.valueOf(clusterGroupValue));
         roommateSearchRepository.save(roommateSearch);
 
+
+        System.out.println("\n\n DEBUG: --- response: " + response + "\n\n\n");
+        System.out.println("\n\n DEBUG: --- clusterGroupValue: " + clusterGroupValue + "\n\n\n");
+
         // Now process the response synchronously
         return ResponseEntity.ok(Integer.valueOf(clusterGroupValue));
     }

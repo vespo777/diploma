@@ -142,6 +142,8 @@ const PersonalityTestPage = () => {
     setSubmitting(true);
     setError(null);
     
+    console.log("\n\nDEBUG --- answers: ", orderedAnswers, "\n\n")
+
     try {
       const response = await fetch('http://localhost:8080/give-classtered-group', {
         method: 'POST',
