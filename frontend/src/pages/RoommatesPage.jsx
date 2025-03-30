@@ -26,48 +26,43 @@ const RoommatesPage = () => {
   const [universityFilter, setUniversityFilter] = useState('');
   const [interestFilter, setInterestFilter] = useState('');
 
-  // Глобальная хешмапа для хранения matching levels
   const matchingLevelsMap = useRef({});
+  const hasFetched = useRef(false);
 
-  // Функция для получения matching levels из API
+
   const fetchMatchingLevels = async () => {
-    console.log("DEBUG inside fetchMatchingLevels: ", user.userId)
-    if (!user?.userId) return;
+    if (!user?.userId || hasFetched.current) return;
+    hasFetched.current = true
 
     try {
       const response = await fetch(`http://localhost:8080/recommended-users-dto?userId=${user.userId}`, {
         headers: { 'Authorization': `${localStorage.getItem('token')}` }
       });
-    
-      console.log("DEBUG response: ", response)
-      
+
+
       if (!response.ok) {
         throw new Error(`Failed to fetch matching levels: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
-      console.log("DEBUG data: ", data)
+
 
       // Заполняем глобальную хешмапу
       const levelsMap = {};
       data.forEach(item => {
-        console.log("DEBUG: item.user.userId = ", item.user.userId, " , item.matchingScore", item.matchingScore)
         if (item.user.userId && item.matchingScore) {
           levelsMap[item.user.userId] = item.matchingScore;
         }
       });
-      
-      console.log("DEBUG levelsMap: ", levelsMap)
+
 
       matchingLevelsMap.current = levelsMap;
-      console.log("Matching levels loaded:", matchingLevelsMap.current);
-      
+
     } catch (error) {
       console.error("Error fetching matching levels:", error);
     }
   };
-  
+
   // Функция для получения matching level по userId
   const getMatchingLevel = (userId) => {
     return matchingLevelsMap.current[userId];
@@ -92,7 +87,7 @@ const RoommatesPage = () => {
 
         setAllUsers(uniqueUsers);  // Загружаем всех
         setVisibleUsers(uniqueUsers.slice(0, PAGE_SIZE));
-        setHasMore(uniqueUsers.length > PAGE_SIZE); // Если пользователей больше PAGE_SIZE, показываем кнопку
+        setHasMore(uniqueUsers.length > PAGE_SIZE);
 
       } catch (error) {
         console.error('Error fetching users:', error);
