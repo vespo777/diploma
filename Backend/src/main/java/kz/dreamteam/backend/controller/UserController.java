@@ -70,7 +70,7 @@ public class UserController {
         return graphSearchService.getUserRecommendations(userId);
     }
 
-    @GetMapping("/recommended-users-dto")
+    @GetMapping("/recommended-users-dto") // necessary to get matching score
     public ResponseEntity<List<UserRecommendationDTO>> getRecommendedUsersDTO(@RequestParam int userId) {
         return graphSearchService.getUserRecommendationsDTO(userId);
     }
