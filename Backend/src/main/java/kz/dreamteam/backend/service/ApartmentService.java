@@ -7,7 +7,6 @@ import com.vladmihalcea.spring.repository.HibernateRepositoryImpl;
 import kz.dreamteam.backend.model.Apartment;
 import kz.dreamteam.backend.model.User;
 import kz.dreamteam.backend.model.dto.ApartmentDTO;
-//import kz.dreamteam.backend.repository.elasticsearch.ApartmentElasticsearchRepository;
 import kz.dreamteam.backend.repository.ApartmentsRepository;
 import kz.dreamteam.backend.repository.UserRepository;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -18,6 +17,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
@@ -35,17 +35,14 @@ public class ApartmentService {
 
     private final UserRepository userRepository;
 
-//    private final ApartmentElasticsearchRepository apartmentElasticsearchRepository;
 
     public ApartmentService(ApartmentsRepository apartmentsRepository,
                             ElasticsearchOperations elasticsearchOperations,
                             ElasticsearchClient elasticsearchClient,
-//                            ApartmentElasticsearchRepository apartmentElasticsearchRepository,
                             UserRepository userRepository) {
         this.apartmentsRepository = apartmentsRepository;
         this.elasticsearchOperations = elasticsearchOperations;
         this.elasticsearchClient = elasticsearchClient;
-//        this.apartmentElasticsearchRepository = apartmentElasticsearchRepository;
         this.userRepository = userRepository;
     }
 
@@ -97,7 +94,7 @@ public class ApartmentService {
         Apartment savedApartment = apartmentsRepository.save(apartment);
 
         // Сохраняем в Elasticsearch
-//        apartmentElasticsearchRepository.save(savedApartment);
+        saveToElasticsearch(apartment);
 
         return savedApartment;
     }
@@ -128,7 +125,7 @@ public class ApartmentService {
                     apartmentsRepository.save(apartment);
 
                     // Обновляем запись в Elasticsearch
-//                    apartmentElasticsearchRepository.save(apartment); // Используйте репозиторий для Elasticsearch
+                    saveToElasticsearch(apartment);
 
                     return apartment;
                 })
@@ -141,7 +138,7 @@ public class ApartmentService {
         apartmentsRepository.deleteById(id);
 
         // Удаляем из Elasticsearch
-//        apartmentElasticsearchRepository.deleteById(id.toString());
+        deleteFromElasticsearch(id);
     }
 
     public void createIndexIfNotExists(String indexName) {
@@ -155,4 +152,36 @@ public class ApartmentService {
             e.printStackTrace();
         }
     }
+
+    public void saveToElasticsearch(Apartment apartment) {
+        try {
+            elasticsearchClient.index(i -> i
+                    .index("apartments")
+                    .id(apartment.getApartmentId().toString())
+                    .document(apartment)
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при сохранении в Elasticsearch", e);
+        }
+    }
+
+    public void deleteFromElasticsearch(Long id) {
+        try {
+            boolean indexExists = elasticsearchClient.indices().exists(i -> i.index("apartments")).value();
+            if (!indexExists) {
+                throw new RuntimeException("Индекс apartments не существует!");
+            }
+
+            elasticsearchClient.delete(d -> d
+                    .index("apartments")
+                    .id(id.toString())
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при удалении из Elasticsearch", e);
+        }
+    }
+
+
+
+
 }
