@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI
 import joblib
 import numpy as np
@@ -5,7 +6,7 @@ import pandas as pd  # Import Pandas to handle DataFrame conversion
 from pydantic import BaseModel
 
 # Load K-Means model (No scaler needed)
-kmeans_model = joblib.load("/Users/Admin/Desktop/KBTU2025/diplomka/model/kmeans_model.pkl")
+kmeans_model = joblib.load("/Users/polatkhan/Desktop/kbtu/diploma/ml/model/kmeans_model1.pkl")
 
 # Initialize FastAPI
 app = FastAPI()
@@ -34,5 +35,7 @@ def predict_cluster(user_response: UserResponse):
 
 
 
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)
 
 
