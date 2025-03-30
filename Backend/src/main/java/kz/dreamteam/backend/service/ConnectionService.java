@@ -75,8 +75,9 @@ public class ConnectionService {
 
     @Transactional
     public void answerConnectionRequest(Long senderId, Long receiverId, Boolean answer) {
-        Connection connection = (Connection) connectionRepository
+        Connection connection = connectionRepository
                 .findBySenderIdAndReceiverId(senderId, receiverId)
+                .flatMap(connections -> connections.stream().findFirst()) // Get the first element
                 .orElseThrow(() -> new RuntimeException("Connection request not found."));
 
         if (!"PENDING".equals(connection.getStatus())) {

@@ -80,7 +80,6 @@ public class UserController {
         return graphSearchService.getTeamRecommendations(userId);
     }
 
-
     @GetMapping("/check-ml-questions")
     public ResponseEntity<Boolean> checkMlQuestions(@RequestParam Long userId) {
         return userService.checkMlQuestionsAnswers(userId);
@@ -110,7 +109,7 @@ public class UserController {
             return answers;
         }
 
-        public void setNumbers(List<Integer> answers) {
+        public void setAnswers(List<Integer> answers) {
             this.answers = answers;
         }
     }
