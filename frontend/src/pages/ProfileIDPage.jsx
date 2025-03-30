@@ -1,4 +1,5 @@
 import { useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import ConnectionButton from "../components/Connection";
 import "../styles/ProfilePage.css"
@@ -12,6 +13,16 @@ const Profile = () => {
   const token  = localStorage.getItem("token");
   const userMe = JSON.parse(localStorage.getItem("user"));
   const myId = userMe?.userId;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!myId) {
+      navigate("/login"); // Если нет идентификатора пользователя, редирект на /login
+    } else if (myId === Number(id)) {
+      navigate("/profile"); // Если id пользователя совпадает с myId, редирект на страницу профиля
+    }
+    console.log(id, myId);
+  }, [id, myId, navigate]);
 
 
   useEffect(() => {

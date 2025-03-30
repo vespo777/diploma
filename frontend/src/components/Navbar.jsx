@@ -68,7 +68,6 @@ const Navbar = () => {
 
   const handleMyConnections = async (userId) => {
     if (!user?.userId) {
-      setConnections(null);
       return;
     }
 
@@ -103,7 +102,6 @@ const Navbar = () => {
 
       if (!response.ok) throw new Error("Ошибка при обработке запроса");
 
-      // Фильтруем отклоненные или принятые запросы
       setNotifications((prev) => prev.filter((notif) => notif.senderId !== senderId));
     } catch (error) {
       console.error("Ошибка обработки запроса:", error);
@@ -214,7 +212,15 @@ const Navbar = () => {
                           <Link to="/profile" className="dropdown-item" onClick={() => setShowDropdown(false) || setShowConnections(false)}>
                             {user.email}
                           </Link>
-                            <Link className="dropdown-item" onClick={() => setShowConnections(!showConnections)} onChange={handleMyConnections}>My Connections</Link>
+                          <Link
+                              className="dropdown-item"
+                              onClick={() => {
+                                setShowConnections(!showConnections);
+                                handleMyConnections(user.userId);
+                              }}
+                          >
+                            My Connections
+                          </Link>
                           <button className="dropdown-item logout" onClick={handleLogout}>Logout</button>
                         </motion.div>
                     )}
@@ -226,7 +232,7 @@ const Navbar = () => {
                           {connections.length > 0 ? (
                               connections.map((connect, index) => (
                                   <div key={index} className="notification-item">
-                                    <p><strong>{connect.personalInfo.name} {connect.personalInfo.surname}</strong> хочет добавить вас в друзья</p>
+                                    <p><strong>{connect.personalInfo.name} {connect.personalInfo.surname}</strong> <br/><i>{connect.socialDetails.profession}</i> at <strong>{connect.socialDetails.company}</strong></p>
                                     <div className="notification-actions">
                                       <Link to={`/profile/${connect.userId}`}>more</Link>
                                     </div>

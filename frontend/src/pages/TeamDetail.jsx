@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../styles/addListingPage.css";
 
@@ -10,12 +11,28 @@ const TeamDetail = () => {
     const navigate = useNavigate();
     const userStr = localStorage.getItem("user");
     const user = userStr ? JSON.parse(userStr) : null;
+    const [status, setStatus] = useState(null);
 
     const [team, setTeam] = useState(null);
     const [members, setMembers] = useState([]);
 
     const hasFetched = useRef(false);
-    // const [invitedUser, setInvitedUser] = useState("");
+
+    const fetchMemberProfiles = useCallback(async (memberIds) => {
+        try {
+            const memberRequests = memberIds.map(id =>
+                fetch(`${API_URL}/profile/${id}`, {
+                    headers: { Authorization: localStorage.getItem("token")
+                    },
+                }).then(res => res.ok ? res.json() : null)
+            );
+
+            const profiles = await Promise.all(memberRequests);
+            setMembers(profiles.filter(Boolean)); // Убираем null-значения
+        } catch (error) {
+            console.error("Ошибка загрузки участников:", error);
+        }
+    }, []);
 
     const fetchTeamDetails = useCallback(async () => {
         if (!id || hasFetched.current) return;
@@ -28,14 +45,16 @@ const TeamDetail = () => {
             if (response.ok) {
                 const data = await response.json();
                 setTeam(data);
-                setMembers(data.members || []);
+                if (data.members?.length) {
+                    fetchMemberProfiles(data.members);
+                }
             } else {
                 throw new Error("Ошибка загрузки команды");
             }
         } catch (error) {
             console.error("Ошибка при загрузке команды:", error);
         }
-    }, [id]);
+    }, [id, fetchMemberProfiles]);
 
 
     const handleJoinRequest = async () => {
@@ -45,18 +64,23 @@ const TeamDetail = () => {
             const token = localStorage.getItem("token");
             if (!token) throw new Error("Ошибка: нет токена");
 
-            const response = await fetch(`${API_URL}/teams/send-request-to-join-team?senderId=${user.userId}&receiverId=${id}`, {
+            const response = await fetch(`${API_URL}/teams/send-join-request?senderId=${user.userId}&receiverId=${id}`, {
                 method: "POST",
                 headers: { Authorization: token },
             });
 
             if (!response.ok) throw new Error("Ошибка при отправке запроса");
-
-            alert("Запрос на вступление отправлен!");
+            const data = await response.text();
+            if (data === "Request already pending") {
+                setStatus("PENDING")
+            }
+            alert("Request to join successfully sent!");
         } catch (error) {
             console.error("Ошибка:", error);
         }
     };
+
+
 
     useEffect(() => {
         if (!user) {
@@ -65,6 +89,7 @@ const TeamDetail = () => {
             fetchTeamDetails();
         }
     }, [fetchTeamDetails, user, navigate]);
+
 
 
     return (
@@ -78,16 +103,24 @@ const TeamDetail = () => {
                 {team ? (
                     <>
                         <h2 className="team-header">Команда: {team.name}</h2>
-                        <h5>Owner: {team.owner.personalInfo.name} {team.owner.personalInfo.surname}</h5>
+                        <h5>Owner:</h5>
+                        <Link className="link-owner" to={`/profile/${team.owner.userId}`}>{team.owner.personalInfo.name} {team.owner.personalInfo.surname}</Link>
 
-                        <h3 className="team-subheader">Участники:</h3>
                         <ul className="team-members">
-                            {team.members.length > 0 ? (
-                                team.members.map((member, index) => (
+                            {team.members.length > 1 ? (
+                                members.map((member, index) => (
                                     <li key={index} className="team-member">
-                                        <p><strong>Имя:</strong> {member.personalInfo?.name} {member.personalInfo?.surname}</p>
-                                        <p><strong>Город:</strong> {member.locationDetails?.currentCity}</p>
-                                        <p><strong>Telegram:</strong> {member.contacts?.telegramNickname}</p>
+                                        {member?.userId ? (
+                                            <>
+                                            <Link className="team-member-link" to={`/profile/${member.userId}`}>
+                                                {member.personalInfo.name} {member.personalInfo.surname}
+                                            </Link>
+                                            <p><i>{member.socialDetails.profession}</i> at <strong>{member.socialDetails.company}</strong></p>
+                                            </>
+                                        ) : (
+                                            <p>
+                                                Loading...
+                                            </p>)}
                                     </li>
                                 ))
                             ) : (
@@ -95,9 +128,21 @@ const TeamDetail = () => {
                             )}
                         </ul>
                         {!members.some(member => member.userId === user?.userId) && (
-                            <button onClick={handleJoinRequest} className="join-button">
-                                Подать заявку
-                            </button>
+                            status === "PENDING" ? (
+                                <button className="bg-yellow-400 text-white px-4 py-2 rounded" disabled>
+                                    ⏳ Request Sent
+                                </button>
+                            ) : status === null ? (
+                                <button
+                                    onClick={() => {
+                                        handleJoinRequest();
+                                        setStatus("PENDING");
+                                    }}
+                                    className="join-button"
+                                >
+                                    Подать заявку
+                                </button>
+                            ) : null
                         )}
                     </>
                 ) : (
