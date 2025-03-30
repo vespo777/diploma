@@ -1,10 +1,12 @@
 package kz.dreamteam.backend.controller;
 
 import kz.dreamteam.backend.model.Team;
+import kz.dreamteam.backend.model.dto.NotificationDTO;
 import kz.dreamteam.backend.service.TeamService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.Notification;
 import java.util.List;
 
 @RestController
@@ -30,6 +32,12 @@ public class TeamController {
     @GetMapping("/get-team-by-teamId")
     public ResponseEntity<Team> getTeam(@RequestParam Long teamId) {
         return ResponseEntity.ok(teamService.getTeam(teamId));
+    }
+
+    @GetMapping("/received-invitations-and-requests")
+    public ResponseEntity<List<NotificationDTO>> getAllInvitesAndRequests(@RequestParam Long userId) {
+        List<NotificationDTO> receivedInvitesAndRequests = teamService.getAllInvitesAndRequestsForUser(userId);
+        return ResponseEntity.ok(receivedInvitesAndRequests);
     }
 
     @PostMapping("/send-join-request")

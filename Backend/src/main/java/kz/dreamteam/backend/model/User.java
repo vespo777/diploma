@@ -5,11 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-
+import org.springframework.data.elasticsearch.annotations.Document;
 
 
 @Entity
 @Table(name = "users") // Matches the table name
+@Document(indexName = "users")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 public class User {
     @Id
@@ -26,32 +27,39 @@ public class User {
     private String profilePhotoPath;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @org.springframework.data.annotation.Transient
 //    @JsonManagedReference
 //    @JsonIgnore
     private PersonalInfo personalInfo;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @org.springframework.data.annotation.Transient
 //    @JsonManagedReference
     private RoommateSearch roommateSearch;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @org.springframework.data.annotation.Transient
 //    @JsonManagedReference
     private SocialDetails socialDetails;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @org.springframework.data.annotation.Transient
 //    @JsonManagedReference
     private LocationDetails locationDetails;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @org.springframework.data.annotation.Transient
 //    @JsonManagedReference
     private RoommatePreferences roommatePreferences;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @org.springframework.data.annotation.Transient
 //    @JsonManagedReference
     private Contacts contacts;
 
     @ManyToOne
     @JoinColumn(name = "team_id")
+    @org.springframework.data.annotation.Transient
 //    @JsonIgnore
     private Team team;
 

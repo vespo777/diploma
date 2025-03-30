@@ -14,6 +14,7 @@ public class StartupService {
     @PostConstruct
     public void init() {
         apartmentService.createIndexIfNotExists("apartments");
+        apartmentService.createIndexIfNotExists("users");
     }
 }
 

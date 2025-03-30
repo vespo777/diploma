@@ -1,21 +1,25 @@
 package kz.dreamteam.backend.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 @Entity
 @Table(name = "apartments")
 @Document(indexName = "apartments")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "apartmentId")
 public class Apartment {
 
     @Id
+    @org.springframework.data.annotation.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "apartment_id")
     private Long apartmentId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;  // Each apartment is associated with one user
 
     private String description;
@@ -28,6 +32,14 @@ public class Apartment {
 
     private Integer roomQuantity;
     private Integer sizeSquareMeter;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Long getApartmentId() {
         return apartmentId;
