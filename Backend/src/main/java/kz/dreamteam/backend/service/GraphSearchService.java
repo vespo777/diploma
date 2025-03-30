@@ -1,6 +1,7 @@
 package kz.dreamteam.backend.service;
 
 import kz.dreamteam.backend.model.*;
+import kz.dreamteam.backend.model.dto.UserRecommendationDTO;
 import kz.dreamteam.backend.model.graph.Pair;
 import kz.dreamteam.backend.model.graph.UserNode;
 import kz.dreamteam.backend.repository.*;
@@ -19,9 +20,9 @@ import java.util.*;
 public class GraphSearchService {
     private static final Logger log = LoggerFactory.getLogger(GraphSearchService.class);
 
-    private Map<Integer, UserNode> users = new HashMap<>();
-    private Map<String, Double> importanceCoef = new HashMap<>();
-    private Map<Integer, List<Pair<Double, Integer>>> graph = new HashMap<>();
+    private final Map<Integer, UserNode> users = new HashMap<>();
+    private final Map<String, Double> importanceCoef = new HashMap<>();
+    private final Map<Integer, List<Pair<Double, Integer>>> graph = new HashMap<>();
 
     private final UserRepository userRepository;
     private final SocialDetailsRepository socialDetailsRepository;
@@ -29,6 +30,7 @@ public class GraphSearchService {
     private final RoommatePreferencesRepository roommatePreferencesRepository;
     private final PersonalInfoRepository personalInfoRepository;
     private final RoommateSearchRepository roommateSearchRepository;
+    private final TeamRepository teamRepository;
 
     private GraphSearchService(UserRepository userRepository,
                                SocialDetailsRepository socialDetailsRepository,
@@ -36,13 +38,14 @@ public class GraphSearchService {
                                RoommatePreferencesRepository roommatePreferencesRepository,
                                PersonalInfoRepository personalInfoRepository,
                                RoommateSearchRepository roommateSearchRepository,
-                               ContactsRepository contactsRepository) {
+                               TeamRepository teamRepository) {
         this.userRepository = userRepository;
         this.socialDetailsRepository = socialDetailsRepository;
         this.locationDetailsRepository = locationDetailsRepository;
         this.roommatePreferencesRepository = roommatePreferencesRepository;
         this.personalInfoRepository = personalInfoRepository;
         this.roommateSearchRepository = roommateSearchRepository;
+        this.teamRepository = teamRepository;
         initializeCoefficients();
         downloadFromDB();
     }
@@ -83,8 +86,6 @@ public class GraphSearchService {
         return (double) count / minSize * importanceCoef.getOrDefault("interests", 0.0);
     }
 
-
-
     private double calcRegionFrom(UserNode A, UserNode B) {
         if (A.regionFrom == null || B.regionFrom == null) return 0.0;
 
@@ -96,7 +97,6 @@ public class GraphSearchService {
 
         return 0.0;
     }
-
 
 //    private double calcLanguage(UserNode A, UserNode B) {
 //        return A.languages.stream().anyMatch(B.languages::contains) ? importanceCoef.getOrDefault("languages", 0.0) : 0;
@@ -162,7 +162,7 @@ public class GraphSearchService {
                 : 0.0;
     }
 
-    private double calcMatchingLevel(UserNode A, UserNode B) {
+    private double calcMatchingScore(UserNode A, UserNode B) {
         return
                 calcAge(A, B) +
                         calcInterests(A, B) +
@@ -186,7 +186,7 @@ public class GraphSearchService {
 
         for (Map.Entry<Integer, List<Pair<Double, Integer>>> entry : graph.entrySet()) {
             if (entry.getKey().equals(newUserNode.id)) continue;
-            double level = calcMatchingLevel(users.get(entry.getKey()), newUserNode);
+            double level = calcMatchingScore(users.get(entry.getKey()), newUserNode);
             entry.getValue().add(new Pair<>(level, newUserNode.id));
             graph.get(newUserNode.id).add(new Pair<>(level, entry.getKey()));
         }
@@ -216,6 +216,70 @@ public class GraphSearchService {
 
         return ResponseEntity.ok(recommendedUsers);
     }
+    public ResponseEntity<List<UserRecommendationDTO>> getUserRecommendationsDTO(int userIdP) {
+        List<Pair<Double, Integer>> res = graph.getOrDefault(userIdP, new ArrayList<>());
+
+        res.sort((a, b) -> Double.compare(b.getKey(), a.getKey()));
+
+        List<UserRecommendationDTO> recommendations = res.stream()
+                .peek(it -> log.info("Searching for user with ID: {}", it.getValue()))
+                .map(it -> {
+                    Long userId = Long.valueOf(it.getValue());
+                    Optional<User> userOpt = userRepository.findById(userId);
+                    if (userOpt.isEmpty()) {
+                        log.warn("User with ID {} not found!", userId);
+                    }
+                    return userOpt.map(user -> new UserRecommendationDTO(user, it.getKey()));
+                })
+                .flatMap(Optional::stream)
+                .toList();
+
+        if (recommendations.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        }
+
+        return ResponseEntity.ok(recommendations);
+    }
+
+    public ResponseEntity<List<Team>> getTeamRecommendations(int userId) {
+        List<Team> allTeams = teamRepository.findAll(); // Загружаем все команды
+
+        // Фильтруем и сортируем команды по среднему matchingScore
+        List<Team> sortedTeams = allTeams.stream()
+                .map(team -> {
+                    List<User> members = new ArrayList<>(team.getMembers());// Получаем участников команды
+
+                    // Вычисляем matchingScore каждого члена с userId
+                    List<Double> scores = members.stream()
+                            .map(member -> getMatchingScoreFromGraph(userId, Math.toIntExact(member.getUserId())))
+                            .toList();
+
+                    // Вычисляем средний matchingScore команды
+                    double avgScore = scores.stream()
+                            .mapToDouble(Double::doubleValue)
+                            .average()
+                            .orElse(0.0);
+
+                    return new AbstractMap.SimpleEntry<>(team, avgScore);
+                })
+                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue())) // Сортируем по убыванию
+                .map(AbstractMap.SimpleEntry::getKey)
+                .toList();
+
+        if (sortedTeams.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        }
+
+        return ResponseEntity.ok(sortedTeams);
+    }
+
+    private double getMatchingScoreFromGraph(int userId, int memberId) {
+        return graph.getOrDefault(userId, Collections.emptyList()).stream()
+                .filter(pair -> pair.getValue().equals(memberId)) // Ищем пару с нужным memberId
+                .map(Pair::getKey) // Берем matchingScore
+                .findFirst()
+                .orElse(0.0); // Если нет значения, возвращаем 0.0
+    }
 
 
     public void uploadToDB() {
@@ -227,6 +291,11 @@ public class GraphSearchService {
         log.info("Found {} users in database", users.size());
 
         for (User user : users) {
+            // Проверяем, если user уже есть в graph, то пропускаем его
+            if (graph.containsKey(Math.toIntExact(user.getUserId()))) {
+                continue; // Пропускаем текущего пользователя, если его ID уже есть в graph
+            }
+
             int userId = user.getUserId().intValue();
             UserNode newUserNode = new UserNode();
 

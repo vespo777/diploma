@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface TeammateRequestRepository extends JpaRepository<TeammateRequest, Long> {
@@ -20,6 +21,8 @@ public interface TeammateRequestRepository extends JpaRepository<TeammateRequest
     boolean existsByReceiverIdAndStatus(Long receiverId, RequestStatus status);
 
     void deleteBySenderIdAndReceiverId(Long senderId, Long receiverId);
+
+    List<TeammateRequest> findByReceiverIdAndStatus(Long receiverId, RequestStatus status);
 
 
     @Modifying

@@ -16,10 +16,24 @@ const TeamDetail = () => {
     const [userTeam] = useState(null);
     const [allTeams, setAllTeams] = useState([]);
 
+
     const hasFetched = useRef(false);
 
 
+    const fetchMemberProfiles = useCallback(async (memberIds) => {
+        try {
+            const memberRequests = memberIds.map(id =>
+                fetch(`${API_URL}/profile/${id}`, {
+                    headers: { Authorization: localStorage.getItem("token") },
+                }).then(res => res.ok ? res.json() : null)
+            );
 
+            const profiles = await Promise.all(memberRequests);
+            setMembers(profiles.filter(Boolean)); // Убираем null-значения
+        } catch (error) {
+            console.error("Ошибка загрузки участников:", error);
+        }
+    }, []);
 
     const fetchAllTeams = useCallback(async () => {
         if (hasFetched.current) return;
@@ -32,12 +46,25 @@ const TeamDetail = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                setAllTeams(Object.values(data)); // Преобразуем объект в массив
+
+                const teamsWithDefaults = Object.values(data).map(team => ({
+                    ...team,
+                    members: team.members || [],
+
+                }));
+                setAllTeams(teamsWithDefaults);
+
+                teamsWithDefaults.forEach(team => {
+                    if (team.members?.length) {
+                        fetchMemberProfiles(team.members);
+                    }
+                });
+
             }
         } catch (error) {
             console.error("Ошибка при загрузке списка команд:", error);
         }
-    }, []);
+    }, [fetchMemberProfiles]);
 
 
 
@@ -73,6 +100,7 @@ const TeamDetail = () => {
         }
     }, [user, navigate, fetchAllTeams]);
 
+
     return (
         <div className="auth-container">
             <motion.div
@@ -83,7 +111,8 @@ const TeamDetail = () => {
             >
                 {userTeam ? (
                     <>
-                        <h2 className="team-header">Ваша команда: {userTeam.teamName}</h2>
+                        <h2 className="team-header">Ваша команда: {
+                            userTeam.name}</h2>
 
                         <h3 className="team-subheader">Участники</h3>
                         <ul className="team-members">
@@ -123,15 +152,20 @@ const TeamDetail = () => {
 
                 <ul className="all-teams">
                     {allTeams.map((team) => (
-                        <li key={team.id}>
-                            <h5>{team.name}</h5>
+                        <li className="team-details" key={team.id}>
+                            <h3 className="link-owner">{team.name}</h3>
 
                             <ul className="team-members">
-                                {team.members.map((member, index) => (
-                                    <li key={index} className="team-member">
-                                        {member.personalInfo.name} {member.personalInfo.surname}
-                                    </li>
-                                ))}
+                                {Array.isArray(team.members) ? (
+                                    members.map((member, index) => (
+                                        <li key={index} className="team-member">
+                                            <p>{member.personalInfo?.name} {member.personalInfo?.surname}</p>
+                                            <i>{member.socialDetails.profession}</i>
+                                        </li>
+                                    ))
+                                ) : (
+                                    <p className="no-members">Нет участников</p>
+                                )}
                             </ul>
 
                             <Link to={`/teams/${team.id}`}>Посмотреть команду</Link>

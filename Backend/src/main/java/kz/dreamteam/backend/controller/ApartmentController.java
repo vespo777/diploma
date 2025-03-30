@@ -1,7 +1,11 @@
 package kz.dreamteam.backend.controller;
 
 
+import jakarta.validation.Valid;
 import kz.dreamteam.backend.model.Apartment;
+import kz.dreamteam.backend.model.User;
+import kz.dreamteam.backend.model.dto.ApartmentDTO;
+import kz.dreamteam.backend.repository.UserRepository;
 import kz.dreamteam.backend.service.ApartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +17,27 @@ import java.util.List;
 @RequestMapping("/apartments")
 public class ApartmentController {
 
-    @Autowired
     private ApartmentService apartmentService;
 
+    public ApartmentController(ApartmentService apartmentService) {
+        this.apartmentService = apartmentService;
+    }
+
+    @GetMapping("/search")
+    public List<Apartment> searchApartments(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) Integer minRooms,
+            @RequestParam(required = false) Integer maxRooms,
+            @RequestParam(required = false) Integer minSize,
+            @RequestParam(required = false) Integer maxSize) {
+
+        return apartmentService.searchApartments(query, minRooms, maxRooms, minSize, maxSize);
+    }
+
     // Create a new apartment
-    @PostMapping
-    public ResponseEntity<Apartment> createApartment(@RequestBody Apartment apartment) {
-        Apartment savedApartment = apartmentService.createApartment(apartment);
+    @PostMapping("/create-apartment")
+    public ResponseEntity<Apartment> createApartment(@Valid @RequestBody ApartmentDTO apartmentDTO) {
+        Apartment savedApartment = apartmentService.createApartment(apartmentDTO);
         return ResponseEntity.ok(savedApartment);
     }
 

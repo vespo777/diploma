@@ -48,7 +48,7 @@ function App() {
             <Route path="/profile/:id" element={<ProfileIDPage />} />
             <Route path="/anceta-page" element={<AncetaPage />} />
             <Route path="/*" element={<NotFoundPage />} />
-            <Route path="ml-questions" element={<MLQPage />} />
+            <Route path="/ml-questions" element={<MLQPage />} />
             <Route path="teams" element={<Teams />} />
             <Route path="/teams/:id" element={<TeamDetail />} />
           </Routes>

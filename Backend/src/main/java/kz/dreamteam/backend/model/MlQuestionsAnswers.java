@@ -15,7 +15,7 @@ public class MlQuestionsAnswers {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Type(IntArrayType.class)
+    // @Type(IntArrayType.class)
     @Column(name = "questions_answers", columnDefinition = "integer[]")
     private Integer[] questionsAnswers; // PostgreSQL массив
 

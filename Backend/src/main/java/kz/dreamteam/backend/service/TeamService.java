@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import kz.dreamteam.backend.model.Team;
 import kz.dreamteam.backend.model.TeammateRequest;
 import kz.dreamteam.backend.model.User;
+import kz.dreamteam.backend.model.dto.NotificationDTO;
 import kz.dreamteam.backend.model.enums.RequestStatus;
 import kz.dreamteam.backend.repository.TeamRepository;
 import kz.dreamteam.backend.repository.TeammateRequestRepository;
@@ -12,7 +13,9 @@ import kz.dreamteam.backend.repository.UserRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import javax.management.Notification;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,6 +56,32 @@ public class TeamService {
     public Team getTeam(Long teamId) {
         return teamRepository.findById(teamId)
                 .orElseThrow(() -> new EntityNotFoundException("Team not found"));
+    }
+
+    public List<NotificationDTO> getAllInvitesAndRequestsForUser(Long userId) {
+        List<NotificationDTO> inviteRequestList = new ArrayList<>();
+
+        // Получаем все инвайты и запросы, где пользователь является отправителем или получателем
+        List<TeammateRequest> teammateRequests = new ArrayList<>();
+        teammateRequests.addAll(teammateRequestRepository.findByReceiverIdAndStatus(userId, RequestStatus.INVITED));
+        teammateRequests.addAll(teammateRequestRepository.findByReceiverIdAndStatus(userId, RequestStatus.PENDING));
+
+        // Перебираем все найденные запросы и инвайты
+        for (TeammateRequest request : teammateRequests) {
+            NotificationDTO notificationDTO = new NotificationDTO();
+
+            // Определяем тип (invite или request)
+            String type = request.getStatus() == RequestStatus.INVITED ? "invite" : "request";
+            notificationDTO.setType(type);
+
+            // Заполняем данные пользователя
+            notificationDTO.setUser(userRepository.findByUserId(request.getSenderId()).get());
+            notificationDTO.setTeam(teamRepository.findTeamByUserId(request.getSenderId()).get());
+
+            inviteRequestList.add(notificationDTO);
+        }
+
+        return inviteRequestList;
     }
 
     public String sendJoinRequest(Long senderId, Long receiverId) {

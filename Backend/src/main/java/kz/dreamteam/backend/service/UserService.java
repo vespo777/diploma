@@ -1,5 +1,6 @@
 package kz.dreamteam.backend.service;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import jakarta.transaction.Transactional;
 import kz.dreamteam.backend.model.*;
 import kz.dreamteam.backend.model.dto.UpdateUserProfileRequest;
@@ -7,6 +8,7 @@ import kz.dreamteam.backend.repository.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -19,7 +21,7 @@ public class UserService {
     private final PersonalInfoRepository personalInfoRepository;
     private final MlQuestionsAnswersRepository mlQuestionsAnswersRepository;
     private final JwtService jwtService;
-
+    private final ElasticsearchClient elasticsearchClient;
 
     public UserService(UserRepository userRepository,
                        SocialDetailsRepository socialDetailsRepository,
@@ -27,7 +29,7 @@ public class UserService {
                        RoommatePreferencesRepository roommatePreferencesRepository,
                        PersonalInfoRepository personalInfoRepository,
                        MlQuestionsAnswersRepository mlQuestionsAnswersRepository,
-                       JwtService jwtService){
+                       JwtService jwtService, ElasticsearchClient elasticsearchClient){
         this.userRepository = userRepository;
         this.socialDetailsRepository = socialDetailsRepository;
         this.locationDetailsRepository = locationDetailsRepository;
@@ -35,6 +37,7 @@ public class UserService {
         this.personalInfoRepository = personalInfoRepository;
         this.mlQuestionsAnswersRepository = mlQuestionsAnswersRepository;
         this.jwtService = jwtService;
+        this.elasticsearchClient = elasticsearchClient;
     }
 
 
@@ -70,6 +73,8 @@ public class UserService {
             user.setProfilePhotoPath("newnewnew");
             userRepository.save(user);
 
+            saveToElasticsearch(user);
+
             // Обновление личные данные профиля
             PersonalInfo personalInfo = personalInfoRepository.findById(userId)
                     .orElseThrow(() -> new NoSuchElementException("Personal info not found"));
@@ -102,18 +107,20 @@ public class UserService {
         }
     }
 
-
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
-
-
-
-
-
-
-
-
+    public void saveToElasticsearch(User user) {
+        try {
+            elasticsearchClient.index(i -> i
+                    .index("users")
+                    .id(user.getUserId().toString())
+                    .document(user)
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при сохранении в Elasticsearch", e);
+        }
+    }
 
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const API_URL = "http://localhost:8080"; // Твой бэкенд
+const API_URL = "http://localhost:8080";
 
 const ConnectionButton = ({ currentUserId, otherUserId }) => {
     const [status, setStatus] = useState(null);
@@ -8,6 +8,9 @@ const ConnectionButton = ({ currentUserId, otherUserId }) => {
 
     useEffect(() => {
         if (!currentUserId || !otherUserId) return;
+        if (!currentUserId) {
+            setStatus(null);
+        }
 
         const controller = new AbortController();
         const signal = controller.signal;
@@ -24,13 +27,16 @@ const ConnectionButton = ({ currentUserId, otherUserId }) => {
                     }
                 );
                 if (!res.ok) throw new Error(`Ошибка проверки статуса: ${res.status}`);
-                const data = await res.json();
-                setStatus(data);
+
+                const data = await res.text();
+                setStatus(data.split(": ")[1]);
+
             } catch (error) {
-                if (error.name === "AbortError") return; // Если запрос отменён — игнорируем ошибку
+                if (error.name === "AbortError") return;
                 console.error("Ошибка при проверке статуса:", error);
             }
         })();
+
 
         return () => controller.abort(); // Отмена запроса при изменении зависимостей
     }, [currentUserId, otherUserId]);
@@ -48,7 +54,7 @@ const ConnectionButton = ({ currentUserId, otherUserId }) => {
             });
 
             if (!response.ok) throw new Error("Ошибка при обработке запроса");
-            setStatus("pending");
+            setStatus("PENDING");
         } catch (error) {
             console.error("Ошибка при отправке запроса:", error);
         } finally {
@@ -79,15 +85,15 @@ const ConnectionButton = ({ currentUserId, otherUserId }) => {
 
     return (
         <div>
-            {status === true ? (
+            {status === "ACCEPTED" ? (
                 <button className="bg-gray-400 text-white px-4 py-2 rounded" disabled>
                     ✔ Connected
                 </button>
-            ) : status === "pending" ? (
+            ) : status === "PENDING" ? (
                 <button className="bg-yellow-400 text-white px-4 py-2 rounded" disabled>
                     ⏳ Request Sent
                 </button>
-            ) : status === "received" ? (
+            ) : status === "RECEIVED" ? (
                 <div>
                     <button
                         onClick={() => answerRequest(true)}

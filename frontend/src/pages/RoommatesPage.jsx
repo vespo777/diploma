@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
@@ -26,6 +26,47 @@ const RoommatesPage = () => {
   const [universityFilter, setUniversityFilter] = useState('');
   const [interestFilter, setInterestFilter] = useState('');
 
+  const matchingLevelsMap = useRef({});
+  const hasFetched = useRef(false);
+
+
+  const fetchMatchingLevels = async () => {
+    if (!user?.userId || hasFetched.current) return;
+    hasFetched.current = true
+
+    try {
+      const response = await fetch(`http://localhost:8080/recommended-users-dto?userId=${user.userId}`, {
+        headers: { 'Authorization': `${localStorage.getItem('token')}` }
+      });
+
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch matching levels: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+
+      // Заполняем глобальную хешмапу
+      const levelsMap = {};
+      data.forEach(item => {
+        if (item.user.userId && item.matchingScore) {
+          levelsMap[item.user.userId] = item.matchingScore;
+        }
+      });
+
+
+      matchingLevelsMap.current = levelsMap;
+
+    } catch (error) {
+      console.error("Error fetching matching levels:", error);
+    }
+  };
+
+  // Функция для получения matching level по userId
+  const getMatchingLevel = (userId) => {
+    return matchingLevelsMap.current[userId];
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -33,6 +74,10 @@ const RoommatesPage = () => {
 
       try {
         setLoading(true);
+
+        // Сначала получаем matching levels
+        await fetchMatchingLevels();
+
         const response = await fetch(`http://localhost:8080/recommended-users?userId=${user.userId}`, {
           headers: { 'Authorization': `${localStorage.getItem('token')}` }
         });
@@ -42,7 +87,7 @@ const RoommatesPage = () => {
 
         setAllUsers(uniqueUsers);  // Загружаем всех
         setVisibleUsers(uniqueUsers.slice(0, PAGE_SIZE));
-        setHasMore(uniqueUsers.length > PAGE_SIZE); // Если пользователей больше PAGE_SIZE, показываем кнопку
+        setHasMore(uniqueUsers.length > PAGE_SIZE);
 
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -54,12 +99,11 @@ const RoommatesPage = () => {
     fetchUsers();
   }, [user]);
 
-  // Функция для подгрузки пользователей
   const loadMoreUsers = () => {
     const newUsers = allUsers.slice(0, visibleUsers.length + PAGE_SIZE);
 
     setVisibleUsers(newUsers);
-    setHasMore(newUsers.length < allUsers.length); // Если загрузили всех, убираем кнопку
+    setHasMore(newUsers.length < allUsers.length);
   };
 
   const filteredUsers = visibleUsers.filter(user => {
@@ -222,6 +266,7 @@ const RoommatesPage = () => {
                     <div className="roommate-info">
                       <h3>{user.personalInfo.name} {user.personalInfo.surname}</h3>
                       <p className="price-info">Minimal Budget: {user.roommateSearch?.budgetMin} T</p>
+                      <p className="price-info">Matching Score with this user is: {getMatchingLevel(user.userId)}</p>
                     </div>
                     <Link to={`/profile/${user.userId}`}>More</Link>
                   </div>

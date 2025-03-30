@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from "../contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,13 +17,17 @@ const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [connections, setConnections] = useState([]);
+  const [showConnections, setShowConnections] = useState(false);
   const location = useLocation();
   const token = localStorage.getItem("token");
   const API_URL = "http://localhost:8080";
+  const wrapperRef = useRef(null);
 
 
   useEffect(() => {
     if (!token || !user?.userId) return;
+
 
     const fetchNotifications = async () => {
       try {
@@ -47,6 +51,43 @@ const Navbar = () => {
     fetchNotifications();
   }, [token, user?.userId]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setShowDropdown(false);
+        setShowNotification(false);
+        setShowConnections(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDropdown, showNotification, showConnections]);
+
+  const handleMyConnections = async (userId) => {
+    if (!user?.userId) {
+      return;
+    }
+
+
+    try {
+      const responce = await fetch(`${API_URL}/connections/my-connections?userId=${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        }
+      });
+
+      const data = await responce.json();
+      setConnections(data);
+    }catch(err) {
+      console.error(err);
+    }
+  };
+
   const handleAnswer = async (senderId, answer) => {
     if (!user?.userId) return;
 
@@ -61,7 +102,6 @@ const Navbar = () => {
 
       if (!response.ok) throw new Error("Ошибка при обработке запроса");
 
-      // Фильтруем отклоненные или принятые запросы
       setNotifications((prev) => prev.filter((notif) => notif.senderId !== senderId));
     } catch (error) {
       console.error("Ошибка обработки запроса:", error);
@@ -138,7 +178,7 @@ const Navbar = () => {
           </button>
 
           {user ? (
-              <>
+              <div ref={wrapperRef}>
                 <AnimatePresence>
                   {showNotification && (
                       <motion.div className="notification-dropdown">
@@ -150,6 +190,7 @@ const Navbar = () => {
                                   <div className="notification-actions">
                                     <button className="accept-btn" onClick={() => handleAnswer(notif.userId, true)}>Принять</button>
                                     <button className="decline-btn" onClick={() => handleAnswer(notif.userId, false)}>Отклонить</button>
+                                    <Link to={`/profile/${notif.userId}`}>more</Link>
                                   </div>
                                 </div>
                             ))
@@ -168,15 +209,44 @@ const Navbar = () => {
                   <AnimatePresence>
                     {showDropdown && (
                         <motion.div className="dropdown-menu">
-                          <Link to="/profile" className="dropdown-item" onClick={() => setShowDropdown(false)}>
+                          <Link to="/profile" className="dropdown-item" onClick={() => setShowDropdown(false) || setShowConnections(false)}>
                             {user.email}
+                          </Link>
+                          <Link
+                              className="dropdown-item"
+                              onClick={() => {
+                                setShowConnections(!showConnections);
+                                handleMyConnections(user.userId);
+                              }}
+                          >
+                            My Connections
                           </Link>
                           <button className="dropdown-item logout" onClick={handleLogout}>Logout</button>
                         </motion.div>
                     )}
                   </AnimatePresence>
+
+                  <AnimatePresence>
+                    {showConnections && (
+                        <motion.div className="connections-dropdown">
+                          {connections.length > 0 ? (
+                              connections.map((connect, index) => (
+                                  <div key={index} className="notification-item">
+                                    <p><strong>{connect.personalInfo.name} {connect.personalInfo.surname}</strong> <br/><i>{connect.socialDetails.profession}</i> at <strong>{connect.socialDetails.company}</strong></p>
+                                    <div className="notification-actions">
+                                      <Link to={`/profile/${connect.userId}`}>more</Link>
+                                    </div>
+                                  </div>
+                              ))
+                          ) : (
+                              <p className="notification-empty">Нет друзей</p>
+                          )}
+
+                        </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-              </>
+              </div>
           ) : (
               <div className="auth-buttons">
                 <Link to="/login" className={`nav-link login ${isActive('/login') ? 'active' : ''}`}>Login</Link>

@@ -1,5 +1,6 @@
 package kz.dreamteam.backend.service;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import kz.dreamteam.backend.model.*;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Collections;
 
 
@@ -28,6 +30,7 @@ public class PasswordService {
     private final ContactsRepository contactsRepository;
     private final TeamRepository teamRepository;
     private final GraphSearchService graphSearchService;
+    private final ElasticsearchClient elasticsearchClient;
 
 
     public PasswordService(UserRepository userRepository,
@@ -39,7 +42,7 @@ public class PasswordService {
                            ContactsRepository contactsRepository,
                            GraphSearchService graphSearchService,
                            TeamRepository teamRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, ElasticsearchClient elasticsearchClient) {
         this.userRepository = userRepository;
         this.socialDetailsRepository = socialDetailsRepository;
         this.locationDetailsRepository = locationDetailsRepository;
@@ -50,6 +53,7 @@ public class PasswordService {
         this.passwordEncoder = passwordEncoder;
         this.teamRepository = teamRepository;
         this.graphSearchService = graphSearchService;
+        this.elasticsearchClient = elasticsearchClient;
     }
 
     public String encodePassword(String password) {
@@ -156,7 +160,9 @@ public class PasswordService {
             createEmptyContacts(user);
             userRepository.save(user);
 
+            saveToElasticsearch(user);
 
+            graphSearchService.downloadFromDB();
 
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
         } catch (Exception e) {
@@ -165,6 +171,16 @@ public class PasswordService {
         }
     }
 
-
+    public void saveToElasticsearch(User user) {
+        try {
+            elasticsearchClient.index(i -> i
+                    .index("users")
+                    .id(user.getUserId().toString())
+                    .document(user)
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при сохранении в Elasticsearch", e);
+        }
+    }
 
 }

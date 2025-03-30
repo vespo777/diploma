@@ -2,8 +2,10 @@ package kz.dreamteam.backend.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import kz.dreamteam.backend.model.Team;
 import kz.dreamteam.backend.model.User;
 import kz.dreamteam.backend.model.dto.UpdateUserProfileRequest;
+import kz.dreamteam.backend.model.dto.UserRecommendationDTO;
 import kz.dreamteam.backend.service.DjangoClientService;
 import kz.dreamteam.backend.service.GraphSearchService;
 import kz.dreamteam.backend.service.JwtService;
@@ -68,6 +70,15 @@ public class UserController {
         return graphSearchService.getUserRecommendations(userId);
     }
 
+    @GetMapping("/recommended-users-dto") // necessary to get matching score
+    public ResponseEntity<List<UserRecommendationDTO>> getRecommendedUsersDTO(@RequestParam int userId) {
+        return graphSearchService.getUserRecommendationsDTO(userId);
+    }
+
+    @GetMapping("/recommended-teams")
+    public ResponseEntity<List<Team>> getRecommendedTeams(@RequestParam int userId) {
+        return graphSearchService.getTeamRecommendations(userId);
+    }
 
     @GetMapping("/check-ml-questions")
     public ResponseEntity<Boolean> checkMlQuestions(@RequestParam Long userId) {
@@ -87,8 +98,6 @@ public class UserController {
                 ? authorizationHeader.substring(7)
                 : authorizationHeader;
 
-
-
         return djangoClientService.saveUserClassteredGroup(req.getAnswers(), token);
     }
 
@@ -100,7 +109,7 @@ public class UserController {
             return answers;
         }
 
-        public void setNumbers(List<Integer> answers) {
+        public void setAnswers(List<Integer> answers) {
             this.answers = answers;
         }
     }
