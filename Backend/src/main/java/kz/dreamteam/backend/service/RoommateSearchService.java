@@ -29,4 +29,20 @@ public class RoommateSearchService {
 
         return ResponseEntity.ok("Roommate search updated successfully");
     }
+
+    public ResponseEntity<Integer> getPersonalityScore(Long userId) {
+        RoommateSearch roommateSearch = roommateSearchRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Roommate search not found for userId: " + userId));
+        return ResponseEntity.ok(roommateSearch.getScoreTest());
+    }
+
+    public ResponseEntity<Boolean> checkScoreTestExists(Long userId) {
+        RoommateSearch roommateSearch = roommateSearchRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Roommate search not found for userId: " + userId));
+        
+        System.out.println("\n\nDEBUG -- roommateSearch.getScoreTest(): " + roommateSearch.getScoreTest() + "\n\n");
+
+        return ResponseEntity.ok(roommateSearch.getScoreTest() != null);
+    }
+
 }

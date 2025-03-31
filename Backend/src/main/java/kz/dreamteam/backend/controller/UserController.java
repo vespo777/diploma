@@ -8,6 +8,7 @@ import kz.dreamteam.backend.model.dto.UpdateUserProfileRequest;
 import kz.dreamteam.backend.model.dto.UserRecommendationDTO;
 import kz.dreamteam.backend.service.DjangoClientService;
 import kz.dreamteam.backend.service.GraphSearchService;
+import kz.dreamteam.backend.service.RoommateSearchService;
 import kz.dreamteam.backend.service.JwtService;
 import kz.dreamteam.backend.service.UserService;
 import org.slf4j.Logger;
@@ -26,15 +27,18 @@ public class UserController {
     private final UserService userService;
     private final DjangoClientService djangoClientService;
     private final GraphSearchService graphSearchService;
+    private final RoommateSearchService roommateSearchService;
 
     public UserController(JwtService jwtService,
                           UserService userService,
                           DjangoClientService djangoClientService,
-                          GraphSearchService graphSearchService){
+                          GraphSearchService graphSearchService,
+                          RoommateSearchService roommateSearchService){
         this.jwtService = jwtService;
         this.userService = userService;
         this.djangoClientService = djangoClientService;
         this.graphSearchService = graphSearchService;
+        this.roommateSearchService = roommateSearchService;
     }
 
 
@@ -72,6 +76,7 @@ public class UserController {
 
     @GetMapping("/recommended-users-dto") // necessary to get matching score
     public ResponseEntity<List<UserRecommendationDTO>> getRecommendedUsersDTO(@RequestParam int userId) {
+        System.out.println("\n\nDEBUG backend graphSearchService.getUserRecommendationsDTO(userId): " + graphSearchService.getUserRecommendationsDTO(userId) + "\n\n");
         return graphSearchService.getUserRecommendationsDTO(userId);
     }
 
@@ -82,7 +87,8 @@ public class UserController {
 
     @GetMapping("/check-ml-questions")
     public ResponseEntity<Boolean> checkMlQuestions(@RequestParam Long userId) {
-        return userService.checkMlQuestionsAnswers(userId);
+        // return userService.checkMlQuestionsAnswers(userId);
+        return roommateSearchService.checkScoreTestExists(userId);
     }
 
 

@@ -19,5 +19,13 @@ public class RoommateSearchController {
                                                        @RequestBody UpdateRoommateSearchDto dto) {
         return roommateSearchService.updateRoommateSearch(userId, dto);
     }
+
+
+    @GetMapping("/get-personality-type") // get(/user/get-personality-type)
+    public ResponseEntity<Integer> getPersonalityScore(@RequestParam Long userId) {
+        System.out.println("\n\nDEBUG inside public ResponseEntity<Integer> getPersonalityScore(@RequestParam Long userId) \n\n");
+        return roommateSearchService.getPersonalityScore(userId);
+    }
+
 }
 
