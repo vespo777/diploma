@@ -115,28 +115,14 @@ const TeamDetail = () => {
                 {userTeam && userTeam.name ? (
                     <>
                         <h2>Ваша команда: {userTeam.name}</h2>
-                        <div className="all-teams">
-                            <ul className="team-details">
-                                {userTeam.members && userTeam.members.length > 1 ? (
-                                    userTeam.members.map((member, index) => (
-                                        <li key={index} className="team-member">
-                                            <p>{member.personalInfo?.name} {member.personalInfo?.surname}</p>
-                                            <i>{member.socialDetails?.profession}</i>
-                                        </li>
-                                    ))
-
-
-                                ) : (
-                                    <p className="no-members">Пока нет участников</p>
-                                )}
-                                <Link to={`/teams/${user.userId}`}>Посмотреть команду</Link>
-                            </ul>
+                        <div className="team-details">
+                                <Link to={`/teams/${user.userId}`}>Посмотреть мою команду</Link>
                         </div>
                     </>
                 ) : (
                     <p>Вы не состоите в команде</p>
                 )}
-                        <h1>All Teams</h1>
+                        <h1 className="team-header">All Teams</h1>
                         <ul className="all-teams">
                             {allTeams.map((team) => (
                                 <li className="team-details" key={team.id}>

@@ -17,9 +17,9 @@ const Profile = () => {
 
   useEffect(() => {
     if (!myId) {
-      navigate("/login"); // Если нет идентификатора пользователя, редирект на /login
+      navigate("/login");
     } else if (myId === Number(id)) {
-      navigate("/profile"); // Если id пользователя совпадает с myId, редирект на страницу профиля
+      navigate("/profile");
     }
     console.log(id, myId);
   }, [id, myId, navigate]);
