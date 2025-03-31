@@ -388,7 +388,6 @@ const ProfilePage = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
   if (!userData) return <p>No user data found</p>;
-  console.log(userData);
   return (
       <div className="profile-container">
         <h2>Your Profile</h2>
@@ -412,7 +411,7 @@ const ProfilePage = () => {
 
 
           <h3>Personality type</h3>
-          
+
           <h3>Social Details</h3>
           <input type="text" placeholder="School Name" value={userData.socialDetails.schoolName} onChange={(e) => handleChange('socialDetails', 'schoolName', e.target.value)} />
           <select

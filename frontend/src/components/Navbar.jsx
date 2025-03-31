@@ -23,6 +23,7 @@ const Navbar = () => {
   const token = localStorage.getItem("token");
   const API_URL = "http://localhost:8080";
   const wrapperRef = useRef(null);
+  const [teamInvitations, setTeamInvitations] = useState([]);
 
 
   useEffect(() => {
@@ -48,8 +49,25 @@ const Navbar = () => {
       }
     };
 
+    const fetchTeamInvitations = async () => {
+      try {
+        const response = await fetch(`${API_URL}/teams/received-invitations-and-requests?userId=${user.userId}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json", Authorization: token },
+        });
+        if (!response.ok) throw new Error("Ошибка загрузки приглашений в команду");
+        const data = await response.json();
+        setTeamInvitations(data);
+      } catch (error) {
+        console.error("Ошибка при загрузке приглашений в команду:", error);
+      }
+    };
+
     fetchNotifications();
+    fetchTeamInvitations();
   }, [token, user?.userId]);
+
+
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -71,7 +89,6 @@ const Navbar = () => {
       return;
     }
 
-
     try {
       const responce = await fetch(`${API_URL}/connections/my-connections?userId=${userId}`, {
         method: "GET",
@@ -83,7 +100,7 @@ const Navbar = () => {
 
       const data = await responce.json();
       setConnections(data);
-    }catch(err) {
+    } catch(err) {
       console.error(err);
     }
   };
@@ -108,6 +125,47 @@ const Navbar = () => {
     }
   };
 
+  const handleTeamInvitationResponse = async (senderId, teamId, status) => {
+    try {
+      const response = await fetch(`${API_URL}/teams/answer-to-invite?senderId=${senderId}&receiverId=${user.userId}&status=${status}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to process invitation");
+
+      setTeamInvitations(prev => prev.filter(invite =>
+          !(invite.user.userId === senderId && invite.team.id === teamId)
+      ));
+    } catch (error) {
+      console.error("Error handling team invitation:", error);
+    }
+  };
+
+  const handleTeamRequestResponse = async (senderId, teamId, status) => {
+    try {
+      const response = await fetch(`${API_URL}/teams/answer-to-request?senderId=${senderId}&receiverId=${user.userId}&status=${status}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to process request");
+
+      setTeamInvitations(prev => prev.filter(request =>
+          !(request.user.userId === senderId && request.team.id === teamId)
+      ));
+    } catch (error) {
+      console.error("Error handling team request:", error);
+    }
+  };
+
+
 
   const handleLogout = () => {
     logout();
@@ -116,7 +174,7 @@ const Navbar = () => {
   };
 
   const isActive = (path) => location.pathname === path;
-  const hasNewNotifications = notifications.length > 0;
+  const hasNewNotifications = notifications.length > 0 || teamInvitations.length > 0;
 
   return (
       <motion.nav
@@ -174,7 +232,12 @@ const Navbar = () => {
               onClick={() => setShowNotification(!showNotification)}
               style={{ background: 'none', border: 'none', cursor: 'pointer' }}
           >
-            <img src={hasNewNotifications ? notificationTrue : notificationFalse} alt="notification icon" className="notification-icon" />
+            <div className="notification-icon-container">
+              <img src={hasNewNotifications ? notificationTrue : notificationFalse} alt="notification icon" className="notification-icon" />
+              {hasNewNotifications && (
+                  <span className="notification-badge"></span>
+              )}
+            </div>
           </button>
 
           {user ? (
@@ -182,20 +245,70 @@ const Navbar = () => {
                 <AnimatePresence>
                   {showNotification && (
                       <motion.div className="notification-dropdown">
-                        <h4>Запросы на коннект</h4>
+                        <h4>Connection Requests</h4>
                         {notifications.length > 0 ? (
                             notifications.map((notif, index) => (
                                 <div key={index} className="notification-item">
-                                  <p><strong>{notif.personalInfo.name} {notif.personalInfo.surname}</strong> хочет добавить вас в друзья</p>
+                                  <p><strong>{notif.personalInfo.name} {notif.personalInfo.surname}</strong> wants to connect with you</p>
                                   <div className="notification-actions">
-                                    <button className="accept-btn" onClick={() => handleAnswer(notif.userId, true)}>Принять</button>
-                                    <button className="decline-btn" onClick={() => handleAnswer(notif.userId, false)}>Отклонить</button>
-                                    <Link to={`/profile/${notif.userId}`}>more</Link>
+                                    <button className="accept-btn" onClick={() => handleAnswer(notif.userId, true)}>Accept</button>
+                                    <button className="decline-btn" onClick={() => handleAnswer(notif.userId, false)}>Decline</button>
+                                    <Link to={`/profile/${notif.userId}`}>View Profile</Link>
                                   </div>
                                 </div>
                             ))
                         ) : (
-                            <p className="notification-empty">Нет новых запросов</p>
+                            <p className="notification-empty">No new connection requests</p>
+                        )}
+
+                        <div className="notif-separator"></div>
+
+                        <h4>Team Invitations & Requests</h4>
+                        {teamInvitations.length > 0 ? (
+                            teamInvitations.map((item, index) => (
+                                <div key={index} className="notification-item">
+                                  {item.type === "invite" ? (
+                                      <>
+                                        <p>You're invited to join team <strong><Link to={`/teams/${item.team.id}`}>{item.team.name}</Link></strong></p>
+                                        <p>Invited by <i><Link to={`/profile/${item.user.userId}`}>{item.user.email}</Link></i></p>
+                                        <div className="notification-actions">
+                                          <button
+                                              className="accept-btn"
+                                              onClick={() => handleTeamInvitationResponse(item.user.userId, item.team.id, "ACCEPTED")}
+                                          >
+                                            Accept
+                                          </button>
+                                          <button
+                                              className="decline-btn"
+                                              onClick={() => handleTeamInvitationResponse(item.user.userId, item.team.id, "REJECTED")}
+                                          >
+                                            Decline
+                                          </button>
+                                        </div>
+                                      </>
+                                  ) : item.type === "request" ? (
+                                      <>
+                                        <p><strong><Link to={`/profile/${item.user.userId}`}>{item.user.email}</Link></strong> wants to join your team Your Team</p>
+                                        <div className="notification-actions">
+                                          <button
+                                              className="accept-btn"
+                                              onClick={() => handleTeamRequestResponse(item.user.userId, item.team.id, "ACCEPTED")}
+                                          >
+                                            Accept
+                                          </button>
+                                          <button
+                                              className="decline-btn"
+                                              onClick={() => handleTeamRequestResponse(item.user.userId, item.team.id, "REJECTED")}
+                                          >
+                                            Decline
+                                          </button>
+                                        </div>
+                                      </>
+                                  ) : null}
+                                </div>
+                            ))
+                        ) : (
+                            <p className="notification-empty">No new team invitations or requests</p>
                         )}
                       </motion.div>
                   )}
