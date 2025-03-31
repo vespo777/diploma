@@ -148,6 +148,103 @@ background: #2563eb;
   border-radius: 4px;
   cursor: pointer;
 }
+/* Loading */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Team Sections */
+.team-section, .all-teams-section {
+  margin-bottom: 2rem;
+}
+
+.team-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.team-name {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+/* Members List */
+.team-members {
+  margin: 1rem 0;
+}
+
+.member-item {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #eee;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+.member-link {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.member-link:hover {
+  text-decoration: underline;
+}
+
+.member-profession {
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.more-members {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+/* Buttons */
+.view-team-button, .create-team-button, .retry-button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: #3498db;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-top: 1rem;
+  border: none;
+  cursor: pointer;
+}
+
+.view-team-button:hover, .create-team-button:hover, .retry-button:hover {
+  background: #2980b9;
+}
+
+/* Error Message */
+.error-message {
+  color: #e74c3c;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Empty States */
+.no-team, .no-teams {
+  text-align: center;
+  padding: 2rem;
+  color: #7f8c8d;
+}
+
+/* Teams List */
+.teams-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 0;
+  list-style: none;
+}
 
 .pending-button {
   background: #ffeb3b;
@@ -239,8 +336,7 @@ color: #2f2f2f;
 list-style: none;
 padding: 10px;
 display: flex;
-  flex-direction: column;
-justify-content: center;
+justify-content: space-evenly;
 }
 .team-members{
   flex-direction: row;
