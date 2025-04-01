@@ -90,7 +90,7 @@ const Navbar = () => {
     }
 
     try {
-      const responce = await fetch(`${API_URL}/connections/my-connections?userId=${userId}`, {
+      const response = await fetch(`${API_URL}/connections/my-connections?userId=${userId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -98,8 +98,10 @@ const Navbar = () => {
         }
       });
 
-      const data = await responce.json();
-      setConnections(data);
+      if (!response.ok) throw new Error("Ошибка загрузки соединений");
+      const data = await response.json();
+      const cleanedData = data.filter(item => typeof item === "object");
+      setConnections(cleanedData);
     } catch(err) {
       console.error(err);
     }
@@ -119,7 +121,7 @@ const Navbar = () => {
 
       if (!response.ok) throw new Error("Ошибка при обработке запроса");
 
-      setNotifications((prev) => prev.filter((notif) => notif.senderId !== senderId));
+      setNotifications((prev) => prev.filter((notif) => notif.userId !== senderId));
     } catch (error) {
       console.error("Ошибка обработки запроса:", error);
     }
@@ -288,17 +290,17 @@ const Navbar = () => {
                                       </>
                                   ) : item.type === "request" ? (
                                       <>
-                                        <p><strong><Link to={`/profile/${item.user.userId}`}>{item.user.email}</Link></strong> wants to join your team Your Team</p>
+                                        <p><strong><Link to={`/profile/${item.user}`}>Someone</Link></strong> wants to join your team Your Team</p>
                                         <div className="notification-actions">
                                           <button
                                               className="accept-btn"
-                                              onClick={() => handleTeamRequestResponse(item.user.userId, item.team.id, "ACCEPTED")}
+                                              onClick={() => handleTeamRequestResponse(item.user, item.team.id, "ACCEPTED")}
                                           >
                                             Accept
                                           </button>
                                           <button
                                               className="decline-btn"
-                                              onClick={() => handleTeamRequestResponse(item.user.userId, item.team.id, "REJECTED")}
+                                              onClick={() => handleTeamRequestResponse(item.user, item.team.id, "REJECTED")}
                                           >
                                             Decline
                                           </button>
@@ -347,7 +349,7 @@ const Navbar = () => {
                                   <div key={index} className="notification-item">
                                     <p><strong>{connect.personalInfo.name} {connect.personalInfo.surname}</strong> <br/><i>{connect.socialDetails.profession}</i> at <strong>{connect.socialDetails.company}</strong></p>
                                     <div className="notification-actions">
-                                      <Link to={`/profile/${connect.userId}`}>more</Link>
+                                      <Link to={`/profile/${connect.userId}`}>View Profile</Link>
                                     </div>
                                   </div>
                               ))

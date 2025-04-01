@@ -44,7 +44,8 @@ const TeamDetail = () => {
             });
             if (!response.ok) throw new Error("Ошибка загрузки коннекшнов");
             const data = await response.json();
-            setConnections(data);
+            const cleanedData = data.filter(item => typeof item === "object");
+            setConnections(cleanedData);
         } catch (error) {
             console.error("Ошибка при загрузке коннекшнов:", error);
         }

@@ -46,7 +46,8 @@ const RoommatesPage = () => {
 
       const data = await response.json();
 
-
+      console.log("\n\nDEBUG data: ", data, "\n\n");
+      
       // Заполняем глобальную хешмапу
       const levelsMap = {};
       data.forEach(item => {

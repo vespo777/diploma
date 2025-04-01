@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import "../styles/ProfilePage.css"
 
@@ -304,6 +305,10 @@ const ProfilePage = () => {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Добавляем новые состояния для личностного теста
+  const [personalityTestCompleted, setPersonalityTestCompleted] = useState(null);
+  const [personalityData, setPersonalityData] = useState(null);
+  const [loadingPersonality, setLoadingPersonality] = useState(false);
 
   useEffect(() => {
     if (!user?.userId) return;
@@ -328,6 +333,54 @@ const ProfilePage = () => {
 
   }, [user]);
 
+  // Добавляем новый useEffect для проверки статуса личностного теста
+  useEffect(() => {
+    if (!user?.userId) return;
+
+    setLoadingPersonality(true);
+    
+    // Проверяем, пройден ли тест
+    fetch(`${API_URL}/check-ml-questions?userId=${user.userId}`, {
+      headers: {
+        'Authorization': `${localStorage.getItem('token')}`
+      }
+    })
+      .then(res => res.ok ? res.json() : Promise.reject('Failed to check personality test status'))
+      .then(completed => {
+        setPersonalityTestCompleted(completed);
+        
+        console.log("\n\nDEBUG -- completed: ", completed, " userid: ", user.userId, "\n\n")
+        
+        // Если тест пройден, получаем результаты
+        if (completed) {
+          return fetch(`${API_URL}/user/get-personality-type?userId=${user.userId}`, {
+            headers: {
+              'Authorization': `${localStorage.getItem('token')}`
+            }
+          });
+        }
+        return null;
+      })
+      .then(res => res ? (res.ok ? res.json() : Promise.reject('Failed to load personality data')) : null)
+      .then(data => {
+        if (data) {
+
+          console.log("\n\nDEBUG --- before setPersonalityData: ", personalityData, "\n\n");
+
+          setPersonalityData(data);
+
+          console.log("\n\nDEBUG --- after setPersonalityData: ", personalityData, "\n\n");
+          console.log("\n\nDEBUG --- data data: ", data, "\n\n");
+
+        }
+      })
+      .catch(err => {
+        console.error("Error fetching personality data:", err);
+      })
+      .finally(() => setLoadingPersonality(false));
+  }, [user]);
+
+  
 
   const handleChange = (section, field, value) => {
     setUserData(prev => ({
@@ -385,9 +438,74 @@ const ProfilePage = () => {
   };
 
 
+// Функция для отображения секции личностного теста
+const renderPersonalitySection = () => {
+  if (loadingPersonality) {
+    return <div className="personality-loading">Loading personality information...</div>;
+  }
+  
+  if (personalityTestCompleted === null) {
+    return null; // Данные еще не загружены
+  }
+  
+  if (personalityTestCompleted === false) {
+    return (
+      <div className="personality-not-completed">
+        <p>You haven't completed the personality assessment yet.</p>
+        <p>Taking this assessment will help us find better roommate matches for you!</p>
+        <Link to="/ml-questions" className="take-test-button">
+          Take Personality Test
+        </Link>
+      </div>
+    );
+  }
+  
+  // Тест пройден, отображаем результаты
+  return (
+    <div className="personality-results">
+      {personalityData !== null ? (
+        <>
+          <div className="personality-score-container">
+            <div className="personality-score">
+              <div className="score-circle">
+                <span className="score-value">{personalityData}</span>
+              </div>
+            </div>
+            <div className="score-info">
+              <p className="score-description">
+                {getScoreDescription(personalityData)}
+              </p>
+              <p className="score-explanation">
+                This score represents your personality compatibility value. Higher scores indicate better compatibility potential with roommates.
+              </p>
+              <Link to="/ml-questions" className="retake-test-button">
+                Retake Test
+              </Link>
+            </div>
+          </div>
+        </>
+      ) : (
+        <p>Your personality assessment is completed, but results are still processing.</p>
+      )}
+    </div>
+  );
+};
+
+// Вспомогательная функция для описания оценки
+const getScoreDescription = (score) => {
+  if (score == 5) return "Excellent compatibility potential";
+  if (score == 4) return "Very good compatibility potential";
+  if (score == 3) return "Good compatibility potential";
+  if (score == 2) return "Average compatibility potential";
+  if (score == 1) return "Below average compatibility potential";
+  return "Cannot find your type in Database";
+};
+
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
   if (!userData) return <p>No user data found</p>;
+  console.log(userData);
   return (
       <div className="profile-container">
         <h2>Your Profile</h2>
@@ -411,6 +529,7 @@ const ProfilePage = () => {
 
 
           <h3>Personality type</h3>
+          {renderPersonalitySection()}
 
           <h3>Social Details</h3>
           <input type="text" placeholder="School Name" value={userData.socialDetails.schoolName} onChange={(e) => handleChange('socialDetails', 'schoolName', e.target.value)} />

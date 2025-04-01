@@ -1,166 +1,346 @@
+/* Base Styles */
 .home-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  line-height: 1.6;
 }
 
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Hero Section */
 .hero-section {
-  text-align: center;
-  padding: 60px 20px;
-  background: linear-gradient(135deg, #000000 0%, #ac6e11 100%);
+  background: linear-gradient(135deg, #6e45e2 0%, #88d3ce 100%);
   color: white;
-  border-radius: 15px;
-  margin-bottom: 40px;
+  padding: 100px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
 }
 
 .hero-section h1 {
-  font-size: 2.5rem;
+  font-size: 3rem;
   margin-bottom: 20px;
+  font-weight: 700;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
 }
 
 .hero-section p {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
+  margin-bottom: 30px;
   opacity: 0.9;
 }
 
-.listings-section {
-  margin-bottom: 40px;
-}
-
-.listings-section h2 {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #2d3748;
-}
-
-.listings-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 30px;
-  padding: 20px 0;
-}
-
-.listing-card {
+.cta-button {
   background: white;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  color: #6e45e2;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-.listing-card img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }
 
-.listing-content {
-  padding: 20px;
+/* Problems Section */
+.problems-section {
+  padding: 80px 0;
+  background: #f9f9f9;
 }
 
-.listing-content h3 {
-  margin: 0 0 10px 0;
-  color: #2d3748;
-}
-
-.listing-location {
-  color: #718096;
-  margin-bottom: 10px;
-}
-
-.listing-description {
-  color: #4a5568;
-  margin-bottom: 15px;
-  font-size: 0.9rem;
-}
-
-.listing-details {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
-  color: #718096;
-  font-size: 0.9rem;
-}
-
-.listing-price {
-  font-weight: bold;
-  color: #4a5568;
-  font-size: 1.2rem;
-}
-
-.about-section {
-  padding: 40px 0;
-}
-
-.about-section h2 {
+.problems-section h2, .solutions-section h2, .testimonial-section h2 {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 50px;
+  font-size: 2.2rem;
+  color: #2d3748;
+  position: relative;
+}
+
+.problems-section h2:after, .solutions-section h2:after, .testimonial-section h2:after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 4px;
+  background: #6e45e2;
+  margin: 15px auto;
+  border-radius: 2px;
+}
+
+.problems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.problem-card {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.problem-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+.problem-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.problem-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
   color: #2d3748;
 }
 
-.features-grid {
+.problem-card p {
+  color: #718096;
+  font-size: 1rem;
+}
+
+/* Solutions Section */
+.solutions-section {
+  padding: 80px 0;
+  background: white;
+}
+
+.solutions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 30px;
-  text-align: center;
 }
 
-.feature {
-  padding: 20px;
+.solution-card {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 30px;
+  position: relative;
+  overflow: hidden;
 }
 
-.feature-icon {
-  font-size: 2.5rem;
+.solution-number {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 3rem;
+  font-weight: 700;
+  color: rgba(110, 69, 226, 0.1);
+}
+
+.solution-card h3 {
+  font-size: 1.3rem;
   margin-bottom: 15px;
-  display: block;
-}
-
-.feature h3 {
-  margin-bottom: 10px;
   color: #2d3748;
 }
 
-.problems-wrapper{
+.solution-card p {
+  color: #718096;
+  font-size: 1rem;
+}
+
+/* Testimonial Section */
+.testimonial-section {
+  padding: 80px 0;
+  background: linear-gradient(135deg, #88d3ce 0%, #6e45e2 100%);
+  color: white;
+}
+
+.testimonial-card {
+  max-width: 800px;
+  margin: 0 auto;
+  background: rgba(255,255,255,0.1);
+  padding: 40px;
+  border-radius: 10px;
+  text-align: center;
+  backdrop-filter: blur(5px);
+}
+
+.testimonial-card p {
+  font-size: 1.3rem;
+  font-style: italic;
+  margin-bottom: 20px;
+  line-height: 1.8;
+}
+
+.testimonial-author {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* ML Questions Success Indicator */
+.ml-success-indicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: fadeInOut 3s ease-in-out;
+}
+/* Custom Alert */
+.custom-alert {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
+  z-index: 1000;
+}
+
+.alert-content {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.alert-content h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.alert-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
   justify-content: center;
 }
 
-.feature p {
-  color: #718096;
+.alert-primary {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
 }
 
-.listing-link {
-  text-decoration: none;
-  color: inherit;
-  display: block;
+.alert-secondary {
+  background: #f0f0f0;
+  color: #333;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.listing-card:hover {
-  transform: translateY(-5px);
+/* Attention Message */
+.attention-message {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff3cd;
+  color: #856404;
+  padding: 15px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 999;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+.attention-icon {
+  font-size: 1.2em;
+}
+
+.attention-button {
+  background: #ffc107;
+  color: #856404;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Success Indicator (existing) */
+.ml-success-indicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  20% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
+  .hero-section h1 {
+    font-size: 2.2rem;
+  }
+
+  .hero-section p {
+    font-size: 1.2rem;
+  }
+
+  .problems-section h2, .solutions-section h2, .testimonial-section h2 {
+    font-size: 1.8rem;
+  }
+
+  .problems-grid, .solutions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .testimonial-card {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
   .hero-section {
-    padding: 40px 20px;
+    padding: 60px 0;
   }
 
   .hero-section h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
-  .listings-grid {
-    grid-template-columns: 1fr;
+  .cta-button {
+    padding: 12px 25px;
+    font-size: 1rem;
   }
 }
-
-.home-page {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
