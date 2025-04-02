@@ -6,14 +6,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import notificationTrue from "../imgs/icons8-notification-48.png"
 import notificationFalse from "../imgs/icons8-notification-48(1).png"
 import home from "../imgs/icons8-home.svg";
-import search from "../imgs/icons8-search.svg";
+import roommatesIcon from "../imgs/roommates-icon.png";
 import logo from "../imgs/logo.jpg";
 import avatarPlaceholder from "../imgs/default-avatar.jpeg";
+import apartmentIcon from "../imgs/apartments-icon.png"
+import faqIcon from "../imgs/faq-icon.png"
+import teamIcon from "../imgs/team-icon.png";
 import '../styles/navbar.css';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
-  const [showSearch, setShowSearch] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -191,58 +193,71 @@ const Navbar = () => {
         </div>
 
         <div className="nav-links">
-          <Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`}>
-            <img src={home} alt="home icon" />
-          </Link>
-          <div className="search-container">
-            <button
-                className={`nav-link ${showSearch ? 'active' : 'search-button'}`}
-                onClick={() => setShowSearch(!showSearch)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-            >
-              <img src={search} alt="search icon" />
-            </button>
-
-            <AnimatePresence>
-              {showSearch && (
-                  <motion.div
-                      className="search-dropdown"
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                  >
-                    <Link to="/roommates" className="search-option">Roommates</Link>
-                    <Link to="/apartments" className="search-option">Apartments</Link>
-                  </motion.div>
-              )}
-            </AnimatePresence>
+          <div className="nav-link-container">
+            <Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`}>
+              <img src={home} alt="home icon" />
+            </Link>
+            <span className="nav-link-label">Home</span>
           </div>
 
+          <div className="nav-link-container">
+            <Link to="/roommates" className={`nav-link ${isActive('/roommates') ? 'active' : ''}`}>
+              <img src={roommatesIcon} alt="search icon" />
+            </Link>
+            <span className="nav-link-label">Roommates</span>
+          </div>
 
+          <div className="nav-link-container">
+            <Link to="/apartments" className={`nav-link ${isActive('/apartments') ? 'active' : ''}`}>
+              <img alt="apartment-icon" src={apartmentIcon} style={{ width: '24px', height: '24px'}} />
+            </Link>
+            <span className="nav-link-label">Apartments</span>
+          </div>
 
-          <Link to="/teams" className={`nav-link ${isActive('/teams') ? 'active' : ''}`}>Teams</Link>
-          <Link to="/faq" className={`nav-link ${isActive('/faq') ? 'active' : ''}`}>FAQ</Link>
+          <div className="nav-link-container">
+            <Link to="/teams" className={`nav-link ${isActive('/teams') ? 'active' : ''}`}>
+              <img alt="Team-icon" src={teamIcon} />
+            </Link>
+            <span className="nav-link-label">Teams</span>
+          </div>
+
+          <div className="nav-link-container">
+            <Link to="/faq" className={`nav-link ${isActive('/faq') ? 'active' : ''}`}>
+              <img src={faqIcon} alt="faq-icon" />
+            </Link>
+            <span className="nav-link-label">FAQ</span>
+          </div>
+
           {isActive('/apartments') && (
-              <Link to="/add-listing" className="nav-link">Add Apartment</Link>
+              <div className="nav-link-container">
+                <Link to="/add-listing" className="nav-link">+</Link>
+                <span className="nav-link-label">Add Listing</span>
+              </div>
           )}
         </div>
 
         <div className="nav-auth">
 
-          <button
-              className={`nav-link ${showNotification ? 'active' : 'search-button'}`}
-              onClick={() => setShowNotification(!showNotification)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-          >
-            <div className="notification-icon-container">
-              <img src={hasNewNotifications ? notificationTrue : notificationFalse} alt="notification icon" className="notification-icon" />
-              {hasNewNotifications && (
-                  <span className="notification-badge"></span>
-              )}
-            </div>
-          </button>
-
           {user ? (
+              <div className="notification-semi-container">
+                <button
+                    className={`notification-button ${showNotification ? 'active' : ''}`}
+                    onClick={() => setShowNotification(!showNotification)}
+                >
+                  <img src={hasNewNotifications ? notificationTrue : notificationFalse} alt="notification icon" className="notification-icon" />
+                    {hasNewNotifications && (
+                        <span className="notification-badge"></span>
+                    )}
+                </button>
+                <span className="nav-link-label">Notification</span>
+              </div>
+          ) : ( <p></p>
+          )
+          }
+
+
+
+        {user ? (
               <div ref={wrapperRef}>
                 <AnimatePresence>
                   {showNotification && (
@@ -320,6 +335,8 @@ const Navbar = () => {
                   <button className="avatar-button" onClick={() => setShowDropdown(!showDropdown)}>
                     <img src={user.avatar || avatarPlaceholder} alt="User Avatar" className="avatar" />
                   </button>
+                  <span className="nav-link-label">Profile</span>
+
 
                   <AnimatePresence>
                     {showDropdown && (
@@ -364,7 +381,7 @@ const Navbar = () => {
               </div>
           ) : (
               <div className="auth-buttons">
-                <Link to="/login" className={`nav-link login ${isActive('/login') ? 'active' : ''}`}>Login</Link>
+                <Link to="/login" className={`nav-link login`}>Login</Link>
                 <Link to="/register" className={`nav-link register`}>Register</Link>
               </div>
           )}

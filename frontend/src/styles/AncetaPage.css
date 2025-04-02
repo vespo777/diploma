@@ -1,10 +1,13 @@
 .anceta-card-wrapper {
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 1px 1px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
-    max-width: 800px;
     margin: 100px auto;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 850px;
+    box-sizing: border-box;
+    backdrop-filter: blur(10px);
 }
 
 .anceta-form div{
@@ -17,9 +20,8 @@
     display: block;
     flex-direction: row-reverse;
     align-items: center;
-    margin-top: 1rem;
-    gap: 10px;
-    margin-right: 10px;
+    margin-top: 20px;
+    margin-left: 20px;
 }
 .anceta-form input {
     width: 100%;
@@ -48,8 +50,8 @@
     margin-top: 20px;
 }
 .anceta-form button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15);
 }
 .anceta-form button:disabled {
     background: #f7fafc;
@@ -78,17 +80,10 @@
 }
 
 
-.selector{
-    margin-right: 1rem;
-    text-align: center;
-    padding: 0.5rem;
-    margin-top: 1rem;
-    border-radius: 13px;
-    border: none;
-}
+
 
 .anceta-form select{
-    max-width: 500px;
+    max-width: 180px;
     padding: 0.5rem;
     background: #efefef;
     margin-right: 1rem;
@@ -96,7 +91,63 @@
     border-radius: 13px;
     border: none;
 }
-label input[type="checkbox"] {
-    display: block;
-    justify-content: end;
+
+/* Скрытый чекбокс */
+.checkbox-interests {
+    position: absolute;
+    opacity: 0;
+    height: 0;
+    width: 0;
+}
+
+/* Стилизуем label (по умолчанию) */
+.interests-label {
+    display: inline-flex;
+    align-items: center;
+    margin: 8px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+/* Добавляем кастомный чекбокс */
+.interests-label::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-right: 12px;
+    border: 2px solid #adb5bd;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+/* Когда input:checked → применяем стили к label */
+.checkbox-interests:checked + .interests-label {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Изменяем цвет чекбокса, если он выбран */
+.checkbox-interests:checked + .interests-label::before {
+    border-color: white;
+    content: '✔';
+    font-size: 14px;
+    text-align: center;
+    line-height: 18px;
+}
+
+@media (min-width: 600px) {
+    .modal-content {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .interests-label {
+        margin: 5px;
+    }
 }

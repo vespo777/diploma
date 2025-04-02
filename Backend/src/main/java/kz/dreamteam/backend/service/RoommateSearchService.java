@@ -42,7 +42,7 @@ public class RoommateSearchService {
 
             System.out.println("\n\nDEBUG -- roommateSearch.getScoreTest(): " + roommateSearch.getScoreTest() + "\n\n");
 
-            boolean flag = roommateSearch.getScoreTest() != null && roommateSearch.getScoreTest() > 0;
+            boolean flag = roommateSearch.getScoreTest() != null && roommateSearch.getScoreTest() >= 0; 
             return ResponseEntity.ok(flag);
         }
 }

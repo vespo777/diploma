@@ -549,16 +549,21 @@ const AncetaPage = () => {
                                     <div className="modal-content">
                                         <h3>Select Your Interests</h3>
                                         {interests.map((interest, index) => (
-                                            <label key={index}>
+                                            <div key={index} style={{ position: "relative" }}>
                                                 <input
+                                                    className="checkbox-interests"
                                                     type="checkbox"
+                                                    id={`interest-${index}`}
                                                     checked={formData.social_details.interests.includes(interest)}
                                                     onChange={() => handleInterestsChange(interest)}
                                                 />
-                                                {interest}
-                                            </label>
+                                                <label className="interests-label" htmlFor={`interest-${index}`}>
+                                                    {interest}
+                                                </label>
+                                            </div>
                                         ))}
                                         <button type="button" onClick={() => setIsModalOpen(false)}>Save</button>
+
                                     </div>
                                 </div>
                             )}
@@ -732,8 +737,8 @@ const AncetaPage = () => {
 
                 )}
 
-                <button type="button" disabled={step === 1} onClick={() => setStep(step - 1)}>Back</button>
                 <button type="submit">{step < 6 ? "Save and next Page" : "Finish"}</button>
+                <button type="button" disabled={step === 1} onClick={() => setStep(step - 1)}>Back</button>
             </form>
         </div>
     );

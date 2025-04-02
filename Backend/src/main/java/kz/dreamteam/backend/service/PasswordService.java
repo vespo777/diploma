@@ -160,7 +160,7 @@ public class PasswordService {
             createEmptyContacts(user);
             userRepository.save(user);
 
-            saveToElasticsearch(user);
+//             saveToElasticsearch(user);
 
             graphSearchService.downloadFromDB();
 
