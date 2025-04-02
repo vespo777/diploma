@@ -315,7 +315,7 @@ const ProfilePage = () => {
 
     setLoading(true);
 
-    fetch(`${API_URL}/profile/${user.userId}`, {
+    fetch(`${API_URL}/profile`, {
       method: 'GET',
       headers: {
         'Authorization': ` ${localStorage.getItem('token')}`
@@ -324,6 +324,7 @@ const ProfilePage = () => {
         .then(res => res.ok ? res.json() : Promise.reject('Failed to load profile'))
         .then(data => {
           setUserData(data);
+          localStorage.setItem('userData', JSON.stringify(data));
         })
         .catch(err => {
           console.error("Error fetching profile:", err);
