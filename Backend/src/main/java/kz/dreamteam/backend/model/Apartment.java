@@ -18,9 +18,8 @@ public class Apartment {
     @Column(name = "apartment_id")
     private Long apartmentId;
 
-    @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;  // Each apartment is associated with one user
+    private Long userId;  // Each apartment is associated with one user
 
     private String description;
 
@@ -33,12 +32,12 @@ public class Apartment {
     private Integer roomQuantity;
     private Integer sizeSquareMeter;
 
-    public User getUser() {
-        return user;
+    public Long getUser() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Long userId) {
+        this.userId = userId;
     }
 
     public Long getApartmentId() {

@@ -82,7 +82,7 @@ public class ApartmentService {
 
         // Создаем объект Apartment
         Apartment apartment = new Apartment();
-        apartment.setUser(user);
+        apartment.setUser(user.getUserId());
         apartment.setDescription(apartmentDTO.getDescription());
         apartment.setPhotoPath(apartmentDTO.getPhotoPath());
         apartment.setLocation2Gis(apartmentDTO.getLocation2Gis());
