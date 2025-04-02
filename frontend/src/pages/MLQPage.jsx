@@ -156,8 +156,9 @@ const PersonalityTestPage = () => {
         })
       });
 
-      console.log("\n\nDEBUG --> ", response, "\n\n")
-
+      console.log("\n\nDEBUG --> response", response, "\n\n")
+      console.log("\n\nDEBUG --> user.userId:", user.userId, "\n\n")
+      
       if (!response.ok) {
         throw new Error(`Server responded with status ${response.status}`);
       }

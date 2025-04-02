@@ -37,7 +37,7 @@ public class DjangoClientService {
 
     public ResponseEntity<Integer> saveUserClassteredGroup(List<Integer> answers, String token) throws JsonProcessingException {
         var response = sendPostRequest(answers);
-
+        
         if(response == null) return null;
         String clusterGroupValue = extractClusterGroupValue(response);
 
