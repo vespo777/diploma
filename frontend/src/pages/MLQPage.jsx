@@ -72,28 +72,28 @@ const opn_questions = {
 // Получение всех вопросов в правильном порядке
 const getAllQuestions = () => {
   const allQuestions = [];
-  
+
   // Добавляем вопросы в правильном порядке
   Object.entries(ext_questions).forEach(([id, text]) => {
     allQuestions.push({ id, text, category: 'Extraversion' });
   });
-  
+
   Object.entries(est_questions).forEach(([id, text]) => {
     allQuestions.push({ id, text, category: 'Emotional Stability' });
   });
-  
+
   Object.entries(agr_questions).forEach(([id, text]) => {
     allQuestions.push({ id, text, category: 'Agreeableness' });
   });
-  
+
   Object.entries(csn_questions).forEach(([id, text]) => {
     allQuestions.push({ id, text, category: 'Conscientiousness' });
   });
-  
+
   Object.entries(opn_questions).forEach(([id, text]) => {
     allQuestions.push({ id, text, category: 'Openness' });
   });
-  
+
   return allQuestions;
 };
 
@@ -104,9 +104,9 @@ const PersonalityTestPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  
+
   const allQuestions = getAllQuestions();
-  
+
   // Инициализация ответов
   useEffect(() => {
     const initialAnswers = {};
@@ -115,7 +115,7 @@ const PersonalityTestPage = () => {
     });
     setAnswers(initialAnswers);
   }, []);
-  
+
   // Обработчик изменения ответа
   const handleAnswer = (questionId, value) => {
     setAnswers(prev => ({
@@ -123,25 +123,25 @@ const PersonalityTestPage = () => {
       [questionId]: value
     }));
   };
-  
+
   // Проверка заполнения всех ответов
   const areAllQuestionsAnswered = () => {
     return Object.values(answers).every(a => a !== null && a !== undefined);
   };
-  
+
   // Отправка ответов на сервер
   const submitAnswers = async () => {
     if (!areAllQuestionsAnswered()) {
       setError('Please answer all questions before submitting.');
       return;
     }
-    
+
     // Преобразование ответов в массив в нужном порядке
     const orderedAnswers = allQuestions.map(q => answers[q.id]);
-    
+
     setSubmitting(true);
     setError(null);
-    
+
     console.log("\n\nDEBUG --- answers: ", orderedAnswers, "\n\n")
 
     try {
@@ -152,24 +152,23 @@ const PersonalityTestPage = () => {
           'Authorization': `${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
-          userId: user.userId,
           answers: orderedAnswers
         })
       });
 
       console.log("\n\nDEBUG --> ", response, "\n\n")
-      
+
       if (!response.ok) {
         throw new Error(`Server responded with status ${response.status}`);
       }
-      
+
       setSuccess(true);
-      
+
       // Перенаправление пользователя после успешной отправки
       setTimeout(() => {
         navigate('/profile');
       }, 2000);
-      
+
     } catch (err) {
       console.error('Error submitting answers:', err);
       setError('Failed to submit your answers. Please try again.');
@@ -177,11 +176,11 @@ const PersonalityTestPage = () => {
       setSubmitting(false);
     }
   };
-  
+
   // Отрисовка всех вопросов
   const renderQuestions = () => {
     let currentCategory = null;
-    
+
     return (
       <div className="questions-container">
         {allQuestions.map((question, index) => {
@@ -189,9 +188,9 @@ const PersonalityTestPage = () => {
           const categoryHeader = question.category !== currentCategory ? (
             <h2 className="category-header">{question.category}</h2>
           ) : null;
-          
+
           currentCategory = question.category;
-          
+
           return (
             <React.Fragment key={question.id}>
               {categoryHeader}
@@ -220,12 +219,12 @@ const PersonalityTestPage = () => {
       </div>
     );
   };
-  
+
   if (!user) {
     navigate('/login');
     return null;
   }
-  
+
   return (
     <div className="personality-test-page">
       <div className="test-container">
@@ -233,11 +232,11 @@ const PersonalityTestPage = () => {
         <p className="test-instructions">
           Rate how much you agree with each statement on a scale from 1 (strongly disagree) to 5 (strongly agree).
         </p>
-        
+
         {renderQuestions()}
-        
+
         <div className="submit-container">
-          <button 
+          <button
             className="submit-button"
             onClick={submitAnswers}
             disabled={submitting}
@@ -245,7 +244,7 @@ const PersonalityTestPage = () => {
             {submitting ? 'Submitting...' : 'Submit All Answers'}
           </button>
         </div>
-        
+
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">Your answers have been submitted successfully!</div>}
       </div>
