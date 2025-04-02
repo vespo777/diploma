@@ -9,6 +9,7 @@ import home from "../imgs/icons8-home.svg";
 import search from "../imgs/icons8-search.svg";
 import logo from "../imgs/logo.jpg";
 import avatarPlaceholder from "../imgs/default-avatar.jpeg";
+import teamIcon from "../imgs/team-icon.png";
 import '../styles/navbar.css';
 
 const Navbar = () => {
@@ -220,7 +221,7 @@ const Navbar = () => {
 
 
 
-          <Link to="/teams" className={`nav-link ${isActive('/teams') ? 'active' : ''}`}>Teams</Link>
+          <Link to="/teams" className={`nav-link ${isActive('/teams') ? 'active' : ''}`}><img alt="Team-icon" src={teamIcon} /></Link>
           <Link to="/faq" className={`nav-link ${isActive('/faq') ? 'active' : ''}`}>FAQ</Link>
           {isActive('/apartments') && (
               <Link to="/add-listing" className="nav-link">Add Apartment</Link>
