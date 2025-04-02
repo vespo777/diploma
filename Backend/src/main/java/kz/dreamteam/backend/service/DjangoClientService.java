@@ -37,6 +37,7 @@ public class DjangoClientService {
 
     public ResponseEntity<Integer> saveUserClassteredGroup(List<Integer> answers, String token) throws JsonProcessingException {
         var response = sendPostRequest(answers);
+
         if(response == null) return null;
         String clusterGroupValue = extractClusterGroupValue(response);
 
@@ -47,6 +48,7 @@ public class DjangoClientService {
                 .orElseThrow(() -> new RuntimeException("Roommate search not found for userId: " + userId));
 
         roommateSearch.setScoreTest(Integer.valueOf(clusterGroupValue));
+
         roommateSearchRepository.save(roommateSearch);
 
 

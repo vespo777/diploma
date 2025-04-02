@@ -37,12 +37,12 @@ public class RoommateSearchService {
     }
 
     public ResponseEntity<Boolean> checkScoreTestExists(Long userId) {
-        RoommateSearch roommateSearch = roommateSearchRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Roommate search not found for userId: " + userId));
-        
-        System.out.println("\n\nDEBUG -- roommateSearch.getScoreTest(): " + roommateSearch.getScoreTest() + "\n\n");
+            RoommateSearch roommateSearch = roommateSearchRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Roommate search not found for userId: " + userId));
 
-        return ResponseEntity.ok(roommateSearch.getScoreTest() != null);
-    }
+            System.out.println("\n\nDEBUG -- roommateSearch.getScoreTest(): " + roommateSearch.getScoreTest() + "\n\n");
 
+            boolean flag = roommateSearch.getScoreTest() != null && roommateSearch.getScoreTest() > 0;
+            return ResponseEntity.ok(flag);
+        }
 }

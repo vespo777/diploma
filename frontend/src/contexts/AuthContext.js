@@ -10,7 +10,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // При загрузке приложения проверяем localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('token');
@@ -47,7 +46,7 @@ export const AuthProvider = ({ children }) => {
       const decodedToken = getUserFromToken();
       const userObject = {
         email: email,
-        userId: decodedToken.user_id
+        userId: decodedToken.user_id,
       };
 
       localStorage.setItem('user', JSON.stringify(userObject));
@@ -66,7 +65,7 @@ export const AuthProvider = ({ children }) => {
         name: userData.name,
         surname: userData.surname,
         email: userData.email,
-        rawPassword: userData.rawPassword
+        rawPassword: userData.rawPassword,
       };
 
       const response = await fetch(`${API_URL}/register`, {

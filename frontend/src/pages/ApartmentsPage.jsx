@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
@@ -7,11 +7,13 @@ import '../styles/ApartmentsPage.css';
 
 const ApartmentsPage = () => {
   const { user } = useAuth();
-  // const [apartments, setApartments] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  const [apartments, setApartments] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
-    smoking: false,
-    drinking: false,
+    // smoking: false,
+    // drinking: false,
+    minPrice: '',
+    maxPrice: '',
     prefersDorm: false,
     prefersApartment: false,
     wakeUpTime: '',
@@ -26,25 +28,25 @@ const ApartmentsPage = () => {
     lifePlans: ''
   });
 
-  // useEffect(() => {
-  //   const fetchApartments = async () => {
-  //     try {
-  //       const response = await fetch('http://localhost:8080/apartments', {
-  //         headers: {
-  //           'Authorization': `Bearer ${localStorage.getItem('token')}`
-  //         }
-  //       });
-  //       const data = await response.json();
-  //       setApartments(data);
-  //     } catch (error) {
-  //       console.error('Error fetching apartments:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchApartments = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/apartments', {
+          headers: {
+            'Authorization': `${localStorage.getItem('token')}`
+          }
+        });
+        const data = await response.json();
+        setApartments(data);
+      } catch (error) {
+        console.error('Error fetching apartments:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   fetchApartments();
-  // }, []);
+    fetchApartments();
+  }, []);
 
   const handleFilterChange = (e) => {
     const { name, type, value, checked } = e.target;
@@ -54,6 +56,39 @@ const ApartmentsPage = () => {
     }));
   };
 
+  const filteredApartments = apartments.filter(apartment => {
+    // Фильтрация по цене (если у вас есть поле price в модели)
+    const price = apartment.price || 0;
+    const minPrice = filters.minPrice ? parseInt(filters.minPrice) : 0;
+    const maxPrice = filters.maxPrice ? parseInt(filters.maxPrice) : Infinity;
+    
+    // Фильтрация по количеству комнат
+    const roomFilter = filters.roomQuantity 
+      ? apartment.roomQuantity === parseInt(filters.roomQuantity)
+      : true;
+    
+    // Фильтрация по размеру
+    const size = apartment.sizeSquareMeter || 0;
+    const minSize = filters.minSize ? parseInt(filters.minSize) : 0;
+    const maxSize = filters.maxSize ? parseInt(filters.maxSize) : Infinity;
+    
+    return (
+      price >= minPrice && 
+      price <= maxPrice &&
+      roomFilter &&
+      size >= minSize && 
+      size <= maxSize
+    );
+  });
+
+  const filteredListings = mockListings.filter(listing => {
+    const price = parseInt(listing.price);
+    const minPrice = filters.minPrice ? parseInt(filters.minPrice) : 0;
+    const maxPrice = filters.maxPrice ? parseInt(filters.maxPrice) : Infinity;
+    
+    return price >= minPrice && price <= maxPrice;
+  });
+
   if (!user) {
     return <Navigate to="/login" />;
   }
@@ -62,12 +97,41 @@ const ApartmentsPage = () => {
   //   return <div className="loading">Loading...</div>;
   // }
 
+  // Получаем первое фото из мок-данных
+  const mockPhoto = mockListings[0]?.images?.[0];
+
   return (
     <div className="apartments-page">
       <div className="filters-sidebar">
-        <h2>Roommate Preferences</h2>
-        
+        <h2>Apartment Preferences</h2>
+
         <div className="filter-section">
+          <h3>Price Range</h3>
+          <label>
+            Min Price (₸)
+            <input
+              type="number"
+              name="minPrice"
+              value={filters.minPrice}
+              onChange={handleFilterChange}
+              placeholder="0"
+              min="0"
+            />
+          </label>
+          <label>
+            Max Price (₸)
+            <input
+              type="number"
+              name="maxPrice"
+              value={filters.maxPrice}
+              onChange={handleFilterChange}
+              placeholder="Any"
+              min="0"
+            />
+          </label>
+        </div>
+        
+        {/* <div className="filter-section">
           <h3>Lifestyle</h3>
           <label>
             <input
@@ -87,7 +151,7 @@ const ApartmentsPage = () => {
             />
             Drinking
           </label>
-        </div>
+        </div> */}
 
         <div className="filter-section">
           <h3>Living Preferences</h3>
@@ -195,6 +259,52 @@ const ApartmentsPage = () => {
       <div className="apartments-content">
         <h1>Available Apartments</h1>
         <div className="listings-grid">
+          {filteredApartments.map((apartment) => (
+            <motion.div
+              key={apartment.apartmentId}
+              className="listing-card"
+              whileHover={{ scale: 1.03 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Link to={`/listing/${apartment.apartmentId}`} className="listing-link">
+                {apartment.photoPath && (
+                  <img 
+                    src={mockPhoto} 
+                    alt={apartment.description || 'Apartment'} 
+                  />
+                )}
+                <div className="listing-content">
+                  <h3>
+                    {apartment.roomQuantity ? `${apartment.roomQuantity}-room apartment` : 'Apartment'}
+                  </h3>
+                  <p className="listing-location">{apartment.location2Gis || 'Location not specified'}</p>
+                  <p className="listing-description">
+                    {apartment.description || 'No description provided'}
+                  </p>
+                  <div className="listing-details">
+                    <span>🛏 {apartment.roomQuantity || '?'} rooms</span>
+                    <span>📏 {apartment.sizeSquareMeter || '?'} m²</span>
+                  </div>
+                  {apartment.linkToKrishaKz && (
+                    <a 
+                      href={apartment.linkToKrishaKz} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="krisha-link"
+                    >
+                      View on krisha.kz
+                      </a>
+                  )}
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      <div className="apartments-content">
+        <h1>Available Apartments</h1>
+        <div className="listings-grid">
           {mockListings.map((apartment) => (
             <motion.div
               key={apartment.id}
@@ -203,7 +313,8 @@ const ApartmentsPage = () => {
               transition={{ duration: 0.2 }}
             >
               <Link to={`/listing/${apartment.id}`} className="listing-link">
-                <img src={apartment.images[0]} alt={apartment.title} />
+                <img src={apartment.images[0]} 
+                alt={apartment.title} />
                 <div className="listing-content">
                   <h3>{apartment.title}</h3>
                   <p className="listing-location">{apartment.location}</p>
@@ -220,6 +331,7 @@ const ApartmentsPage = () => {
           ))}
         </div>
       </div>
+
     </div>
   );
 };

@@ -19,55 +19,54 @@ const RoommatesPage = () => {
   const [hasMore, setHasMore] = useState(true);
   const [cityFilter, setCityFilter] = useState('');
   const [ageRange, setAgeRange] = useState({ min: '0', max: '100' });
-  const [genderFilter, setGenderFilter] = useState('');
+  const [genderFilter, setGenderFilter] = useState('Any');
   const [professionFilter, setProfessionFilter] = useState('');
-  const [smokingFilter, setSmokingFilter] = useState(null);
-  const [drinkingFilter, setDrinkingFilter] = useState(null);
+  const [smokingFilter, setSmokingFilter] = useState('Any');
+  const [drinkingFilter, setDrinkingFilter] = useState('Any');
   const [universityFilter, setUniversityFilter] = useState('');
   const [interestFilter, setInterestFilter] = useState('');
 
-  const matchingLevelsMap = useRef({});
-  const hasFetched = useRef(false);
 
 
-  const fetchMatchingLevels = async () => {
-    if (!user?.userId || hasFetched.current) return;
-    hasFetched.current = true
 
-    try {
-      const response = await fetch(`http://localhost:8080/recommended-users-dto?userId=${user.userId}`, {
-        headers: { 'Authorization': `${localStorage.getItem('token')}` }
-      });
-
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch matching levels: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      console.log("\n\nDEBUG data: ", data, "\n\n");
-      
-      // Заполняем глобальную хешмапу
-      const levelsMap = {};
-      data.forEach(item => {
-        if (item.user.userId && item.matchingScore) {
-          levelsMap[item.user.userId] = item.matchingScore;
-        }
-      });
-
-
-      matchingLevelsMap.current = levelsMap;
-
-    } catch (error) {
-      console.error("Error fetching matching levels:", error);
-    }
-  };
+  // const fetchMatchingLevels = async () => {
+  //   if (!user?.userId || hasFetched.current) return;
+  //   hasFetched.current = true
+  //
+  //   try {
+  //     const response = await fetch(`http://localhost:8080/recommended-users-dto?userId=${user.userId}`, {
+  //       headers: { 'Authorization': `${localStorage.getItem('token')}` }
+  //     });
+  //
+  //
+  //     if (!response.ok) {
+  //       throw new Error(`Failed to fetch matching levels: ${response.status}`);
+  //     }
+  //
+  //     const data = await response.json();
+  //
+  //     console.log("\n\nDEBUG data: ", data, "\n\n");
+  //
+  //     // Заполняем глобальную хешмапу
+  //     const levelsMap = {};
+  //     data.forEach(item => {
+  //       if (item.user.userId && item.matchingScore) {
+  //         levelsMap[item.user.userId] = item.matchingScore;
+  //       }
+  //     });
+  //
+  //
+  //     matchingLevelsMap.current = levelsMap;
+  //
+  //   } catch (error) {
+  //     console.error("Error fetching matching levels:", error);
+  //   }
+  // };
 
   // Функция для получения matching level по userId
-  const getMatchingLevel = (userId) => {
-    return matchingLevelsMap.current[userId];
-  };
+  // const getMatchingLevel = (userId) => {
+  //   return matchingLevelsMap.current[userId];
+  // };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -76,8 +75,7 @@ const RoommatesPage = () => {
       try {
         setLoading(true);
 
-        // Сначала получаем matching levels
-        await fetchMatchingLevels();
+
 
         const response = await fetch(`http://localhost:8080/recommended-users?userId=${user.userId}`, {
           headers: { 'Authorization': `${localStorage.getItem('token')}` }
@@ -267,7 +265,6 @@ const RoommatesPage = () => {
                     <div className="roommate-info">
                       <h3>{user.personalInfo.name} {user.personalInfo.surname}</h3>
                       <p className="price-info">Minimal Budget: {user.roommateSearch?.budgetMin} T</p>
-                      <p className="price-info">Matching Score with this user is: {getMatchingLevel(user.userId)}</p>
                     </div>
                     <Link to={`/profile/${user.userId}`}>More</Link>
                   </div>

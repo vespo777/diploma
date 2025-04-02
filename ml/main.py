@@ -6,7 +6,7 @@ import pandas as pd  # Import Pandas to handle DataFrame conversion
 from pydantic import BaseModel
 
 # Load K-Means model (No scaler needed)
-kmeans_model = joblib.load("/Users/polatkhan/Desktop/kbtu/diploma/ml/model/kmeans_model1.pkl")
+kmeans_model = joblib.load("/home/deelbak/Documents/KBTU2025/diploma/ml/model/kmeans_model1.pkl")
 
 # Initialize FastAPI
 app = FastAPI()
