@@ -66,7 +66,6 @@ const LoginPage = () => {
           </div>
 
           <div className="input-group">
-            <div className="password-input-wrapper">
               <input
                 type={showPassword ? "text" : "password"}
                 className="auth-input"
@@ -83,7 +82,6 @@ const LoginPage = () => {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
-          </div>
 
           <div className="reset-password">
             <Link to="/reset-password" className="auth-link">

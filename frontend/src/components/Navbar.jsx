@@ -238,19 +238,22 @@ const Navbar = () => {
 
         <div className="nav-auth">
 
-          <div className="notification-semi-container">
-              <button
-                  className={`notification-button ${showNotification ? 'active' : ''}`}
-                  onClick={() => setShowNotification(!showNotification)}
-              >
-
-            <img src={hasNewNotifications ? notificationTrue : notificationFalse} alt="notification icon" className="notification-icon" />
-              {hasNewNotifications && (
-                  <span className="notification-badge"></span>
-              )}
-              </button>
-              <span className="nav-link-label">Notification</span>
-          </div>
+          {user ? (
+              <div className="notification-semi-container">
+                <button
+                    className={`notification-button ${showNotification ? 'active' : ''}`}
+                    onClick={() => setShowNotification(!showNotification)}
+                >
+                  <img src={hasNewNotifications ? notificationTrue : notificationFalse} alt="notification icon" className="notification-icon" />
+                    {hasNewNotifications && (
+                        <span className="notification-badge"></span>
+                    )}
+                </button>
+                <span className="nav-link-label">Notification</span>
+              </div>
+          ) : ( <p></p>
+          )
+          }
 
 
 
