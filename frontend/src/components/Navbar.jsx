@@ -378,7 +378,7 @@ const Navbar = () => {
               </div>
           ) : (
               <div className="auth-buttons">
-                <Link to="/login" className={`nav-link login ${isActive('/login') ? 'active' : ''}`}>Login</Link>
+                <Link to="/login" className={`nav-link login`}>Login</Link>
                 <Link to="/register" className={`nav-link register`}>Register</Link>
               </div>
           )}

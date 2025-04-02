@@ -58,6 +58,26 @@
   background: rgba(76, 76, 76, 0.1);
 }
 
+.nav-link.login {
+  align-items: center;
+  padding: 1rem;
+  background: rgba(135, 135, 135, 0.3);
+}
+.nav-link.login:hover {
+  background: rgba(76, 76, 76, 0.1);
+}
+
+.nav-link.register {
+  align-items: center;
+  padding: 1rem;
+  background: #ff8a1d;
+  color: #1a1919;
+}
+
+.nav-link.register:hover {
+  background: rgba(255, 191, 126, 0.9);
+}
+
 .nav-link-label {
   font-weight: 400;
   font-size: 15px;
@@ -95,6 +115,7 @@
 
 .auth-buttons {
   display: flex;
+  align-items: center;
   gap: 1rem;
 }
 
