@@ -60,8 +60,10 @@ public class UserController {
     @PutMapping("/profile/{userId}")
     public ResponseEntity<String> updateProfile(
             @PathVariable Long userId,
-            @RequestBody UpdateUserProfileRequest updateRequest) {
-        return ResponseEntity.ok(userService.updateUserProfile(userId, updateRequest));
+            @RequestBody User updatedUser) {
+
+        String response = userService.updateUser(userId, updatedUser);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/users")
