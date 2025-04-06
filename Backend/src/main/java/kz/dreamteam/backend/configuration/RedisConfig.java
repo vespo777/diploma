@@ -1,5 +1,6 @@
 package kz.dreamteam.backend.configuration;
 
+import kz.dreamteam.backend.model.dto.UserDto;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,28 +28,41 @@ public class RedisConfig {
         return new LettuceConnectionFactory();
     }
 
+//    @Bean
+//    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+//        RedisTemplate<String, Object> template = new RedisTemplate<>();
+//        template.setConnectionFactory(connectionFactory);
+//
+//        // Настраиваем ObjectMapper
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.registerModule(new JavaTimeModule()); // Поддержка LocalDateTime
+//        objectMapper.activateDefaultTyping(
+//                BasicPolymorphicTypeValidator.builder().allowIfBaseType(Object.class).build(),
+//                ObjectMapper.DefaultTyping.NON_FINAL
+//        ); // Включаем поддержку типов при десериализации
+//
+//        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+//
+//        // Устанавливаем сериализаторы
+//        template.setKeySerializer(new StringRedisSerializer());
+//        template.setValueSerializer(serializer);
+//        template.setHashKeySerializer(new StringRedisSerializer());
+//        template.setHashValueSerializer(serializer);
+//
+//        template.afterPropertiesSet();
+//        return template;
+//    }
+
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
+    public RedisTemplate<String, UserDto> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, UserDto> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
+        template.setKeySerializer(new StringRedisSerializer()); // Сериализация ключа как строки
 
-        // Настраиваем ObjectMapper
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule()); // Поддержка LocalDateTime
-        objectMapper.activateDefaultTyping(
-                BasicPolymorphicTypeValidator.builder().allowIfBaseType(Object.class).build(),
-                ObjectMapper.DefaultTyping.NON_FINAL
-        ); // Включаем поддержку типов при десериализации
-
-        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
-
-        // Устанавливаем сериализаторы
-        template.setKeySerializer(new StringRedisSerializer());
+        // Настройка сериализации для UserDto
+        Jackson2JsonRedisSerializer<UserDto> serializer = new Jackson2JsonRedisSerializer<>(UserDto.class);
         template.setValueSerializer(serializer);
-        template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(serializer);
 
-        template.afterPropertiesSet();
         return template;
     }
 

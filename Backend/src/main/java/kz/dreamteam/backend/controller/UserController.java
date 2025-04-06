@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import kz.dreamteam.backend.model.Team;
 import kz.dreamteam.backend.model.User;
 import kz.dreamteam.backend.model.dto.UpdateUserProfileRequest;
+import kz.dreamteam.backend.model.dto.UserDto;
 import kz.dreamteam.backend.model.dto.UserRecommendationDTO;
 import kz.dreamteam.backend.service.DjangoClientService;
 import kz.dreamteam.backend.service.GraphSearchService;
@@ -53,7 +54,7 @@ public class UserController {
     }
 
     @GetMapping("/profile/{userId}")
-    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
         return ResponseEntity.ok(this.userService.getUserById(userId));
     }
 

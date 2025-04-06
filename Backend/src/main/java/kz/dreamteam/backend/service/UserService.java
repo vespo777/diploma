@@ -4,7 +4,10 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import jakarta.transaction.Transactional;
 import kz.dreamteam.backend.model.*;
 import kz.dreamteam.backend.model.dto.UpdateUserProfileRequest;
+import kz.dreamteam.backend.model.dto.UserDto;
 import kz.dreamteam.backend.repository.*;
+import kz.dreamteam.backend.util.UserMapper;
+import org.hibernate.Hibernate;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +29,7 @@ public class UserService {
     private final MlQuestionsAnswersRepository mlQuestionsAnswersRepository;
     private final JwtService jwtService;
     private final ElasticsearchClient elasticsearchClient;
+    private final UserMapper userMapper;
 
     public UserService(UserRepository userRepository,
                        SocialDetailsRepository socialDetailsRepository,
@@ -33,7 +37,8 @@ public class UserService {
                        RoommatePreferencesRepository roommatePreferencesRepository,
                        PersonalInfoRepository personalInfoRepository, ContactsRepository contactsRepository, RoommateSearchRepository roommateSearchRepository,
                        MlQuestionsAnswersRepository mlQuestionsAnswersRepository,
-                       JwtService jwtService, ElasticsearchClient elasticsearchClient){
+                       JwtService jwtService, ElasticsearchClient elasticsearchClient,
+                       UserMapper userMapper){
         this.userRepository = userRepository;
         this.socialDetailsRepository = socialDetailsRepository;
         this.locationDetailsRepository = locationDetailsRepository;
@@ -44,6 +49,7 @@ public class UserService {
         this.mlQuestionsAnswersRepository = mlQuestionsAnswersRepository;
         this.jwtService = jwtService;
         this.elasticsearchClient = elasticsearchClient;
+        this.userMapper = userMapper;
     }
 
 
@@ -62,17 +68,16 @@ public class UserService {
         return ResponseEntity.ok(user);
     }
 
-//    @Cacheable(value = "users", key = "#userId")
-    public User getUserById(Long userId) {
-
-        return userRepository.findById(userId)
+    @Cacheable(value = "users", key = "#userId")
+    public UserDto getUserById(Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        return userMapper.toDto(user);
     }
 
 
-
     @Transactional
-//    @CacheEvict(value = "users", key = "#userId")
+    @CacheEvict(value = "users", key = "#userId")
     public String updateUser(Long userId, User updatedUser) {
         User currentUser  = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
