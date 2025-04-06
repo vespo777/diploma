@@ -572,8 +572,8 @@ const ProfilePage = () => {
           <div className="team-section">
             <h3>Team</h3>
             <p>You're not part of any team yet.</p>
-            <Link to="/create-team" className="create-team-button">
-              Create Team
+            <Link to="/teams" className="create-team-button">
+              View all teams
             </Link>
           </div>
       );
@@ -581,23 +581,11 @@ const ProfilePage = () => {
 
     return (
         <div className="team-section">
-          <h3>Team: {userData.team.name}</h3>
-          <div className="team-members">
-            <h4>Members:</h4>
-            <ul>
-              {userData.team.members.map((memberId, index) => {
-                const isOwner = memberId === userData.team.owner.userId;
-                const isCurrentUser = memberId === user.userId;
-                return (
-                    <li key={index} className={`member ${isCurrentUser ? 'current-user' : ''}`}>
-                      {isCurrentUser ? 'You' : `Member ${memberId}`}
-                      {isOwner && ' (Team Leader)'}
-                    </li>
-                );
-              })}
-            </ul>
-          </div>
-          <button className="leave-team-button">Leave Team</button>
+          <p>Active Team: <strong>{userData.team.name}</strong></p>
+
+          <Link to={`/teams/${userData.team.id}`} className="create-team-button">
+            View team
+          </Link>
         </div>
     );
   };
