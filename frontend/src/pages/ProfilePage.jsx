@@ -447,6 +447,7 @@ const ProfilePage = () => {
 
     return (
         <div className="personality-results">
+          {console.log("DEBUG personality data --> ", personalityData)}
           {personalityData !== null ? (
               <>
                 <div className="personality-score-container">
@@ -460,7 +461,6 @@ const ProfilePage = () => {
                       {getScoreDescription(personalityData)}
                     </p>
                     <p className="score-explanation">
-                      This score represents your personality compatibility value. Higher scores indicate better compatibility potential with roommates.
                     </p>
                     <Link to="/ml-questions" className="retake-test-button">
                       Retake Test
@@ -476,12 +476,15 @@ const ProfilePage = () => {
   };
 
   const getScoreDescription = (score) => {
-    if (score === 5) return "Excellent compatibility potential";
-    if (score === 4) return "Very good compatibility potential";
-    if (score === 3) return "Good compatibility potential";
-    if (score === 2) return "Average compatibility potential";
-    if (score === 1) return "Below average compatibility potential";
-    return "Cannot find your type in Database";
+    if (score === 8) return "🧠 Personality Summary: \"The Social Explorer\" --- Talkative and emotionally calm with a curious mind. May enjoy new experiences, group activities, and a dynamic environment.";
+    if (score === 7) return "🧠 Personality Summary: \"The Balanced Companion\" ---  Sociable, grounded, kind, and neat. Ideal for harmonious living with low drama and good cooperation.";
+    if (score === 6) return "🧠 Personality Summary: \"The Talkative Realist\" --- Sociable and expressive, but can be moody. Likely prefers routines and practical experiences over abstract ideas.";
+    if (score === 5) return "You are most likely didn't seriously complete the questionnaire. Please retake the test";
+    if (score === 4) return "🧠 Personality Summary: \"The Emotional Idealist\" --- Thoughtful and empathetic, but very sensitive. Could be great for deep discussions, though might need a calm and patient roommate.";
+    if (score === 3) return "🧠 Personality Summary: \"The Reliable Friend\" --- Sociable, kind, organized, and emotionally grounded. Likely a great communicator and a cooperative roommate.";
+    if (score === 2) return "🧠 Personality Summary: \"The Practical Thinker\" --- Stable and reliable with a curious mind, but more reserved socially and emotionally neutral. Likely a balanced roommate.";
+    if (score === 1) return "🧠 Personality Summary: \"The Expressive Companion\" --- Sociable, emotionally intense, and creative. Likely to enjoy deep conversations and artistic hobbies, but may be sensitive or moody.";
+    return "Please Retake the Test";
   };
 
   const renderTeamSection = () => {
