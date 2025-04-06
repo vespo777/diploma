@@ -18,7 +18,7 @@ public class ApartmentDTO {
     private String photoPath;
     private String address;
     private String location2Gis;
-    private PropertyType propertyType;
+    private String propertyType;
     private Boolean furnished;
     private Boolean internetIncluded;
     private Boolean utilitiesIncluded;
@@ -95,11 +95,11 @@ public class ApartmentDTO {
         this.location2Gis = location2Gis;
     }
 
-    public PropertyType getPropertyType() {
+    public String getPropertyType() {
         return propertyType;
     }
 
-    public void setPropertyType(PropertyType propertyType) {
+    public void setPropertyType(String propertyType) {
         this.propertyType = propertyType;
     }
 

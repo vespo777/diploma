@@ -197,6 +197,30 @@ const AddListingPage = () => {
                 required
               />
             </div>
+
+            <div className="input-group">
+              <input
+                type="text"
+                name="location2Gis"
+                className="auth-input"
+                placeholder="Location 2GIS link"
+                value={formData.location2Gis}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            <div className="input-group">
+              <input
+                type="text"
+                name="linkToKrishaKz"
+                className="auth-input"
+                placeholder="Link to Krisha.kz"
+                value={formData.linkToKrishaKz}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
           </div>
 
           {/* Property Details */}
@@ -229,6 +253,7 @@ const AddListingPage = () => {
                   required
                 />
               </div>
+
               <div className="input-group half">
                 <input
                   type="number"
@@ -289,7 +314,7 @@ const AddListingPage = () => {
                 onChange={handlePhotoChange}
                 multiple
                 accept="image/*"
-                required
+                // required
               />
             </div>
             <div className="photo-preview">
