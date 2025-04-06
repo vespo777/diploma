@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import useUserImageStore from './../store/userStore';
 
 import defaultAvatar from '../imgs/default-avatar.jpeg';
 import '../styles/RoommatesPage.css';
@@ -27,6 +28,17 @@ const RoommatesPage = () => {
   const [interestFilter, setInterestFilter] = useState('');
 
 
+  const { images, setImage, clearImage } = useUserImageStore();
+  const handleImageChange = (userId, e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImage(userId, reader.result); // Store image by userId
+    };
+    reader.readAsDataURL(file);
+  };
 
   const matchingLevelsMap = useRef({});
   const hasFetched = useRef(false);
@@ -35,21 +47,21 @@ const RoommatesPage = () => {
   const fetchMatchingLevels = async () => {
     if (!user?.userId || hasFetched.current) return;
     hasFetched.current = true
-  
+
     try {
       const response = await fetch(`http://localhost:8080/get-matching-score?userId=${user.userId}`, {
         headers: { 'Authorization': `${localStorage.getItem('token')}` }
       });
-  
-  
+
+
       if (!response.ok) {
         throw new Error(`Failed to fetch matching levels: ${response.status}`);
       }
-  
+
       const data = await response.json();
-  
+
       console.log("\n\nDEBUG data: ", data, "\n\n");
-  
+
       // Заполняем глобальную хешмапу
       const levelsMap = {};
       data.forEach(item => {
@@ -57,10 +69,10 @@ const RoommatesPage = () => {
           levelsMap[item.user.userId] = item.matchingScore;
         }
       });
-  
-  
+
+
       matchingLevelsMap.current = levelsMap;
-  
+
     } catch (error) {
       console.error("Error fetching matching levels:", error);
     }
@@ -106,22 +118,22 @@ const RoommatesPage = () => {
 
   const calculateAge = (birthDate) => {
     if (!birthDate) return null; // Handle missing birth date
-    
+
     const today = new Date();
     const birthDateObj = new Date(birthDate);
-    
+
     // Calculate difference in years
     let age = today.getFullYear() - birthDateObj.getFullYear();
-    
+
     // Adjust if birthday hasn't occurred yet this year
     const monthDiff = today.getMonth() - birthDateObj.getMonth();
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
       age--;
     }
-    
+
     return age;
   };
-  
+
   const loadMoreUsers = () => {
     const newUsers = allUsers.slice(0, visibleUsers.length + PAGE_SIZE);
 
@@ -146,7 +158,7 @@ const RoommatesPage = () => {
     const birthDate = user.personalInfo?.birthDate;
     const userAge = birthDate ? calculateAge(birthDate) : null;
     const matchesAge = !userAge || (userAge >= Number(ageRange.min) && userAge <= Number(ageRange.max));
-  
+
 
     const matchesGender = genderFilter === '' || genderFilter === 'Any' || user.personalInfo?.gender === genderFilter; // Исправлено для учета значения 'Any'
 
@@ -157,21 +169,21 @@ const RoommatesPage = () => {
 
     const matchesUniversity = !universityFilter || user.socialDetails?.universityName?.toLowerCase().includes(universityFilter.toLowerCase()); // Исправлено для учета пустых значений
 
-    const matchesInterests = !interestFilter || user.socialDetails?.interests?.some(interest => 
+    const matchesInterests = !interestFilter || user.socialDetails?.interests?.some(interest =>
       interest.toLowerCase().includes(interestFilter.toLowerCase())
     );
 
     return (
-        matchesSearch &&
-        matchesPrice &&
-        matchesCity &&
-        matchesAge &&
-        matchesGender &&
-        matchesProfession &&
-        matchesSmoking &&
-        matchesDrinking &&
-        matchesUniversity &&
-        matchesInterests
+      matchesSearch &&
+      matchesPrice &&
+      matchesCity &&
+      matchesAge &&
+      matchesGender &&
+      matchesProfession &&
+      matchesSmoking &&
+      matchesDrinking &&
+      matchesUniversity &&
+      matchesInterests
     );
   });
 
@@ -180,137 +192,137 @@ const RoommatesPage = () => {
   if (loading && allUsers.length === 0) return <div className="loading">Loading...</div>;
 
   return (
-      <div className="roommates-page">
-        <div className="filter-sidebar">
-          <div className="filter-section">
-            <h3>Filters</h3>
+    <div className="roommates-page">
+      <div className="filter-sidebar">
+        <div className="filter-section">
+          <h3>Filters</h3>
 
-            {/* Поиск по имени */}
-            <div className="input-group">
-              <label>Search by Name</label>
-              <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-            </div>
-
-            {/* Бюджет */}
-            <div className="price-inputs">
-              <label>Budget Range</label>
-              <div className="input-group">
-                <input type="number" placeholder="Min" value={priceRange.min} onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))} />
-                <input type="number" placeholder="Max" value={priceRange.max} onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))} />
-              </div>
-            </div>
-
-            {/* Город */}
-            <div className="input-group">
-              <label>Region From</label>
-              <input type="text" value={cityFilter} onChange={(e) => setCityFilter(e.target.value)} />
-            </div>
-
-            {/* Возраст */}
-            <div className="price-inputs">
-              <label>Age Range</label>
-              <div className="input-group">
-                <input type="number" placeholder="Min Age" value={ageRange.min} onChange={(e) => setAgeRange(prev => ({ ...prev, min: e.target.value }))} />
-                <input type="number" placeholder="Max Age" value={ageRange.max} onChange={(e) => setAgeRange(prev => ({ ...prev, max: e.target.value }))} />
-              </div>
-            </div>
-
-            {/* Пол */}
-            <div className="input-group">
-              <label>Gender</label>
-              <select value={genderFilter} onChange={(e) => setGenderFilter(e.target.value)}>
-                <option value="">Any</option>
-                <option value="M">Male</option>
-                <option value="F">Female</option>
-              </select>
-            </div>
-
-            {/* Профессия */}
-            <div className="input-group">
-              <label>Profession</label>
-              <input type="text" value={professionFilter} onChange={(e) => setProfessionFilter(e.target.value)} />
-            </div>
-
-            {/* Курение */}
-            <div className="input-group">
-              <label>Smoking</label>
-              <select value={smokingFilter} onChange={(e) => setSmokingFilter(e.target.value === "true" ? true : e.target.value === "false" ? false : null)}>
-                <option value="">Any</option>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </select>
-            </div>
-
-            {/* Алкоголь */}
-            <div className="input-group">
-              <label>Drinking</label>
-              <select value={drinkingFilter} onChange={(e) => setDrinkingFilter(e.target.value === "true" ? true : e.target.value === "false" ? false : null)}>
-                <option value="">Any</option>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </select>
-            </div>
-
-            {/* Университет */}
-            <div className="input-group">
-              <label>University</label>
-              <input type="text" value={universityFilter} onChange={(e) => setUniversityFilter(e.target.value)} />
-            </div>
-
-            {/* Интересы */}
-            <div className="input-group">
-              <label>Interests</label>
-              <input type="text" value={interestFilter} onChange={(e) => setInterestFilter(e.target.value)} placeholder="e.g., Football, Music" />
-            </div>
-
-            {/* Кнопка сброса */}
-            <button className="reset-btn" onClick={() => {
-              setSearchTerm('');
-              setPriceRange({ min: '0', max: '1000000' });
-              setCityFilter('');
-              setAgeRange({ min: '-100', max: '100' });
-              setGenderFilter('');
-              setProfessionFilter('');
-              setSmokingFilter(null);
-              setDrinkingFilter(null);
-              setUniversityFilter('');
-              setInterestFilter('');
-            }}>
-              Reset Filters
-            </button>
+          {/* Поиск по имени */}
+          <div className="input-group">
+            <label>Search by Name</label>
+            <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
           </div>
-        </div>
 
-        <div className="content-area">
-
-          <div className="users-container">
-            <motion.div className="auth-box listing-box" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <h2>For You</h2>
-              {filteredUsers.map((user, index) => (
-                  <div key={user.id || index} className="roommate-card">
-                    <div className="roommate-avatar">
-                      <img src={user.avatarUrl || defaultAvatar} alt={`${user.personalInfo.name}'s avatar`} />
-                    </div>
-                    <div className="roommate-info">
-                      <h3>{user.personalInfo.name} {user.personalInfo.surname}</h3>
-                      <p className="price-info">Budget: {user.roommateSearch?.budgetMin}-{user.roommateSearch?.budgetMax} kzt</p>
-                      <p className="price-info">Current City: {user.locationDetails?.currentCity}</p>
-                      <p className="price-info">Age: {calculateAge(user.personalInfo?.birthDate) || 'Unknown'}</p>
-                      <p className="price-info">Matching Score: {getMatchingLevel(user.userId)}</p>
-                    </div>
-                    <Link to={`/profile/${user.userId}`}>More</Link>
-                  </div>
-              ))}
-            </motion.div>
-
-            {hasMore && (
-                <button className="load-more-btn" onClick={loadMoreUsers}>
-                  Additional Users
-                </button>
-            )}
+          {/* Бюджет */}
+          <div className="price-inputs">
+            <label>Budget Range</label>
+            <div className="input-group">
+              <input type="number" placeholder="Min" value={priceRange.min} onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))} />
+              <input type="number" placeholder="Max" value={priceRange.max} onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))} />
+            </div>
           </div>
+
+          {/* Город */}
+          <div className="input-group">
+            <label>Region From</label>
+            <input type="text" value={cityFilter} onChange={(e) => setCityFilter(e.target.value)} />
+          </div>
+
+          {/* Возраст */}
+          <div className="price-inputs">
+            <label>Age Range</label>
+            <div className="input-group">
+              <input type="number" placeholder="Min Age" value={ageRange.min} onChange={(e) => setAgeRange(prev => ({ ...prev, min: e.target.value }))} />
+              <input type="number" placeholder="Max Age" value={ageRange.max} onChange={(e) => setAgeRange(prev => ({ ...prev, max: e.target.value }))} />
+            </div>
+          </div>
+
+          {/* Пол */}
+          <div className="input-group">
+            <label>Gender</label>
+            <select value={genderFilter} onChange={(e) => setGenderFilter(e.target.value)}>
+              <option value="">Any</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+            </select>
+          </div>
+
+          {/* Профессия */}
+          <div className="input-group">
+            <label>Profession</label>
+            <input type="text" value={professionFilter} onChange={(e) => setProfessionFilter(e.target.value)} />
+          </div>
+
+          {/* Курение */}
+          <div className="input-group">
+            <label>Smoking</label>
+            <select value={smokingFilter} onChange={(e) => setSmokingFilter(e.target.value === "true" ? true : e.target.value === "false" ? false : null)}>
+              <option value="">Any</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+
+          {/* Алкоголь */}
+          <div className="input-group">
+            <label>Drinking</label>
+            <select value={drinkingFilter} onChange={(e) => setDrinkingFilter(e.target.value === "true" ? true : e.target.value === "false" ? false : null)}>
+              <option value="">Any</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+
+          {/* Университет */}
+          <div className="input-group">
+            <label>University</label>
+            <input type="text" value={universityFilter} onChange={(e) => setUniversityFilter(e.target.value)} />
+          </div>
+
+          {/* Интересы */}
+          <div className="input-group">
+            <label>Interests</label>
+            <input type="text" value={interestFilter} onChange={(e) => setInterestFilter(e.target.value)} placeholder="e.g., Football, Music" />
+          </div>
+
+          {/* Кнопка сброса */}
+          <button className="reset-btn" onClick={() => {
+            setSearchTerm('');
+            setPriceRange({ min: '0', max: '1000000' });
+            setCityFilter('');
+            setAgeRange({ min: '-100', max: '100' });
+            setGenderFilter('');
+            setProfessionFilter('');
+            setSmokingFilter(null);
+            setDrinkingFilter(null);
+            setUniversityFilter('');
+            setInterestFilter('');
+          }}>
+            Reset Filters
+          </button>
         </div>
       </div>
+
+      <div className="content-area">
+
+        <div className="users-container">
+          <motion.div className="auth-box listing-box" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <h2>For You</h2>
+            {filteredUsers.map((user, index) => (
+              <div key={user.id || index} className="roommate-card">
+                <div className="roommate-avatar">
+                  <img src={user.avatarUrl || defaultAvatar} alt={`${user.personalInfo.name}'s avatar`} />
+                </div>
+                <div className="roommate-info">
+                  <h3>{user.personalInfo.name} {user.personalInfo.surname}</h3>
+                  <p className="price-info">Budget: {user.roommateSearch?.budgetMin}-{user.roommateSearch?.budgetMax} kzt</p>
+                  <p className="price-info">Current City: {user.locationDetails?.currentCity}</p>
+                  <p className="price-info">Age: {calculateAge(user.personalInfo?.birthDate) || 'Unknown'}</p>
+                  <p className="price-info">Matching Score: {getMatchingLevel(user.userId)}</p>
+                </div>
+                <Link to={`/profile/${user.userId}`}>More</Link>
+              </div>
+            ))}
+          </motion.div>
+
+          {hasMore && (
+            <button className="load-more-btn" onClick={loadMoreUsers}>
+              Additional Users
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 
