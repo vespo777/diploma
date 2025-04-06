@@ -113,24 +113,24 @@ const RoommatesPage = () => {
     const userPriceMax = user.roommateSearch?.budgetMax ?? Infinity;
     const matchesPrice = userPriceMin >= Number(priceRange.min) && userPriceMax <= Number(priceRange.max);
 
-    const matchesCity = user.locationDetails?.regionFrom?.toLowerCase().includes(cityFilter.toLowerCase() ?? '');
+    const matchesCity = !cityFilter || user.locationDetails?.regionFrom?.toLowerCase().includes(cityFilter.toLowerCase()); // Улучшенная проверка для cityFilter
 
     const birthYear = user.personalInfo?.birthDate ? new Date(user.personalInfo.birthDate).getFullYear() : null;
     const userAge = birthYear ? new Date().getFullYear() - birthYear : null;
     const matchesAge = userAge ? userAge >= Number(ageRange.min) && userAge <= Number(ageRange.max) : true;
 
-    const matchesGender = genderFilter ? user.personalInfo?.gender === genderFilter : true;
+    const matchesGender = genderFilter === '' || genderFilter === 'Any' || user.personalInfo?.gender === genderFilter; // Исправлено для учета значения 'Any'
 
-    const matchesProfession = user.socialDetails?.profession?.toLowerCase().includes(professionFilter.toLowerCase() ?? '');
+    const matchesProfession = !professionFilter || user.socialDetails?.profession?.toLowerCase().includes(professionFilter.toLowerCase()); // Исправлено для учета значения 'Any'
 
-    const matchesSmoking = smokingFilter === null ? true : user.socialDetails?.smoking === smokingFilter;
-    const matchesDrinking = drinkingFilter === null ? true : user.socialDetails?.drinking === drinkingFilter;
+    const matchesSmoking = smokingFilter === null || smokingFilter === 'Any' || user.socialDetails?.smoking === (smokingFilter === 'true'); // Исправлено для учета значения 'Any'
+    const matchesDrinking = drinkingFilter === null || drinkingFilter === 'Any' || user.socialDetails?.drinking === (drinkingFilter === 'true'); // Исправлено для учета значения 'Any'
 
-    const matchesUniversity = universityFilter ? user.socialDetails?.universityName?.toLowerCase().includes(universityFilter.toLowerCase()) : true;
+    const matchesUniversity = !universityFilter || user.socialDetails?.universityName?.toLowerCase().includes(universityFilter.toLowerCase()); // Исправлено для учета пустых значений
 
-    const matchesInterests = interestFilter
-        ? user.socialDetails?.interests?.some(interest => interest.toLowerCase().includes(interestFilter.toLowerCase()))
-        : true;
+    const matchesInterests = !interestFilter || user.socialDetails?.interests?.some(interest => 
+      interest.toLowerCase().includes(interestFilter.toLowerCase())
+    );
 
     return (
         matchesSearch &&
@@ -239,7 +239,7 @@ const RoommatesPage = () => {
               setSearchTerm('');
               setPriceRange({ min: '0', max: '1000000' });
               setCityFilter('');
-              setAgeRange({ min: '18', max: '99' });
+              setAgeRange({ min: '0', max: '100' });
               setGenderFilter('');
               setProfessionFilter('');
               setSmokingFilter(null);
