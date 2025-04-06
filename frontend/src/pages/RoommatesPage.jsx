@@ -28,17 +28,17 @@ const RoommatesPage = () => {
   const [interestFilter, setInterestFilter] = useState('');
 
 
-  const { images, setImage, clearImage } = useUserImageStore();
-  const handleImageChange = (userId, e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  // const { images, setImage, clearImage } = useUserImageStore();
+  // const handleImageChange = (userId, e) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImage(userId, reader.result); // Store image by userId
-    };
-    reader.readAsDataURL(file);
-  };
+  //   const reader = new FileReader();
+  //   reader.onloadend = () => {
+  //     setImage(userId, reader.result); // Store image by userId
+  //   };
+  //   reader.readAsDataURL(file);
+  // };
 
   const matchingLevelsMap = useRef({});
   const hasFetched = useRef(false);
