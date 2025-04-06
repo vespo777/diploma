@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ApartmentCard from '../components/ApartmentCard';
 import ApartmentForm from '../components/ApartmentForm';
+import LoadingRabbit from '../components/pixi/Loading';
 import '../styles/ApartmentsPage.css';
 
 const ApartmentsPage = () => {
@@ -112,7 +113,7 @@ const ApartmentsPage = () => {
 
   const canAddListing = userData?.roommateSearch?.searchStatus === 2;
 
-  if (loading) return <div className="loading">Loading apartments...</div>;
+  if (loading) return <LoadingRabbit />;
   if (error) return <div className="error">Error: {error}</div>;
 
   return (

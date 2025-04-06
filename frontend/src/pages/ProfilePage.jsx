@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import LoadingRabbit from '../components/pixi/Loading';
+import defaultAvatar from '../imgs/default-avatar.jpeg';
 import "../styles/ProfilePage.css"
 
 const API_URL = 'http://localhost:8080';
@@ -309,6 +310,7 @@ const ProfilePage = () => {
   const [personalityTestCompleted, setPersonalityTestCompleted] = useState(null);
   const [personalityData, setPersonalityData] = useState(null);
   const [loadingPersonality, setLoadingPersonality] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState(null);
 
   useEffect(() => {
     if (!user?.userId) return;
@@ -325,6 +327,9 @@ const ProfilePage = () => {
         .then(data => {
           setUserData(data);
           localStorage.setItem('userData', JSON.stringify(data));
+          if (data.profilePhotoPath && data.profilePhotoPath !== 'default') {
+            setAvatarPreview(data.profilePhotoPath);
+          }
         })
         .catch(err => {
           console.error("Error fetching profile:", err);
@@ -334,7 +339,82 @@ const ProfilePage = () => {
 
   }, [user]);
 
-  // Personality test status check
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Check file type
+    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+      alert('Please upload a JPEG, JPG or PNG image');
+      return;
+    }
+
+    // Check file size (e.g., 2MB max)
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Image size should be less than 2MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64String = event.target.result;
+      setAvatarPreview(base64String);
+    };
+    reader.readAsDataURL(file);
+  };
+  const uploadAvatar = async () => {
+    if (!avatarPreview) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/upload-avatar`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          userId: user.userId,
+          base64Image: avatarPreview
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to upload avatar');
+
+      const updatedUser = await response.json();
+      setUserData(updatedUser);
+      alert('Avatar uploaded successfully');
+    } catch (err) {
+      console.error("Error uploading avatar:", err);
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteAvatar = async () => {
+    try {
+      const response = await fetch(`${API_URL}/delete-avatar`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ userId: user.userId })
+      });
+
+      if (!response.ok) throw new Error('Failed to delete avatar');
+
+      const updatedUser = await response.json();
+      setUserData(updatedUser);
+      setAvatarPreview(null);
+      alert('Avatar removed successfully');
+    } catch (err) {
+      console.error("Error deleting avatar:", err);
+      alert(err.message);
+    }
+  };
+
   useEffect(() => {
     if (!user?.userId) return;
 
@@ -447,7 +527,6 @@ const ProfilePage = () => {
 
     return (
         <div className="personality-results">
-          {console.log("DEBUG personality data --> ", personalityData)}
           {personalityData !== null ? (
               <>
                 <div className="personality-score-container">
@@ -507,7 +586,6 @@ const ProfilePage = () => {
             <h4>Members:</h4>
             <ul>
               {userData.team.members.map((memberId, index) => {
-                // In a real app, you would fetch member details based on memberId
                 const isOwner = memberId === userData.team.owner.userId;
                 const isCurrentUser = memberId === user.userId;
                 return (
@@ -533,22 +611,78 @@ const ProfilePage = () => {
         <h2>Your Profile</h2>
         <form className="profile-content" onSubmit={handleSubmit}>
           {/* Personal Info Section */}
-          <div className="profile-section">
+          <div className="profile-section personal">
             <h3>Personal Info</h3>
-            <input type="text" value={userData.personalInfo.name} onChange={(e) => handleChange('personalInfo', 'name', e.target.value)}/>
-            <input type="text" value={userData.personalInfo.surname} onChange={(e) => handleChange('personalInfo', 'surname', e.target.value)} />
-            <input type="date" value={userData.personalInfo.birthDate} onChange={(e) => handleChange('personalInfo', 'birthDate', e.target.value)} />
-            <select value={userData.personalInfo.gender} onChange={(e) => handleChange('personalInfo', 'gender', e.target.value)}>
-              <option value="M">Male</option>
-              <option value="F">Female</option>
-              <option value="O">Other</option>
-            </select>
-            <select value={userData.personalInfo.religion} onChange={(e) => handleChange('personalInfo', 'religion', e.target.value)}>
-              <option value="Islam">Islam</option>
-              <option value="Christian">Christian</option>
-              <option value="Buddhism">Buddhism</option>
-              <option value="Don't care">Don't care</option>
-            </select>
+            <div className="avatar-section">
+              <div className="avatar-preview">
+                {avatarPreview ? (
+                    <img src={avatarPreview} alt="Profile Avatar" />
+                ) : (
+                    <div className="default-avatar">
+                      <img src={defaultAvatar} alt="Profile Avatar" />
+                    </div>
+                )}
+              </div>
+
+              <div className="avatar-controls">
+                <input
+                    type="file"
+                    id="avatar-upload"
+                    accept="image/jpeg, image/png, image/jpg"
+                    onChange={handleAvatarChange}
+                    style={{ display: 'none' }}
+                />
+                <label htmlFor="avatar-upload" className="avatar-upload-button">
+                  Choose Image
+                </label>
+
+                {avatarPreview && (
+                    <>
+                      <button
+                          type="button"
+                          onClick={uploadAvatar}
+                          disabled={loading}
+                      >
+                        {loading ? 'Uploading...' : 'Save Avatar'}
+                      </button>
+                      <button
+                          type="button"
+                          onClick={() => setAvatarPreview(null)}
+                          className="cancel-avatar-button"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                )}
+
+                {userData?.profilePhotoPath && userData.profilePhotoPath !== 'default' && !avatarPreview && (
+                    <button
+                        type="button"
+                        onClick={deleteAvatar}
+                        className="delete-avatar-button"
+                    >
+                      Delete Avatar
+                    </button>
+                )}
+              </div>
+            </div>
+
+            <div className="profile-personal-info">
+              <input type="text" value={userData.personalInfo.name} onChange={(e) => handleChange('personalInfo', 'name', e.target.value)}/>
+              <input type="text" value={userData.personalInfo.surname} onChange={(e) => handleChange('personalInfo', 'surname', e.target.value)} />
+              <input type="date" value={userData.personalInfo.birthDate} onChange={(e) => handleChange('personalInfo', 'birthDate', e.target.value)} />
+              <select value={userData.personalInfo.gender} onChange={(e) => handleChange('personalInfo', 'gender', e.target.value)}>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="O">Other</option>
+              </select>
+              <select value={userData.personalInfo.religion} onChange={(e) => handleChange('personalInfo', 'religion', e.target.value)}>
+                <option value="Islam">Islam</option>
+                <option value="Christian">Christian</option>
+                <option value="Buddhism">Buddhism</option>
+                <option value="Don't care">Don't care</option>
+              </select>
+            </div>
           </div>
 
           {/* Personality Section */}
@@ -613,14 +747,18 @@ const ProfilePage = () => {
                   <div className="modal-content">
                     <h4>Select Your Interests</h4>
                     {interests.map((interest, index) => (
-                        <label key={index}>
+                        <div key={index} style={{ position: "relative" }}>
                           <input
+                              className="checkbox-interests"
                               type="checkbox"
+                              id={`interest-${index}`}
                               checked={userData.socialDetails.interests.includes(interest)}
                               onChange={() => handleInterestsChange(interest)}
                           />
-                          {interest}
-                        </label>
+                          <label className="interests-label" htmlFor={`interest-${index}`}>
+                            {interest}
+                          </label>
+                        </div>
                     ))}
                     <button type="button" onClick={() => setIsModalOpen(false)}>Save</button>
                   </div>
