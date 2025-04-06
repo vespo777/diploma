@@ -36,8 +36,13 @@ public class ApartmentController {
 
     // Create a new apartment
     @PostMapping("/create-apartment")
-    public ResponseEntity<Apartment> createApartment(@Valid @RequestBody ApartmentDTO apartmentDTO) {
-        Apartment savedApartment = apartmentService.createApartment(apartmentDTO);
+    public ResponseEntity<Apartment> createApartment(@RequestHeader("Authorization") String authorizationHeader,
+                                                      @RequestBody ApartmentDTO apartmentDTO) {
+        String token = authorizationHeader.startsWith("Bearer ")
+                ? authorizationHeader.substring(7)
+                : authorizationHeader;
+
+        Apartment savedApartment = apartmentService.createApartment(token, apartmentDTO);
         return ResponseEntity.ok(savedApartment);
     }
 

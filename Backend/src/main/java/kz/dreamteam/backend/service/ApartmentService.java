@@ -11,6 +11,7 @@ import kz.dreamteam.backend.repository.ApartmentsRepository;
 import kz.dreamteam.backend.repository.UserRepository;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -34,16 +35,21 @@ public class ApartmentService {
     private final ElasticsearchClient elasticsearchClient;
 
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
+    private final JwtService jwtService;
 
 
     public ApartmentService(ApartmentsRepository apartmentsRepository,
                             ElasticsearchOperations elasticsearchOperations,
                             ElasticsearchClient elasticsearchClient,
-                            UserRepository userRepository) {
+                            UserRepository userRepository,
+                            ModelMapper modelMapper, JwtService jwtService) {
         this.apartmentsRepository = apartmentsRepository;
         this.elasticsearchOperations = elasticsearchOperations;
         this.elasticsearchClient = elasticsearchClient;
         this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
+        this.jwtService = jwtService;
     }
 
     public List<Apartment> searchApartments(String query, Integer minRooms, Integer maxRooms, Integer minSize, Integer maxSize) {
@@ -75,27 +81,25 @@ public class ApartmentService {
     }
 
     // Create a new apartment
-    public Apartment createApartment(ApartmentDTO apartmentDTO) {
-        // Проверяем, существует ли пользователь
-        User user = userRepository.findById(apartmentDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public Apartment createApartment(String token, ApartmentDTO apartmentDTO) {
 
-        // Создаем объект Apartment
-        Apartment apartment = new Apartment();
-        apartment.setUser(user.getUserId());
-        apartment.setDescription(apartmentDTO.getDescription());
-        apartment.setPhotoPath(apartmentDTO.getPhotoPath());
-        apartment.setLocation2Gis(apartmentDTO.getLocation2Gis());
-        apartment.setLinkToKrishaKz(apartmentDTO.getLinkToKrishaKz());
-        apartment.setRoomQuantity(apartmentDTO.getRoomQuantity());
-        apartment.setSizeSquareMeter(apartmentDTO.getSizeSquareMeter());
-        apartment.generateDescriptionJunk();
+        Long userId = jwtService.getUserIdFromToken(token);
+
+        // Проверяем, существует ли пользователь
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Маппим DTO в сущность
+        Apartment apartment = modelMapper.map(apartmentDTO, Apartment.class);
+
+        // Устанавливаем userId вручную (возможно, модель не полностью маппится)
+        apartment.setUserId(userId);
 
         // Сохраняем в БД
         Apartment savedApartment = apartmentsRepository.save(apartment);
 
         // Сохраняем в Elasticsearch
-        saveToElasticsearch(apartment);
+//        saveToElasticsearch(apartment);
 
         return savedApartment;
     }
@@ -114,7 +118,7 @@ public class ApartmentService {
     public Apartment updateApartment(Long id, Apartment updatedApartment) {
         return apartmentsRepository.findById(id)
                 .map(apartment -> {
-                    apartment.setUser(updatedApartment.getUser());
+                    apartment.setUserId(updatedApartment.getUserId());
                     apartment.setDescription(updatedApartment.getDescription());
                     apartment.setPhotoPath(updatedApartment.getPhotoPath());
                     apartment.setLocation2Gis(updatedApartment.getLocation2Gis());
