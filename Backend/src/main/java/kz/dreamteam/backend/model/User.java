@@ -63,6 +63,19 @@ public class User {
 //    @JsonIgnore
     private Team team;
 
+//    @OneToOne(mappedBy = "roommate", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+//    @org.springframework.data.annotation.Transient
+////    @JsonManagedReference
+//    private RoommateRating roommateRating;
+//
+//    public RoommateRating getRoommateRating() {
+//        return roommateRating;
+//    }
+//
+//    public void setRoommateRating(RoommateRating roommateRating) {
+//        this.roommateRating = roommateRating;
+//    }
+
     public Team getTeam() {
         return team;
     }

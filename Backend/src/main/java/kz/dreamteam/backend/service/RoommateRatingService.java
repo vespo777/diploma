@@ -29,8 +29,6 @@ public class RoommateRatingService {
         this.reviewRepository = reviewRepository;
     }
 
-
-
     public List<ReviewResponse> getSentReviews(Long userId) {
         List<Review> reviews = reviewRepository.findByReviewer_UserId(userId);
         return reviews.stream()
@@ -38,16 +36,17 @@ public class RoommateRatingService {
                 .toList();
     }
     public List<ReviewResponse> getReceivedReviews(Long userId) {
-        List<Review> reviews = roommateRatingRepository.findByRoommate_UserId(userId).get().getReviews();
+        List<Review> reviews = roommateRatingRepository.findByRoommateUserId(userId).get().getReviews();
         return reviews.stream()
                 .map(review -> new ReviewResponse(review.getRating(), review.getComment(), review.getCreatedAt()))
                 .toList();
     }
 
     public BigDecimal getOverallRating(Long userId) {
-        return roommateRatingRepository.findByRoommate_UserId(userId)
+        BigDecimal ans = roommateRatingRepository.findByRoommateUserId(userId)
                 .map(RoommateRating::getAverageRating)
                 .orElse(BigDecimal.ZERO); // Если нет рейтинга, вернуть 0
+        return ans;
     }
 
 

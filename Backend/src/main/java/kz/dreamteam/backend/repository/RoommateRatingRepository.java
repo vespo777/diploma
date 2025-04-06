@@ -13,6 +13,6 @@ import java.util.Optional;
 @Repository
 public interface RoommateRatingRepository extends JpaRepository<RoommateRating, Long> {
     Optional<RoommateRating> findByRoommate(User roommate);
-    Optional<RoommateRating> findByRoommate_UserId(Long userId);
+    Optional<RoommateRating> findByRoommateUserId(Long userId);
 
 }

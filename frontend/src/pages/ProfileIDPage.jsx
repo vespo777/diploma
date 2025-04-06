@@ -130,9 +130,12 @@ const Profile = () => {
 
         const reviewsData = await reviewsResponse.json();
         const avgRatingData = await avgRatingResponse.json();
+        {  console.log("avgRatingData:", avgRatingData)}
 
         setReviews(reviewsData);
-        setAverageRating(avgRatingData.averageRating || 0);
+        setAverageRating(avgRatingData || 0);
+        {  console.log("Average rating updated:", averageRating)}
+
       } catch (error) {
         console.error("Error fetching ratings:", error);
       } finally {
@@ -179,7 +182,7 @@ const Profile = () => {
         headers: { Authorization: token },
       });
       const avgRatingData = await avgRatingResponse.json();
-      setAverageRating(avgRatingData.averageRating || 0);
+      setAverageRating(avgRatingData || 0);
     } catch (error) {
       console.error("Error submitting review:", error);
       alert("Failed to submit review");
@@ -219,7 +222,8 @@ const Profile = () => {
             {!reviewsLoading && (
                 <>
                   <div className="rating-summary">
-                    <h4>Average Rating: {averageRating.toFixed(1)}/5</h4>
+                    {  console.log("Average rating updated:", averageRating)}
+                    <h4>Average Rating: {averageRating.toFixed(2)}/5</h4>
                     <div className="stars">
                       {[...Array(5)].map((_, i) => (
                           <span key={i} className={i < Math.round(averageRating) ? "star-filled" : "star-empty"}>
