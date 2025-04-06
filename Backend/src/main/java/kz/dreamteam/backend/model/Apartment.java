@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.InnerField;
 
 @Entity
 @Table(name = "apartments")
@@ -31,12 +34,26 @@ public class Apartment {
 
     private Integer roomQuantity;
     private Integer sizeSquareMeter;
+    @Field(type = FieldType.Text)
+    private String descriptionJunk;
+
+    @Field(type = FieldType.Keyword)
+    private String descriptionJunkKeyword;
+
 
     public Long getUser() {
         return userId;
     }
 
     public void setUser(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
@@ -95,5 +112,44 @@ public class Apartment {
 
     public void setSizeSquareMeter(Integer sizeSquareMeter) {
         this.sizeSquareMeter = sizeSquareMeter;
+    }
+
+    public String getDescriptionJunk() {
+        return descriptionJunk;
+    }
+
+    public void setDescriptionJunk(String descriptionJunk) {
+        this.descriptionJunk = descriptionJunk;
+    }
+
+    public String getDescriptionJunkKeyword() {
+        return descriptionJunkKeyword;
+    }
+
+    public void setDescriptionJunkKeyword(String descriptionJunkKeyword) {
+        this.descriptionJunkKeyword = descriptionJunkKeyword;
+    }
+
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    public void generateDescriptionJunk() {
+        String combined = (
+                safeStr(apartmentId) + " " +
+                        safeStr(userId) + " " +
+                        safeStr(description) + " " +
+                        safeStr(photoPath) + " " +
+                        safeStr(location2Gis) + " " +
+                        safeStr(linkToKrishaKz) + " " +
+                        safeStr(roomQuantity) + " " +
+                        safeStr(sizeSquareMeter)
+        ).toLowerCase();
+
+        this.descriptionJunk = combined;
+        this.descriptionJunkKeyword = combined;
+    }
+
+    private String safeStr(Object obj) {
+        return obj != null ? obj.toString() : "";
     }
 }

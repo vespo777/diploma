@@ -54,7 +54,7 @@ public class ApartmentService {
         if(maxSize == null) maxSize=1000000;
 
         if (query != null && !query.isEmpty()) {
-            boolQuery.must(QueryBuilders.matchQuery("description", query))
+            boolQuery.must(QueryBuilders.wildcardQuery("descriptionJunkKeyword.keyword", "*" + query.toLowerCase() + "*"))
                     .filter(QueryBuilders.rangeQuery("roomQuantity").gte(minRooms).lte(maxRooms))
                     .filter(QueryBuilders.rangeQuery("sizeSquareMeter").gte(minSize).lte(maxSize));
         }
@@ -89,6 +89,7 @@ public class ApartmentService {
         apartment.setLinkToKrishaKz(apartmentDTO.getLinkToKrishaKz());
         apartment.setRoomQuantity(apartmentDTO.getRoomQuantity());
         apartment.setSizeSquareMeter(apartmentDTO.getSizeSquareMeter());
+        apartment.generateDescriptionJunk();
 
         // Сохраняем в БД
         Apartment savedApartment = apartmentsRepository.save(apartment);
@@ -120,6 +121,7 @@ public class ApartmentService {
                     apartment.setRoomQuantity(updatedApartment.getRoomQuantity());
                     apartment.setSizeSquareMeter(updatedApartment.getSizeSquareMeter());
                     apartment.setLinkToKrishaKz(updatedApartment.getLinkToKrishaKz());
+                    apartment.generateDescriptionJunk();
 
                     // Сохраняем обновленную запись в базе данных
                     apartmentsRepository.save(apartment);
