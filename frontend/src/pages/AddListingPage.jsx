@@ -13,20 +13,22 @@ const AddListingPage = () => {
     location: '',
     type: 'ROOM', // ROOM, HOUSE, HOSTEL
     address: '',
-    roomCount: '1',
-    bathroomCount: '1',
+    roomQuantity: '1',
+    sizeSquareMeter: '1',
     furnished: false,
     internetIncluded: false,
     utilitiesIncluded: false,
     photos: [],
     phoneNumber: '',
-    preferredGender: 'ANY', // MALE, FEMALE, ANY
-    maxTenants: '1',
-    availableFrom: '',
-    minimumStayMonths: '1',
+    // preferredGender: 'ANY', // MALE, FEMALE, ANY
+    // maxTenants: '1',
+    // availableFrom: '',
+    // minimumStayMonths: '1',
     petsAllowed: false,
-    smokingAllowed: false,
-    parkingAvailable: false
+    // smokingAllowed: false,
+    parkingAvailable: false,
+    location2Gis: '',
+    linkToKrishaKz: ''
   });
 
   const [error, setError] = useState('');
@@ -65,23 +67,48 @@ const AddListingPage = () => {
     setPreviewUrls(urls);
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setError('');
+  //   console.log("DEBUG ---- formData:", formData);
+
+  //   try {
+  //     const formDataToSend = new FormData();
+  //     Object.keys(formData).forEach(key => {
+  //       if (key === 'photos') {
+  //         // formData.photos.forEach(photo => {
+  //         //   formDataToSend.append('photos', photo);
+  //         // });
+  //       } else {
+  //         formDataToSend.append(key, formData[key]);
+  //       }
+  //     });
+  //     console.log("DEBUG ---- formDataToSend:", formDataToSend);
+  //     await addListing(formDataToSend);
+  //     navigate('/');
+  //   } catch (err) {
+  //     setError('Failed to add listing. Please try again.');
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    console.log("DEBUG ---- formData:", formData);
 
     try {
-      const formDataToSend = new FormData();
-      Object.keys(formData).forEach(key => {
-        if (key === 'photos') {
-          formData.photos.forEach(photo => {
-            formDataToSend.append('photos', photo);
-          });
-        } else {
-          formDataToSend.append(key, formData[key]);
-        }
-      });
-
-      await addListing(formDataToSend);
+      // const formDataToSend = new FormData();
+      // Object.keys(formData).forEach(key => {
+      //   if (key === 'photos') {
+      //     // formData.photos.forEach(photo => {
+      //     //   formDataToSend.append('photos', photo);
+      //     // });
+      //   } else {
+      //     formDataToSend.append(key, formData[key]);
+      //   }
+      // });
+      console.log("DEBUG ---- formDataToSend:", formData);
+      await addListing(formData);
       navigate('/');
     } catch (err) {
       setError('Failed to add listing. Please try again.');
@@ -193,10 +220,10 @@ const AddListingPage = () => {
               <div className="input-group half">
                 <input
                   type="number"
-                  name="roomCount"
+                  name="roomQuantity"
                   className="auth-input"
                   placeholder="Number of rooms"
-                  value={formData.roomCount}
+                  value={formData.roomQuantity}
                   onChange={handleInputChange}
                   min="1"
                   required
@@ -205,10 +232,10 @@ const AddListingPage = () => {
               <div className="input-group half">
                 <input
                   type="number"
-                  name="bathroomCount"
+                  name="sizeSquareMeter"
                   className="auth-input"
-                  placeholder="Number of bathrooms"
-                  value={formData.bathroomCount}
+                  placeholder="Size in Square Meters"
+                  value={formData.sizeSquareMeter}
                   onChange={handleInputChange}
                   min="1"
                   required
@@ -291,7 +318,7 @@ const AddListingPage = () => {
           {/* Preferences */}
           <div className="form-section">
             <h3>Preferences</h3>
-            <div className="input-group">
+            {/* <div className="input-group">
               <select
                 name="preferredGender"
                 className="auth-input"
@@ -302,9 +329,9 @@ const AddListingPage = () => {
                 <option value="MALE">Male Only</option>
                 <option value="FEMALE">Female Only</option>
               </select>
-            </div>
+            </div> */}
 
-            <div className="input-row">
+            {/* <div className="input-row">
               <div className="input-group half">
                 <input
                   type="number"
@@ -329,9 +356,9 @@ const AddListingPage = () => {
                   required
                 />
               </div>
-            </div>
+            </div> */}
 
-            <div className="input-group">
+            {/* <div className="input-group">
               <input
                 type="date"
                 name="availableFrom"
@@ -340,7 +367,7 @@ const AddListingPage = () => {
                 onChange={handleInputChange}
                 required
               />
-            </div>
+            </div> */}
 
             <div className="checkbox-group">
               <label>
@@ -352,7 +379,7 @@ const AddListingPage = () => {
                 />
                 Pets Allowed
               </label>
-              <label>
+              {/* <label>
                 <input
                   type="checkbox"
                   name="smokingAllowed"
@@ -360,7 +387,7 @@ const AddListingPage = () => {
                   onChange={handleInputChange}
                 />
                 Smoking Allowed
-              </label>
+              </label> */}
               <label>
                 <input
                   type="checkbox"

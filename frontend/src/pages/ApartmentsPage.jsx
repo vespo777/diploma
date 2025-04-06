@@ -10,6 +10,7 @@ const ApartmentsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [results, setResults] = useState([]);
   const [searchParams, setSearchParams] = useState({
     query: '',
     minRooms: '',
@@ -98,6 +99,16 @@ const ApartmentsPage = () => {
     }));
   };
 
+  const handleSearchSubmit = async () => {
+    try {
+      const response = await fetch(`/api/apartments/search?query=${encodeURIComponent(searchParams.query)}`);
+      const data = await response.json();
+      setResults(data);
+    } catch (error) {
+      console.error('Search failed:', error);
+    }
+  };
+
 
   const canAddListing = userData?.roommateSearch?.searchStatus === 2;
 
@@ -126,6 +137,7 @@ const ApartmentsPage = () => {
               value={searchParams.query}
               onChange={handleSearchChange}
           />
+          <button onClick={handleSearchSubmit}>Search</button>
           <div className="filter-group">
             <label>Rooms:</label>
             <input

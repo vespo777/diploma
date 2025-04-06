@@ -32,9 +32,13 @@ public class RatingController {
     }
 
     @GetMapping("/overall")
-    public ResponseEntity<BigDecimal> getOverallRating(@RequestParam Long userId) {
+    public ResponseEntity<Double> getOverallRating(@RequestParam Long userId) {
         BigDecimal overallRating = roommateRatingService.getOverallRating(userId);
-        return ResponseEntity.ok(overallRating);
+
+        // Преобразуем BigDecimal в double
+        Double overallRatingDouble = overallRating.doubleValue();
+
+        return ResponseEntity.ok(overallRatingDouble);
     }
 
     @PostMapping("/leave-review")

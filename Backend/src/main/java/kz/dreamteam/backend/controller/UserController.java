@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import kz.dreamteam.backend.model.Team;
 import kz.dreamteam.backend.model.User;
 import kz.dreamteam.backend.model.dto.UpdateUserProfileRequest;
+import kz.dreamteam.backend.model.dto.UserDto;
 import kz.dreamteam.backend.model.dto.UserRecommendationDTO;
 import kz.dreamteam.backend.service.DjangoClientService;
 import kz.dreamteam.backend.service.GraphSearchService;
@@ -53,15 +54,17 @@ public class UserController {
     }
 
     @GetMapping("/profile/{userId}")
-    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
         return ResponseEntity.ok(this.userService.getUserById(userId));
     }
 
     @PutMapping("/profile/{userId}")
     public ResponseEntity<String> updateProfile(
             @PathVariable Long userId,
-            @RequestBody UpdateUserProfileRequest updateRequest) {
-        return ResponseEntity.ok(userService.updateUserProfile(userId, updateRequest));
+            @RequestBody User updatedUser) {
+
+        String response = userService.updateUser(userId, updatedUser);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/users")
@@ -74,9 +77,8 @@ public class UserController {
         return graphSearchService.getUserRecommendations(userId);
     }
 
-    @GetMapping("/recommended-users-dto") // necessary to get matching score
+    @GetMapping("/get-matching-score") // necessary to get matching score
     public ResponseEntity<List<UserRecommendationDTO>> getRecommendedUsersDTO(@RequestParam int userId) {
-        System.out.println("\n\nDEBUG backend graphSearchService.getUserRecommendationsDTO(userId): " + graphSearchService.getUserRecommendationsDTO(userId) + "\n\n");
         return graphSearchService.getUserRecommendationsDTO(userId);
     }
 

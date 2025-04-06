@@ -29,6 +29,7 @@ public class PasswordService {
     private final RoommateSearchRepository roommateSearchRepository;
     private final ContactsRepository contactsRepository;
     private final TeamRepository teamRepository;
+    private final RoommateRatingRepository roommateRatingRepository;
     private final GraphSearchService graphSearchService;
     private final ElasticsearchClient elasticsearchClient;
 
@@ -42,7 +43,7 @@ public class PasswordService {
                            ContactsRepository contactsRepository,
                            GraphSearchService graphSearchService,
                            TeamRepository teamRepository,
-                           PasswordEncoder passwordEncoder, ElasticsearchClient elasticsearchClient) {
+                           PasswordEncoder passwordEncoder, RoommateRatingRepository roommateRatingRepository, ElasticsearchClient elasticsearchClient) {
         this.userRepository = userRepository;
         this.socialDetailsRepository = socialDetailsRepository;
         this.locationDetailsRepository = locationDetailsRepository;
@@ -53,6 +54,7 @@ public class PasswordService {
         this.passwordEncoder = passwordEncoder;
         this.teamRepository = teamRepository;
         this.graphSearchService = graphSearchService;
+        this.roommateRatingRepository = roommateRatingRepository;
         this.elasticsearchClient = elasticsearchClient;
     }
 
@@ -133,6 +135,18 @@ public class PasswordService {
 
     }
 
+    private void createEmptyRoommateRating(User user) {
+        try {
+            RoommateRating roommateRating = new RoommateRating();
+            roommateRating.setRoommate(user);
+
+//            user.setRoommateRating(roommateRating);
+
+            roommateRatingRepository.save(roommateRating);
+        } catch (Exception e) { log.error("Error in createEmptyTeam", e); }
+
+    }
+
     public boolean isEmailAvailable(String email) {
         return !userRepository.existsByEmail(email);
     }
@@ -158,6 +172,7 @@ public class PasswordService {
             createEmptyRoommatePreferences(user);
             createEmptyLocationDetails(user);
             createEmptyContacts(user);
+            createEmptyRoommateRating(user);
             userRepository.save(user);
 
 //             saveToElasticsearch(user);

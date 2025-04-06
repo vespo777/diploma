@@ -417,6 +417,11 @@ const AncetaPage = () => {
                 body: JSON.stringify(sectionData)
             });
 
+            // Add console logs
+            console.log('Request URL:', `${API_URL}/user/${sectionKey}/${userId}`);
+            console.log('Response Status:', response.status);
+            console.log('Response Headers:', [...response.headers]);
+            
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error("Ошибка обновления:", errorText);

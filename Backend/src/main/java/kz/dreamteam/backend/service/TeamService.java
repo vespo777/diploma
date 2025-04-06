@@ -123,7 +123,8 @@ public class TeamService {
         request.setStatus(requestStatus);
 
         Optional<Team> team = teamRepository.findTeamByUserId(receiverId);
-        User newMember = userService.getUserById(senderId);
+        User newMember = userRepository.findById(senderId)
+                .orElseThrow(() -> new RuntimeException("Sender user not found"));
 
         // Set start time if accepted
         // Insert new member into team
