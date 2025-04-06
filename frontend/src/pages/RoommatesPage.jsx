@@ -18,7 +18,7 @@ const RoommatesPage = () => {
   const [priceRange, setPriceRange] = useState({ min: '0', max: '1000000' });
   const [hasMore, setHasMore] = useState(true);
   const [cityFilter, setCityFilter] = useState('');
-  const [ageRange, setAgeRange] = useState({ min: '0', max: '100' });
+  const [ageRange, setAgeRange] = useState({ min: '-100', max: '100' });
   const [genderFilter, setGenderFilter] = useState('Any');
   const [professionFilter, setProfessionFilter] = useState('');
   const [smokingFilter, setSmokingFilter] = useState('Any');
@@ -28,45 +28,48 @@ const RoommatesPage = () => {
 
 
 
+  const matchingLevelsMap = useRef({});
+  const hasFetched = useRef(false);
 
-  // const fetchMatchingLevels = async () => {
-  //   if (!user?.userId || hasFetched.current) return;
-  //   hasFetched.current = true
-  //
-  //   try {
-  //     const response = await fetch(`http://localhost:8080/recommended-users-dto?userId=${user.userId}`, {
-  //       headers: { 'Authorization': `${localStorage.getItem('token')}` }
-  //     });
-  //
-  //
-  //     if (!response.ok) {
-  //       throw new Error(`Failed to fetch matching levels: ${response.status}`);
-  //     }
-  //
-  //     const data = await response.json();
-  //
-  //     console.log("\n\nDEBUG data: ", data, "\n\n");
-  //
-  //     // Заполняем глобальную хешмапу
-  //     const levelsMap = {};
-  //     data.forEach(item => {
-  //       if (item.user.userId && item.matchingScore) {
-  //         levelsMap[item.user.userId] = item.matchingScore;
-  //       }
-  //     });
-  //
-  //
-  //     matchingLevelsMap.current = levelsMap;
-  //
-  //   } catch (error) {
-  //     console.error("Error fetching matching levels:", error);
-  //   }
-  // };
+
+  const fetchMatchingLevels = async () => {
+    if (!user?.userId || hasFetched.current) return;
+    hasFetched.current = true
+  
+    try {
+      const response = await fetch(`http://localhost:8080/get-matching-score?userId=${user.userId}`, {
+        headers: { 'Authorization': `${localStorage.getItem('token')}` }
+      });
+  
+  
+      if (!response.ok) {
+        throw new Error(`Failed to fetch matching levels: ${response.status}`);
+      }
+  
+      const data = await response.json();
+  
+      console.log("\n\nDEBUG data: ", data, "\n\n");
+  
+      // Заполняем глобальную хешмапу
+      const levelsMap = {};
+      data.forEach(item => {
+        if (item.user.userId && item.matchingScore) {
+          levelsMap[item.user.userId] = item.matchingScore;
+        }
+      });
+  
+  
+      matchingLevelsMap.current = levelsMap;
+  
+    } catch (error) {
+      console.error("Error fetching matching levels:", error);
+    }
+  };
 
   // Функция для получения matching level по userId
-  // const getMatchingLevel = (userId) => {
-  //   return matchingLevelsMap.current[userId];
-  // };
+  const getMatchingLevel = (userId) => {
+    return matchingLevelsMap.current[userId];
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -75,7 +78,10 @@ const RoommatesPage = () => {
       try {
         setLoading(true);
 
-
+        // Сначала получаем matching levels
+        await fetchMatchingLevels();
+        // задержка чтобы предотвратить concurrency exception
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         const response = await fetch(`http://localhost:8080/recommended-users?userId=${user.userId}`, {
           headers: { 'Authorization': `${localStorage.getItem('token')}` }
@@ -98,6 +104,24 @@ const RoommatesPage = () => {
     fetchUsers();
   }, [user]);
 
+  const calculateAge = (birthDate) => {
+    if (!birthDate) return null; // Handle missing birth date
+    
+    const today = new Date();
+    const birthDateObj = new Date(birthDate);
+    
+    // Calculate difference in years
+    let age = today.getFullYear() - birthDateObj.getFullYear();
+    
+    // Adjust if birthday hasn't occurred yet this year
+    const monthDiff = today.getMonth() - birthDateObj.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
+      age--;
+    }
+    
+    return age;
+  };
+  
   const loadMoreUsers = () => {
     const newUsers = allUsers.slice(0, visibleUsers.length + PAGE_SIZE);
 
@@ -115,9 +139,14 @@ const RoommatesPage = () => {
 
     const matchesCity = !cityFilter || user.locationDetails?.regionFrom?.toLowerCase().includes(cityFilter.toLowerCase()); // Улучшенная проверка для cityFilter
 
-    const birthYear = user.personalInfo?.birthDate ? new Date(user.personalInfo.birthDate).getFullYear() : null;
-    const userAge = birthYear ? new Date().getFullYear() - birthYear : null;
-    const matchesAge = userAge ? userAge >= Number(ageRange.min) && userAge <= Number(ageRange.max) : true;
+    // const birthYear = user.personalInfo?.birthDate ? new Date(user.personalInfo.birthDate).getFullYear() : null;
+    // const userAge = birthYear ? new Date().getFullYear() - birthYear : null;
+    // const matchesAge = userAge ? userAge >= Number(ageRange.min) && userAge <= Number(ageRange.max) : true;
+
+    const birthDate = user.personalInfo?.birthDate;
+    const userAge = birthDate ? calculateAge(birthDate) : null;
+    const matchesAge = !userAge || (userAge >= Number(ageRange.min) && userAge <= Number(ageRange.max));
+  
 
     const matchesGender = genderFilter === '' || genderFilter === 'Any' || user.personalInfo?.gender === genderFilter; // Исправлено для учета значения 'Any'
 
@@ -239,7 +268,7 @@ const RoommatesPage = () => {
               setSearchTerm('');
               setPriceRange({ min: '0', max: '1000000' });
               setCityFilter('');
-              setAgeRange({ min: '0', max: '100' });
+              setAgeRange({ min: '-100', max: '100' });
               setGenderFilter('');
               setProfessionFilter('');
               setSmokingFilter(null);
@@ -264,7 +293,10 @@ const RoommatesPage = () => {
                     </div>
                     <div className="roommate-info">
                       <h3>{user.personalInfo.name} {user.personalInfo.surname}</h3>
-                      <p className="price-info">Minimal Budget: {user.roommateSearch?.budgetMin} T</p>
+                      <p className="price-info">Budget: {user.roommateSearch?.budgetMin}-{user.roommateSearch?.budgetMax} kzt</p>
+                      <p className="price-info">Current City: {user.locationDetails?.currentCity}</p>
+                      <p className="price-info">Age: {calculateAge(user.personalInfo?.birthDate) || 'Unknown'}</p>
+                      <p className="price-info">Matching Score: {getMatchingLevel(user.userId)}</p>
                     </div>
                     <Link to={`/profile/${user.userId}`}>More</Link>
                   </div>
