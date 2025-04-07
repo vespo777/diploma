@@ -32,13 +32,19 @@ const ApartmentsPage = () => {
         if (searchParams.minSize) query.append('minSize', searchParams.minSize);
         if (searchParams.maxSize) query.append('maxSize', searchParams.maxSize);
 
-        const response = await fetch(`${API_URL}/apartments/search?${query.toString()}`, {
+        // const response = await fetch(`${API_URL}/apartments/search?${query.toString()}`, {
+        //   method: 'GET',
+        //     headers: {
+        //       Authorization: `${localStorage.getItem('token')}`
+        //     }
+        // });
+        // if (!response.ok) throw new Error('Failed to fetch apartments');
+        const response = await fetch(`${API_URL}/apartments`, {
           method: 'GET',
             headers: {
               Authorization: `${localStorage.getItem('token')}`
             }
         });
-        if (!response.ok) throw new Error('Failed to fetch apartments');
         const data = await response.json();
         setApartments(data);
       } catch (err) {

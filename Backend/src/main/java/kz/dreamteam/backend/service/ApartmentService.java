@@ -85,10 +85,6 @@ public class ApartmentService {
 
         Long userId = jwtService.getUserIdFromToken(token);
 
-        // Проверяем, существует ли пользователь
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-
         // Маппим DTO в сущность
         Apartment apartment = modelMapper.map(apartmentDTO, Apartment.class);
 
@@ -115,23 +111,38 @@ public class ApartmentService {
     }
 
     // Update apartment
-    public Apartment updateApartment(Long id, Apartment updatedApartment) {
+    public Apartment updateApartment(Long id, ApartmentDTO updatedApartmentDto) {
+
+        Apartment apartmentUpd = modelMapper.map(updatedApartmentDto, Apartment.class);
+
+
         return apartmentsRepository.findById(id)
                 .map(apartment -> {
-                    apartment.setUserId(updatedApartment.getUserId());
-                    apartment.setDescription(updatedApartment.getDescription());
-                    apartment.setPhotoPath(updatedApartment.getPhotoPath());
-                    apartment.setLocation2Gis(updatedApartment.getLocation2Gis());
-                    apartment.setRoomQuantity(updatedApartment.getRoomQuantity());
-                    apartment.setSizeSquareMeter(updatedApartment.getSizeSquareMeter());
-                    apartment.setLinkToKrishaKz(updatedApartment.getLinkToKrishaKz());
+                    apartment.setTitle(apartmentUpd.getTitle());
+                    apartment.setDescription(apartmentUpd.getDescription());
+                    apartment.setPrice(apartmentUpd.getPrice());
+                    apartment.setPrice(apartmentUpd.getPrice());
+                    apartment.setLocation(apartmentUpd.getLocation());
+                    apartment.setPhotoPath(apartmentUpd.getPhotoPath());
+                    apartment.setAddress(apartmentUpd.getAddress());
+                    apartment.setLocation2Gis(apartmentUpd.getLocation2Gis());
+                    apartment.setPropertyType(apartmentUpd.getPropertyType());
+                    apartment.setFurnished(apartmentUpd.getFurnished());
+                    apartment.setInternetIncluded(apartmentUpd.getInternetIncluded());
+                    apartment.setUtilitiesIncluded(apartmentUpd.getUtilitiesIncluded());
+                    apartment.setPhoneNumber(apartmentUpd.getPhoneNumber());
+                    apartment.setPetsAllowed(apartmentUpd.getPetsAllowed());
+                    apartment.setParkingAvailable(apartmentUpd.getParkingAvailable());
+                    apartment.setLinkToKrishaKz(apartmentUpd.getLinkToKrishaKz());
+                    apartment.setRoomQuantity(apartmentUpd.getRoomQuantity());
+                    apartment.setSizeSquareMeter(apartmentUpd.getSizeSquareMeter());
                     apartment.generateDescriptionJunk();
 
                     // Сохраняем обновленную запись в базе данных
                     apartmentsRepository.save(apartment);
 
                     // Обновляем запись в Elasticsearch
-                    saveToElasticsearch(apartment);
+//                    saveToElasticsearch(apartment);
 
                     return apartment;
                 })

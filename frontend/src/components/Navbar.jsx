@@ -59,7 +59,6 @@ const Navbar = () => {
         });
         if (!response.ok) throw new Error("Ошибка загрузки приглашений в команду");
         const data = await response.json();
-
         setTeamInvitations(data);
       } catch (error) {
         console.error("Ошибка при загрузке приглашений в команду:", error);
@@ -229,6 +228,12 @@ const Navbar = () => {
             <span className="nav-link-label">FAQ</span>
           </div>
 
+          {isActive('/apartments') && (
+              <div className="nav-link-container">
+                <Link to="/add-listing" className="nav-link">+</Link>
+                <span className="nav-link-label">Add Listing</span>
+              </div>
+          )}
         </div>
 
         <div className="nav-auth">
@@ -300,17 +305,17 @@ const Navbar = () => {
                                       </>
                                   ) : item.type === "request" ? (
                                       <>
-                                        <p><strong><Link to={`/profile/${item.user.userId}`}>Someone</Link></strong> wants to join your team Your Team</p>
+                                        <p><strong><Link to={`/profile/${item.user}`}>Someone</Link></strong> wants to join your team Your Team</p>
                                         <div className="notification-actions">
                                           <button
                                               className="accept-btn"
-                                              onClick={() => handleTeamRequestResponse(item.user.userId, item.team.id, "ACCEPTED")}
+                                              onClick={() => handleTeamRequestResponse(item.user, item.team.id, "ACCEPTED")}
                                           >
                                             Accept
                                           </button>
                                           <button
                                               className="decline-btn"
-                                              onClick={() => handleTeamRequestResponse(item.user.userId, item.team.id, "REJECTED")}
+                                              onClick={() => handleTeamRequestResponse(item.user, item.team.id, "REJECTED")}
                                           >
                                             Decline
                                           </button>
