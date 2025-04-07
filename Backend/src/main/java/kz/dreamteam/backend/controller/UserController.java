@@ -53,6 +53,20 @@ public class UserController {
         return this.userService.getCurrentUser(token);
     }
 
+    @PutMapping("/profile-photo")
+    public ResponseEntity<String> updateProfile(@RequestParam Long userId,
+                                                @RequestParam String profilePhotoPath ) {
+        userService.updateProfilePhoto(userId, profilePhotoPath);
+        return ResponseEntity.ok("Profile photo updated successfully");
+    }
+
+    @PutMapping("/profile-photo/delete")
+    public ResponseEntity<String> deleteProfilePhoto(@RequestParam Long userId) {
+        userService.deleteProfilePhoto(userId);
+        return ResponseEntity.ok("Profile photo deleted (set to default)");
+    }
+
+
     @GetMapping("/profile/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
         return ResponseEntity.ok(this.userService.getUserById(userId));
