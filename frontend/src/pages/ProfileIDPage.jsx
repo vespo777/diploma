@@ -201,16 +201,69 @@ const Profile = () => {
 
   return (
       <div className="profile-container">
-        <h1>Profile {user.personalInfo.name}</h1>
+        <h1>Profile {user.personalInfo.name}  {user.personalInfo.surname} </h1>
+        // mathcing score here
         <div className="profile-content">
+          
           <div className="profile-section">
+            {/* Basic Information Section */}
+            <h2>Basic Information</h2>
+            <div className="info-grid">
+              <div>
+                <strong>Email:</strong> {user.email}
+              </div>
+              <div>
+                <strong>Gender:</strong> {user.personalInfo.gender === 'M' ? 'Male' : 'Female'}
+              </div>
+              <div>
+                <strong>Date of Birth:</strong> {user.personalInfo.birthDate}
+              </div>
+              <div>
+                <strong>Religion:</strong> {user.personalInfo.religion || 'Not specified'}
+              </div>
+            </div>
+          </div>
+
+        {/* Location Information */}
+        <div className="profile-section">
+          <h2>Location</h2>
+          <div className="info-grid">
+            <div>
+              <strong>Current City:</strong> {user.locationDetails.currentCity}
+            </div>
+            <div>
+              <strong>Region From:</strong> {user.locationDetails.regionFrom}
+            </div>
+          </div>
+        </div>
+
+        {/* Contact Information */}
+        {user.contacts && (
+          <div className="profile-section">
+            <h2>Contact Information</h2>
+            <div className="info-grid">
+              {user.contacts.numberVisible && (
+                <div>
+                  <strong>Phone:</strong> {user.contacts.callNumber}
+                </div>
+              )}
+              {user.contacts.telegramNickname && (
+                <div>
+                  <strong>Telegram:</strong> @{user.contacts.telegramNickname}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        
+         {/* <div className="profile-section">
             <h2>Basic Information</h2>
             <p>Email: {user.email}</p>
             <p>Date of Birth: {user.personalInfo.birthDate}</p>
             <p>City: {user.locationDetails.currentCity}</p>
             <p>Region From: {user.locationDetails.regionFrom}</p>
-          </div>
-
+          </div> */}
           <div className="profile-section">
             <h3>Preferences</h3>
             <p>Wake Up Time: {user.roommatePreferences.wakeTime}</p>
