@@ -12,6 +12,7 @@ import kz.dreamteam.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -35,20 +36,23 @@ public class RoommateRatingService {
                 .map(review -> new ReviewResponse(review.getRating(), review.getComment(), review.getCreatedAt()))
                 .toList();
     }
+
     public List<ReviewResponse> getReceivedReviews(Long userId) {
-        List<Review> reviews = roommateRatingRepository.findByRoommateUserId(userId).get().getReviews();
-        return reviews.stream()
-                .map(review -> new ReviewResponse(review.getRating(), review.getComment(), review.getCreatedAt()))
-                .toList();
+        return roommateRatingRepository.findByRoommateUserId(userId)
+                .map(roommateRating -> roommateRating.getReviews().stream()
+                        .map(review -> new ReviewResponse(
+                                review.getRating(),
+                                review.getComment(),
+                                review.getCreatedAt()))
+                        .toList())
+                .orElse(Collections.emptyList());
     }
 
     public BigDecimal getOverallRating(Long userId) {
-        BigDecimal ans = roommateRatingRepository.findByRoommateUserId(userId)
+        return roommateRatingRepository.findByRoommateUserId(userId)
                 .map(RoommateRating::getAverageRating)
-                .orElse(BigDecimal.ZERO); // Если нет рейтинга, вернуть 0
-        return ans;
+                .orElse(BigDecimal.valueOf(5.00)); // Если нет рейтинга, вернуть 0
     }
-
 
     @Transactional
     public String leaveReview(Long reviewerId, Long roommateId, Integer rating, String comment) {

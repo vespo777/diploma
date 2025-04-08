@@ -39,22 +39,16 @@ const Profile = () => {
         headers: { 'Authorization': token }
       });
 
-      console.log("DEBUG -- response: ", response);
-      console.log("DEBUG -- my id: ", myId);
-      console.log("DEBUG -- user id: ", id);
-
       const isconnected_response = await fetch(`http://localhost:8080/connections/is-connected?userId1=${myId}&userId2=${id}`, {
         headers: { 'Authorization': token }
       });
 
       const isconnected_response_data = await isconnected_response.text();
-      console.log("DEBUG -- isconnected_response_data:", isconnected_response_data);
       
       if (isconnected_response_data == "Connection exists with status: ACCEPTED") {
         connection_exists.current = true;
       }
 
-      console.log("DEBUG -- connection_exists:", connection_exists);
 
 
       if (!response.ok) {
@@ -63,7 +57,6 @@ const Profile = () => {
 
       const data = await response.json();
 
-      console.log("\n\nDEBUG data: ", data, "\n\n");
 
       // Заполняем глобальную хешмапу
       const levelsMap = {};
@@ -198,11 +191,9 @@ const Profile = () => {
 
         const reviewsData = await reviewsResponse.json();
         const avgRatingData = await avgRatingResponse.json();
-        { console.log("avgRatingData:", avgRatingData) }
 
         setReviews(reviewsData);
         setAverageRating(avgRatingData || 0);
-        { console.log("Average rating updated:", averageRating) }
 
       } catch (error) {
         console.error("Error fetching ratings:", error);
@@ -236,7 +227,7 @@ const Profile = () => {
 
       alert("Review submitted successfully!");
       setShowReviewForm(false);
-      setRating(0);
+      // setRating(0);
       setComment("");
 
       // Refresh reviews after submission
@@ -288,7 +279,6 @@ const Profile = () => {
             <div>
               <strong>Personality Type:</strong> {user.roommateSearch.scoreTest}
             </div>
-
 
           </div>
         </div>
@@ -459,7 +449,6 @@ const Profile = () => {
           {!reviewsLoading && (
             <>
               <div className="rating-summary">
-                {console.log("Average rating updated:", averageRating)}
                 <h4>Average Rating: {averageRating.toFixed(2)}/5</h4>
                 <div className="stars">
                   {[...Array(5)].map((_, i) => (
@@ -509,10 +498,10 @@ const Profile = () => {
                 {showReviewForm ? (
                   <form onSubmit={handleSubmitReview} className="review-form">
                     <div className="form-group">
-                      <label>Rating (1-5):</label>
+                      <label>Rating (0-5):</label>
                       <input
                         type="number"
-                        min="1"
+                        min="0"
                         max="5"
                         value={rating}
                         onChange={(e) => setRating(parseInt(e.target.value))}

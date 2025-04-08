@@ -305,17 +305,31 @@ const Navbar = () => {
                                       </>
                                   ) : item.type === "request" ? (
                                       <>
-                                        <p><strong><Link to={`/profile/${item.user}`}>Someone</Link></strong> wants to join your team Your Team</p>
+                                        {item.user?.personalInfo ? (
+                                          <p>
+                                            <strong>
+                                              <Link to={`/profile/${item.user.userId}`}>
+                                                {item.user.personalInfo.name} {item.user.personalInfo.surname}
+                                              </Link>
+                                            </strong> wants to join your team <strong>Your Team</strong>
+                                          </p>
+                                        ) : (
+                                          <p>
+                                            <strong>
+                                              <Link to={`/profile/${item.user?.userId || '#'}`}>Someone</Link>
+                                            </strong> wants to join your team <strong>Your Team</strong>
+                                          </p>
+                                        )}
                                         <div className="notification-actions">
                                           <button
                                               className="accept-btn"
-                                              onClick={() => handleTeamRequestResponse(item.user, item.team.id, "ACCEPTED")}
+                                              onClick={() => handleTeamRequestResponse(item.user.userId, item.team.id, "ACCEPTED")}
                                           >
                                             Accept
                                           </button>
                                           <button
                                               className="decline-btn"
-                                              onClick={() => handleTeamRequestResponse(item.user, item.team.id, "REJECTED")}
+                                              onClick={() => handleTeamRequestResponse(item.user.userId, item.team.id, "REJECTED")}
                                           >
                                             Decline
                                           </button>
