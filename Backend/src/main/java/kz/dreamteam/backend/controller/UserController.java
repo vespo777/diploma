@@ -53,14 +53,15 @@ public class UserController {
         return this.userService.getCurrentUser(token);
     }
 
-    @PutMapping("/profile-photo")
-    public ResponseEntity<String> updateProfile(@RequestParam Long userId,
-                                                @RequestParam String profilePhotoPath ) {
+    @PutMapping("/upload-avatar")
+    public ResponseEntity<String> updateProfile(@RequestParam Long userId, @RequestParam String profilePhotoPath ) {
+        System.out.println("DEBUG -- userId" + userId + ", profilePhotoPath: " + profilePhotoPath);
+                                                
         userService.updateProfilePhoto(userId, profilePhotoPath);
         return ResponseEntity.ok("Profile photo updated successfully");
     }
 
-    @PutMapping("/profile-photo/delete")
+    @PutMapping("/delete-avatar")
     public ResponseEntity<String> deleteProfilePhoto(@RequestParam Long userId) {
         userService.deleteProfilePhoto(userId);
         return ResponseEntity.ok("Profile photo deleted (set to default)");

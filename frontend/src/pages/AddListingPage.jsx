@@ -109,7 +109,7 @@ const AddListingPage = () => {
       // });
       console.log("DEBUG ---- formDataToSend:", formData);
       await addListing(formData);
-      navigate('/');
+      navigate('/apartments');
     } catch (err) {
       setError('Failed to add listing. Please try again.');
     }
