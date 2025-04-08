@@ -859,7 +859,7 @@ const ProfilePage = () => {
         {croppingModalOpen && (
             <div className="avatar-crop-modal-container">
               <div className="avatar-crop-modal-content">
-                <h3>Crop your avatar</h3>
+                <h3>Hold and Drag to crop</h3>
                 <AvatarCropper
                     image={originalImage}
                     onCrop={handleImageCropped}

@@ -1,4 +1,10 @@
 import { useState, useEffect } from "react";
+import LoadingRabbit from "./pixi/Loading";
+import "../styles/Connection.css"
+
+
+
+
 
 const API_URL = "http://localhost:8080";
 
@@ -17,6 +23,7 @@ const ConnectionButton = ({ currentUserId, otherUserId }) => {
 
         (async () => {
             try {
+                setLoading(true);
                 const res = await fetch(
                     `${API_URL}/connections/is-connected?userId1=${currentUserId}&userId2=${otherUserId}`,
                     {
@@ -34,6 +41,8 @@ const ConnectionButton = ({ currentUserId, otherUserId }) => {
             } catch (error) {
                 if (error.name === "AbortError") return;
                 console.error("Ошибка при проверке статуса:", error);
+            }finally{
+                setLoading(false);
             }
         })();
 
@@ -83,11 +92,13 @@ const ConnectionButton = ({ currentUserId, otherUserId }) => {
         }
     };
 
+    if (loading) <LoadingRabbit />;
+
     return (
-        <div>
+        <div className="connection-section">
             {status === "ACCEPTED" ? (
-                <button className="bg-gray-400 text-white px-4 py-2 rounded" disabled>
-                    ✔ Connected
+                <button className="mdc-button mdc-button--raised" disabled>
+                    <span className="mdc-button__label">✔ Connected</span>
                 </button>
             ) : status === "PENDING" ? (
                 <button className="bg-yellow-400 text-white px-4 py-2 rounded" disabled>

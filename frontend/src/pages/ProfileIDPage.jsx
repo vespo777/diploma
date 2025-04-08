@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import ConnectionButton from "../components/Connection";
+import defaultAvatar from "../imgs/default-avatar.jpeg";
 import "../styles/ProfilePage.css";
 
 const API_URL = "http://localhost:8080";
@@ -44,7 +45,7 @@ const Profile = () => {
       });
 
       const isconnected_response_data = await isconnected_response.text();
-      
+
       if (isconnected_response_data == "Connection exists with status: ACCEPTED") {
         connection_exists.current = true;
       }
@@ -260,28 +261,34 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
-     
+
       <div className="profile-header">
-        <h1>
-          {user.personalInfo.name} {user.personalInfo.surname}
-        </h1>
+        <div className="avatar-container">
+          <img
+              src={user.profilePhotoPath || defaultAvatar}
+              alt={`${user.personalInfo.name}'s avatar`}
+              className="profile-avatar"
+          />
+        </div>
+        <div className="profile-title">
+          <h1>
+            {user.personalInfo.name} {user.personalInfo.surname}
+          </h1>
+          {user.roommateSearch.scoreTest && (
+              <div className="personality-badge">
+                {user.roommateSearch.scoreTest} Personality
+              </div>
+          )}
+        </div>
+        <ConnectionButton currentUserId={myId} otherUserId={id} />
+        <div className="matching-score">
+          <span className="score-value">{getMatchingLevel(id)}</span>
+          <span className="score-label">Match Score</span>
+        </div>
       </div>
 
+
       <div className="profile-content">
-
-        {/* Matching Score */}
-        <div className="profile-section">
-          <h2>Compatibilty:</h2>
-          <div className="info-grid">
-            <div>
-              <strong>Matching Score:</strong> {getMatchingLevel(id)}
-            </div>
-            <div>
-              <strong>Personality Type:</strong> {user.roommateSearch.scoreTest}
-            </div>
-
-          </div>
-        </div>
 
         {/* Location Information */}
         <div className="profile-section">
@@ -329,7 +336,7 @@ const Profile = () => {
         </div>
 
 
-        
+
 
 
         {/* Social Details */}
@@ -490,8 +497,6 @@ const Profile = () => {
 
         {myId && myId !== id && (
           <>
-            <ConnectionButton currentUserId={myId} otherUserId={id} />
-
             {!teamsLoading && areTeammates && (
               <div className="profile-section">
                 <h3>Leave a Review</h3>

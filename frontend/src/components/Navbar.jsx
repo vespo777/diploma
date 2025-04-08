@@ -266,12 +266,19 @@ const Navbar = () => {
                         {notifications.length > 0 ? (
                             notifications.map((notif, index) => (
                                 <div key={index} className="notification-item">
-                                  <p><strong>{notif.personalInfo.name} {notif.personalInfo.surname}</strong> wants to connect with you</p>
+                                    <img
+                                        src={notif.profilePhotoPath || avatarPlaceholder}
+                                        alt={`${notif.personalInfo.name}'s avatar`}
+                                        className="notification-avatar"
+                                    />
+                                    <div className="notification-content">
+                                      <p><strong>{notif.personalInfo.name} {notif.personalInfo.surname}</strong> wants to connect with you</p>
                                   <div className="notification-actions">
                                     <button className="accept-btn" onClick={() => handleAnswer(notif.userId, true)}>Accept</button>
                                     <button className="decline-btn" onClick={() => handleAnswer(notif.userId, false)}>Decline</button>
                                     <Link to={`/profile/${notif.userId}`}>View Profile</Link>
                                   </div>
+                                    </div>
                                 </div>
                             ))
                         ) : (
@@ -286,6 +293,12 @@ const Navbar = () => {
                                 <div key={index} className="notification-item">
                                   {item.type === "invite" ? (
                                       <>
+                                      <img
+                                          src={item.user.profilePhotoPath || avatarPlaceholder}
+                                          alt={`${item.user.personalInfo?.name}'s avatar`}
+                                          className="notification-avatar"
+                                      />
+                                      <div className="notification-content">
                                         <p>You're invited to join team <strong><Link to={`/teams/${item.team.id}`}>{item.team.name}</Link></strong></p>
                                         <p>Invited by <i><Link to={`/profile/${item.user.userId}`}>{item.user.email}</Link></i></p>
                                         <div className="notification-actions">
@@ -302,6 +315,7 @@ const Navbar = () => {
                                             Decline
                                           </button>
                                         </div>
+                                      </div>
                                       </>
                                   ) : item.type === "request" ? (
                                       <>

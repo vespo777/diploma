@@ -160,8 +160,9 @@
 .avatar {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: 8px;
   object-fit: cover;
+  border: 1px solid #7d7d7d;
 }
 
 .dropdown-menu {
@@ -189,8 +190,8 @@
 }
 
 .notification-icon {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   transition: transform 0.2s ease-in-out;
 }
 
@@ -215,7 +216,12 @@
   animation: pulse 2s infinite;
 }
 
-
+.notification-avatar {
+  border-radius: 5px;
+  width: 15%;
+  height: 15%;
+  padding: 5px;
+}
 
 .notification-dropdown {
   position: absolute;
@@ -241,6 +247,7 @@
   padding: 10px;
   border-bottom: 1px solid #eee;
   font-size: 14px;
+  display: flex;
 }
 
 .notification-empty {
@@ -284,6 +291,7 @@
     transform: scale(1);
   }
 }
+
 
 @media (max-width: 768px) {
   .navbar {

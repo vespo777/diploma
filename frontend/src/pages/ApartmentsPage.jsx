@@ -11,7 +11,7 @@ const ApartmentsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [results, setResults] = useState([]);
+  const [ setResults] = useState([]);
   const [searchParams, setSearchParams] = useState({
     query: '',
     minRooms: '',
@@ -131,8 +131,8 @@ const ApartmentsPage = () => {
                   className="add-listing-btn"
                   onClick={() => navigate('/add-listing')}
               >
-                Add Listing 
-              </button> 
+                Add Listing
+              </button>
           )}
         </div>
 

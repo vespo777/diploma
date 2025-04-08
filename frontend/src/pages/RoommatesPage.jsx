@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import LoadingRabbit from '../components/pixi/Loading';
 
 import defaultAvatar from '../imgs/default-avatar.jpeg';
 import '../styles/RoommatesPage.css';
@@ -206,7 +207,7 @@ const RoommatesPage = () => {
 
 
   if (!user) return <Navigate to="/login" />;
-  if (loading && allUsers.length === 0) return <div className="loading">Loading...</div>;
+  if (loading && allUsers.length === 0) return <LoadingRabbit />;
 
   return (
     <div className="roommates-page">
@@ -318,7 +319,7 @@ const RoommatesPage = () => {
             {filteredUsers.map((user, index) => (
               <div key={user.id || index} className="roommate-card">
                 <div className="roommate-avatar">
-                  <img src={user.avatarPhotoPath || defaultAvatar} alt={`${user.personalInfo.name}'s avatar`} />
+                  <img src={user.profilePhotoPath || defaultAvatar} alt={`${user.personalInfo.name}'s avatar`} />
                 </div>
                 <div className="roommate-info">
                   <h3>{user.personalInfo.name} {user.personalInfo.surname}</h3>
