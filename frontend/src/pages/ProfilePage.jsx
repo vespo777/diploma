@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import LoadingRabbit from '../components/pixi/Loading';
+import AvatarCropper from '../components/AvatarCropper';
 import defaultAvatar from '../imgs/default-avatar.jpeg';
 import "../styles/ProfilePage.css"
 
@@ -306,8 +307,9 @@ const ProfilePage = () => {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAvatarChoosing, setAvatarChoosing] = useState(false);
+  const [croppingModalOpen, setCroppingModalOpen] = useState(false);
+  const [originalImage, setOriginalImage] = useState(null);
 
-  // Personality test states
   const [personalityTestCompleted, setPersonalityTestCompleted] = useState(null);
   const [personalityData, setPersonalityData] = useState(null);
   const [loadingPersonality, setLoadingPersonality] = useState(false);
@@ -358,11 +360,18 @@ const ProfilePage = () => {
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const base64String = event.target.result;
-      setAvatarPreview(base64String);
+      setOriginalImage(event.target.result);
+      setCroppingModalOpen(true);
     };
     reader.readAsDataURL(file);
   };
+
+  const handleImageCropped = (croppedImage) => {
+    setAvatarPreview(croppedImage);
+    setCroppingModalOpen(false);
+    setAvatarChoosing(true);
+  };
+
   const uploadAvatar = async () => {
     if (!avatarPreview) return;
 
@@ -380,6 +389,9 @@ const ProfilePage = () => {
 
       const updatedUser = await response.text();
       alert(updatedUser);
+
+      userData.profilePhotoPath = avatarPreview;
+      localStorage.setItem('userData', JSON.stringify(userData));
 
       setAvatarPreview(avatarPreview);
       setAvatarChoosing(false);
@@ -465,7 +477,7 @@ const ProfilePage = () => {
         },
         body: JSON.stringify(userData)
       });
-      if (response.ok) {
+      if (!response.ok) {
         throw new Error('Failed to update profile');
       }else{
         alert('Profile updated successfully');
@@ -844,6 +856,19 @@ const ProfilePage = () => {
 
           <button className="save-button" type="submit">Save</button>
         </form>
+        {croppingModalOpen && (
+            <div className="avatar-crop-modal-container">
+              <div className="avatar-crop-modal-content">
+                <h3>Crop your avatar</h3>
+                <AvatarCropper
+                    image={originalImage}
+                    onCrop={handleImageCropped}
+                    onCancel={() => setCroppingModalOpen(false)}
+                />
+              </div>
+            </div>
+        )}
+
       </div>
   );
 };

@@ -3,7 +3,6 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import useUserImageStore from './../store/userStore';
 
 import defaultAvatar from '../imgs/default-avatar.jpeg';
 import '../styles/RoommatesPage.css';
@@ -27,18 +26,6 @@ const RoommatesPage = () => {
   const [universityFilter, setUniversityFilter] = useState('');
   const [interestFilter, setInterestFilter] = useState('');
 
-
-  // const { images, setImage, clearImage } = useUserImageStore();
-  // const handleImageChange = (userId, e) => {
-  //   const file = e.target.files[0];
-  //   if (!file) return;
-
-  //   const reader = new FileReader();
-  //   reader.onloadend = () => {
-  //     setImage(userId, reader.result); // Store image by userId
-  //   };
-  //   reader.readAsDataURL(file);
-  // };
 
   const matchingLevelsMap = useRef({});
   const hasFetched = useRef(false);
@@ -78,7 +65,6 @@ const RoommatesPage = () => {
     }
   };
 
-  // Функция для получения matching level по userId
   const getMatchingLevel = (userId) => {
     return matchingLevelsMap.current[userId];
   };
@@ -90,9 +76,7 @@ const RoommatesPage = () => {
       try {
         setLoading(true);
 
-        // Сначала получаем matching levels
         await fetchMatchingLevels();
-        // задержка чтобы предотвратить concurrency exception
         await new Promise(resolve => setTimeout(resolve, 100));
 
         const response = await fetch(`http://localhost:8080/recommended-users?userId=${user.userId}`, {
@@ -100,9 +84,17 @@ const RoommatesPage = () => {
         });
         const data = await response.json();
 
-        const uniqueUsers = Array.from(new Map(data.map(u => [u.userId, u])).values());
+        const normalizedUsers = (Array.isArray(data) ? data : []).map(u => ({
+          ...u,
+          personalInfo: u.personalInfo || {},
+          roommateSearch: u.roommateSearch || {},
+          locationDetails: u.locationDetails || {},
+          socialDetails: u.socialDetails || {}
+        }));
 
-        setAllUsers(uniqueUsers);  // Загружаем всех
+        const uniqueUsers = Array.from(new Map(normalizedUsers.map(u => [u.userId, u])).values());
+
+        setAllUsers(uniqueUsers);
         setVisibleUsers(uniqueUsers.slice(0, PAGE_SIZE));
         setHasMore(uniqueUsers.length > PAGE_SIZE);
 
@@ -114,10 +106,10 @@ const RoommatesPage = () => {
     };
 
     fetchUsers();
-  }, [user]);
+  }, [user?.userId]);
 
   const calculateAge = (birthDate) => {
-    if (!birthDate) return null; // Handle missing birth date
+    if (!birthDate) return null;
 
     const today = new Date();
     const birthDateObj = new Date(birthDate);
@@ -145,59 +137,59 @@ const RoommatesPage = () => {
     // Search by name
     const fullName = `${user.personalInfo?.name ?? ''} ${user.personalInfo?.surname ?? ''}`.toLowerCase();
     const matchesSearch = !searchTerm || fullName.includes(searchTerm.toLowerCase());
-  
+
   // Budget range
   const userPriceMin = user.roommateSearch?.budgetMin ?? (-1 * Infinity);
   const userPriceMax = user.roommateSearch?.budgetMax ?? Infinity;
-  const matchesPrice = 
-    (priceRange.min === '-100000000000' || priceRange.min === '' || userPriceMin >= Number(priceRange.min)) && 
+  const matchesPrice =
+    (priceRange.min === '-100000000000' || priceRange.min === '' || userPriceMin >= Number(priceRange.min)) &&
     (priceRange.max === '100000000000' || priceRange.max === '' || userPriceMax <= Number(priceRange.max));
 
-  
+
   // City filter
-  const matchesCity = !cityFilter || 
-    (user.locationDetails?.regionFrom && 
+  const matchesCity = !cityFilter ||
+    (user.locationDetails?.regionFrom &&
      user.locationDetails.regionFrom.toLowerCase().includes(cityFilter.toLowerCase()));
-  
+
   // Age filter
   const birthDate = user.personalInfo?.birthDate;
   const userAge = birthDate ? calculateAge(birthDate) : null;
-  const matchesAge = 
-    !userAge || 
-    ((ageRange.min === '-100' || ageRange.min === '' || userAge >= Number(ageRange.min)) && 
+  const matchesAge =
+    !userAge ||
+    ((ageRange.min === '-100' || ageRange.min === '' || userAge >= Number(ageRange.min)) &&
      (ageRange.max === '100' || ageRange.max === '' || userAge <= Number(ageRange.max)));
-  
+
   // Gender filter
-  const matchesGender = genderFilter === 'Any' || !genderFilter || 
+  const matchesGender = genderFilter === 'Any' || !genderFilter ||
     (user.personalInfo?.gender && user.personalInfo.gender === genderFilter);
-  
+
   // Profession filter
-  const matchesProfession = !professionFilter || 
-    (user.socialDetails?.profession && 
+  const matchesProfession = !professionFilter ||
+    (user.socialDetails?.profession &&
      user.socialDetails.profession.toLowerCase().includes(professionFilter.toLowerCase()));
 
   // Smoking filter
-  const matchesSmoking = smokingFilter === 'Any' || 
+  const matchesSmoking = smokingFilter === 'Any' ||
     (user.socialDetails?.smoking === (smokingFilter === 'true'));
 
   // Drinking filter
-  const matchesDrinking = drinkingFilter === 'Any' || 
+  const matchesDrinking = drinkingFilter === 'Any' ||
     (user.socialDetails?.drinking === (drinkingFilter === 'true'));
-  
+
   // University filter
-  const matchesUniversity = !universityFilter || 
-    (user.socialDetails?.universityName && 
+  const matchesUniversity = !universityFilter ||
+    (user.socialDetails?.universityName &&
      user.socialDetails.universityName.toLowerCase().includes(universityFilter.toLowerCase()));
 
   // Interests filter
-  const matchesInterests = !interestFilter || 
-    (user.socialDetails?.interests && 
+  const matchesInterests = !interestFilter ||
+    (user.socialDetails?.interests &&
      Array.isArray(user.socialDetails.interests) &&
      user.socialDetails.interests.length > 0 &&
-     user.socialDetails.interests.some(interest => 
+     user.socialDetails.interests.some(interest =>
        interest.toLowerCase().includes(interestFilter.toLowerCase())
      ));
-  
+
     return (
       matchesSearch &&
       matchesPrice &&
@@ -211,7 +203,7 @@ const RoommatesPage = () => {
       matchesInterests
     );
   });
-  
+
 
   if (!user) return <Navigate to="/login" />;
   if (loading && allUsers.length === 0) return <div className="loading">Loading...</div>;
@@ -326,14 +318,14 @@ const RoommatesPage = () => {
             {filteredUsers.map((user, index) => (
               <div key={user.id || index} className="roommate-card">
                 <div className="roommate-avatar">
-                  <img src={user.avatarUrl || defaultAvatar} alt={`${user.personalInfo.name}'s avatar`} />
+                  <img src={user.avatarPhotoPath || defaultAvatar} alt={`${user.personalInfo.name}'s avatar`} />
                 </div>
                 <div className="roommate-info">
                   <h3>{user.personalInfo.name} {user.personalInfo.surname}</h3>
                   <p className="price-info">Budget: {user.roommateSearch?.budgetMin}-{user.roommateSearch?.budgetMax} kzt</p>
                   <p className="price-info">Current City: {user.locationDetails?.currentCity}</p>
                   <p className="price-info">Age: {calculateAge(user.personalInfo?.birthDate) || 'Unknown'}</p>
-                  <p className="price-info">Matching Score: {getMatchingLevel(user.userId)}</p>
+                  <p className="price-info">Matching Score: {getMatchingLevel(user?.userId)}</p>
                 </div>
                 <Link to={`/profile/${user.userId}`}>More</Link>
               </div>

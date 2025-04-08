@@ -16,6 +16,7 @@ import '../styles/navbar.css';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const userData = JSON.parse(localStorage.getItem('userData'));
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -26,8 +27,7 @@ const Navbar = () => {
   const API_URL = "http://localhost:8080";
   const wrapperRef = useRef(null);
   const [teamInvitations, setTeamInvitations] = useState([]);
-  const avatarPreview = user?.profilePhotoPath;
-  console.log(avatarPreview);
+  const avatarPreview = userData?.profilePhotoPath;
 
 
   useEffect(() => {
@@ -240,24 +240,22 @@ const Navbar = () => {
 
         <div className="nav-auth">
 
-          {user ? (
+          {user && (
               <div className="notification-semi-container">
-                <button
-                    className={`notification-button ${showNotification ? 'active' : ''}`}
-                    onClick={() => setShowNotification(!showNotification)}
-                >
-                  <img src={hasNewNotifications ? notificationTrue : notificationFalse} alt="notification icon" className="notification-icon" />
-                    {hasNewNotifications && (
-                        <span className="notification-badge"></span>
-                    )}
-                </button>
+                <div className="notification-icon-container">
+                  <button
+                      className={`notification-button ${showNotification ? 'active' : ''}`}
+                      onClick={() => setShowNotification(!showNotification)}
+                  >
+                    <img src={hasNewNotifications ? notificationTrue : notificationFalse} alt="notification icon" className="notification-icon" />
+                  </button>
+                  {hasNewNotifications && (
+                      <span className="notification-badge"></span>
+                  )}
+                </div>
                 <span className="nav-link-label">Notification</span>
               </div>
-          ) : ( <p></p>
-          )
-          }
-
-
+          )}
 
         {user ? (
               <div ref={wrapperRef}>
@@ -401,7 +399,6 @@ const Navbar = () => {
                 <Link to="/register" className={`nav-link register`}>Register</Link>
               </div>
           )}
-
         </div>
 
       </motion.nav>

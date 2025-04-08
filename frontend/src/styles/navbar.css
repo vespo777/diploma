@@ -198,17 +198,24 @@
   transform: scale(0.9);
 }
 
+.notification-icon-container {
+  position: relative;
+  display: inline-block;
+}
 
 .notification-badge {
   position: absolute;
-  bottom: -3px;
+  top: -3px;
   right: -3px;
   width: 12px;
   height: 12px;
   background-color: #ff4d4f;
   border-radius: 50%;
   border: 2px solid #ffffff;
+  animation: pulse 2s infinite;
 }
+
+
 
 .notification-dropdown {
   position: absolute;
@@ -264,6 +271,18 @@
 .decline-btn {
   background-color: #f44336;
   color: white;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @media (max-width: 768px) {
