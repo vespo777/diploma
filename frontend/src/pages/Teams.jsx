@@ -34,46 +34,46 @@ const TeamDetail = () => {
         }
     }, []);
 
-    const fetchUserTeam = useCallback(async () => {
-        if (!user?.userId || hasFetchedUserTeam.current) return;
+    // const fetchUserTeam = useCallback(async () => {
+    //     if (!user?.userId || hasFetchedUserTeam.current) return;
 
-        try {
-            setLoading(true);
-            const response = await fetch(`${API_URL}/teams/get-team-by-userId?userId=${user?.userId}`, {
-                headers: { Authorization: localStorage.getItem("token") },
-            });
+    //     try {
+    //         setLoading(true);
+    //         const response = await fetch(`${API_URL}/teams/get-team-by-userId?userId=${user?.userId}`, {
+    //             headers: { Authorization: localStorage.getItem("token") },
+    //         });
 
-            if (!response.ok) {
-                throw new Error("Failed to fetch user team");
-            }
+    //         if (!response.ok) {
+    //             throw new Error("Failed to fetch user team");
+    //         }
 
-            const data = await response.json();
-            if (data && data.members) {
-                const memberProfiles = await fetchMemberProfiles(data.members);
-                setUserTeam({ ...data, memberProfiles });
-            }
-            hasFetchedUserTeam.current = true;
-        } catch (error) {
-            console.error("Error fetching user team:", error);
-            setError("Failed to load your team information");
-        } finally {
-            setLoading(false);
-        }
-    }, [user?.userId, fetchMemberProfiles]);
+    //         const data = await response.json();
+    //         if (data && data.members) {
+    //             const memberProfiles = await fetchMemberProfiles(data.members);
+    //             setUserTeam({ ...data, memberProfiles });
+    //         }
+    //         hasFetchedUserTeam.current = true;
+    //     } catch (error) {
+    //         console.error("Error fetching user team:", error);
+    //         setError("Failed to load your team information");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // }, [user?.userId, fetchMemberProfiles]);
 
-    const fetchAllTeams = useCallback(async () => {
+    const fetchAllTeams = useCallback(async (teamId) => {
         if (hasFetchedAllTeams.current) return;
-
+    
         try {
             setLoading(true);
-            const response = await fetch(`${API_URL}/teams/get-all-teams`, {
+            const response = await fetch(`${API_URL}/teams/get-all-teams?teamId=${teamId}`, {
                 headers: { Authorization: localStorage.getItem("token") },
             });
-
+    
             if (!response.ok) {
                 throw new Error("Failed to fetch teams");
             }
-
+    
             const data = await response.json();
             const teamsWithMembers = await Promise.all(
                 data.map(async (team) => {
@@ -81,7 +81,7 @@ const TeamDetail = () => {
                     return { ...team, memberProfiles };
                 })
             );
-
+    
             setAllTeams(teamsWithMembers);
             hasFetchedAllTeams.current = true;
         } catch (error) {
@@ -91,16 +91,69 @@ const TeamDetail = () => {
             setLoading(false);
         }
     }, [fetchMemberProfiles]);
-
+    
+    const fetchUserTeam = useCallback(async () => {
+        if (!user?.userId || hasFetchedUserTeam.current) return;
+    
+        try {
+            setLoading(true);
+            const response = await fetch(`${API_URL}/teams/get-team-by-userId?userId=${user?.userId}`, {
+                headers: { Authorization: localStorage.getItem("token") },
+            });
+    
+            if (!response.ok) {
+                throw new Error("Failed to fetch user team");
+            }
+    
+            const data = await response.json();
+            if (data && data.members) {
+                const memberProfiles = await fetchMemberProfiles(data.members);
+                const fullTeam = { ...data, memberProfiles };
+                setUserTeam(fullTeam);
+                await fetchAllTeams(data.id); // передаём teamId
+            }
+            hasFetchedUserTeam.current = true;
+        } catch (error) {
+            console.error("Error fetching user team:", error);
+            setError("Failed to load your team information");
+        } finally {
+            setLoading(false);
+        }
+    }, [user?.userId, fetchMemberProfiles, fetchAllTeams]);
+    
     useEffect(() => {
         if (!user) {
             navigate("/login");
         } else {
-            Promise.all([fetchUserTeam(), fetchAllTeams()]).catch(error => {
-                console.error("Error in useEffect:", error);
-            });
+            fetchUserTeam();
         }
-    }, [user, navigate, fetchAllTeams, fetchUserTeam]);
+    }, [user, navigate, fetchUserTeam]);
+    
+
+    // useEffect(() => {
+    //     if (!user) {
+    //         navigate("/login");
+    //     } else {
+    //         Promise.all([fetchUserTeam(), fetchAllTeams()]).catch(error => {
+    //             console.error("Error in useEffect:", error);
+    //         });
+    //     }
+    // }, [user, navigate, fetchAllTeams, fetchUserTeam]);
+
+    // useEffect(() => {
+    //     if (!user) {
+    //         navigate("/login");
+    //     } else {
+    //         fetchUserTeam(); // сначала только userTeam
+    //     }
+    // }, [user, navigate, fetchUserTeam]);
+    
+    // useEffect(() => {
+    //     if (userTeam) {
+    //         fetchAllTeams(); // вызываем только когда userTeam загружен
+    //     }
+    // }, [userTeam, fetchAllTeams]);
+    
 
     if (loading) {
         return (

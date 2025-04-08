@@ -13,7 +13,6 @@ import kz.dreamteam.backend.repository.UserRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import javax.management.Notification;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +39,11 @@ public class TeamService {
         this.userRepository = userRepository;
     }
 
-    public List<Team> getAllTeams() {
-        return teamRepository.findAll();
+    public List<Team> getAllTeams(Long teamId) {
+        return teamRepository.findAll()
+                .stream()
+                .filter(team -> !team.getId().equals(teamId))
+                .toList();
     }
 
     public Team getUserTeam(Long userId) {

@@ -20,8 +20,8 @@ public class TeamController {
     }
 
     @GetMapping("/get-all-teams")
-    public ResponseEntity<List<Team>> getUserTeam() {
-        return ResponseEntity.ok(this.teamService.getAllTeams());
+    public ResponseEntity<List<Team>> getAllTeams(@RequestParam Long teamId) {
+        return ResponseEntity.ok(this.teamService.getAllTeams(teamId));
     }
 
     @GetMapping("/get-team-by-userId")
