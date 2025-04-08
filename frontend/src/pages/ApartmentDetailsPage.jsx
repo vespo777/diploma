@@ -13,7 +13,7 @@ const ApartmentDetailsPage = () => {
   const API_URL = 'http://localhost:8080';
 
   // Безопасное получение userData
-  const userData = JSON.parse(localStorage.getItem('userData'));
+  const userData = JSON.parse(localStorage.getItem('user')) || {};
 
   useEffect(() => {
     const fetchApartment = async () => {
@@ -30,7 +30,7 @@ const ApartmentDetailsPage = () => {
 
         const data = await response.json();
         setApartment(data);
-
+        
         console.log(data.userId, userData, )
         // Проверяем наличие userData и userId
         if (userData && data.userId === userData.userId) {
@@ -44,7 +44,7 @@ const ApartmentDetailsPage = () => {
     };
 
     fetchApartment();
-  }, [userData?.userId]);
+  }, [id, userData.userId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -67,7 +67,7 @@ const ApartmentDetailsPage = () => {
         });
 
         if (!response.ok) throw new Error('Failed to delete apartment');
-
+        
         navigate('/apartments'); // Redirect after deletion
       } catch (err) {
         console.error('Delete error:', err);
@@ -87,11 +87,11 @@ const ApartmentDetailsPage = () => {
         },
         body: JSON.stringify(apartment)
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to update apartment');
       }
-
+  
       const updatedData = await response.json();
       setApartment(updatedData);
       setHasChanges(false);
@@ -226,7 +226,7 @@ const ApartmentDetailsPage = () => {
             <option value="true">Да</option>
             <option value="false">Нет</option>
           </select>
-        ) : (apartment.internetIncluded ? 'Да' : 'Нет')}</p>
+        ) : (apartment.internetIncluded ? 'Да' : 'Нет')}</p>   
 
 <p><strong>Pets Allowed:</strong> {isOwner ? (
           <select
@@ -237,7 +237,7 @@ const ApartmentDetailsPage = () => {
             <option value="true">Да</option>
             <option value="false">Нет</option>
           </select>
-        ) : (apartment.petsAllowed ? 'Да' : 'Нет')}</p>
+        ) : (apartment.petsAllowed ? 'Да' : 'Нет')}</p>  
 
 <p><strong>Parking Available:</strong> {isOwner ? (
           <select
@@ -248,7 +248,7 @@ const ApartmentDetailsPage = () => {
             <option value="true">Да</option>
             <option value="false">Нет</option>
           </select>
-        ) : (apartment.parkingAvailable ? 'Да' : 'Нет')}</p>
+        ) : (apartment.parkingAvailable ? 'Да' : 'Нет')}</p>  
 
 <p><strong>Phone Number:</strong> {isOwner ? (
           <input

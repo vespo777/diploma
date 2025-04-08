@@ -49,14 +49,14 @@ const ApartmentCard = ({ apartment, onDelete, isOwner }) => {
                     <Link to={`/apartments/${apartment.apartmentId}`} className="view-btn">
                         View Details
                     </Link>
-                    {isOwner && (
+                    {/* {isOwner && (
                         <button
                             className="delete-btn"
                             onClick={() => onDelete(apartment.apartmentId)}
                         >
                             Delete
                         </button>
-                    )}
+                    )} */}
                 </div>
             </div>
         </div>

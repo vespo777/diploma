@@ -25,6 +25,7 @@ public class Apartment {
     @JoinColumn(name = "user_id")
     private Long userId;  // Each apartment is associated with one user
 
+    @Column(columnDefinition = "TEXT")
     private String photoPath; // URL to the photo
 
     private String title;
