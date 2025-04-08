@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../styles/addListingPage.css";
 
@@ -27,14 +26,12 @@ const TeamDetail = () => {
                     headers: { Authorization: localStorage.getItem("token") },
                 }).then(res => res.ok ? res.json() : null)
             );
-
             const profiles = await Promise.all(memberRequests);
             setMembers(profiles.filter(Boolean));
         } catch (error) {
             console.error("Ошибка загрузки участников:", error);
         }
     }, []);
-
 
     const fetchConnections = useCallback(async () => {
         if (!user?.userId) return;
@@ -73,6 +70,21 @@ const TeamDetail = () => {
         }
     }, [id, fetchMemberProfiles]);
 
+    const checkIfRequestSent = useCallback(async () => {
+        if (!user?.userId || !id) return;
+        try {
+            const response = await fetch(`${API_URL}/teams/is-user-team-request-sent?userId=${user.userId}&teamId=${id}`, {
+                headers: { Authorization: localStorage.getItem("token") },
+            });
+
+            if (!response.ok) throw new Error("Ошибка проверки статуса заявки");
+            const result = await response.text();
+            setStatus(result === "true" ? "PENDING" : null);
+        } catch (error) {
+            console.error("Ошибка при проверке статуса заявки:", error);
+        }
+    }, [user?.userId, id]);
+
     const handleJoinRequest = async () => {
         if (!user) return alert("Вы не авторизованы!");
 
@@ -80,16 +92,14 @@ const TeamDetail = () => {
             const token = localStorage.getItem("token");
             if (!token) throw new Error("Ошибка: нет токена");
 
-            const response = await fetch(`${API_URL}/teams/send-join-request?senderId=${user.userId}&receiverId=${id}`, {
+            const response = await fetch(`${API_URL}/teams/send-join-request?senderId=${user.userId}&teamId=${id}`, {
                 method: "POST",
                 headers: { Authorization: token },
             });
 
             if (!response.ok) throw new Error("Ошибка при отправке запроса");
-            const data = await response.text();
-            if (data === "Request already pending") {
-                setStatus("PENDING");
-            }
+
+            setStatus("PENDING");
             alert("Request to join successfully sent!");
         } catch (error) {
             console.error("Ошибка:", error);
@@ -140,8 +150,9 @@ const TeamDetail = () => {
         } else {
             fetchTeamDetails();
             fetchConnections();
+            checkIfRequestSent();
         }
-    }, [user?.userId, navigate, fetchTeamDetails, fetchConnections]);
+    }, [user?.userId, navigate, fetchTeamDetails, fetchConnections, checkIfRequestSent]);
 
     const isTeamMember = members.some(member => member.userId === user?.userId);
 
@@ -181,7 +192,6 @@ const TeamDetail = () => {
                                 <p className="no-members">Пока нет участников</p>
                             )}
 
-                            {/* Invite button - only visible to team members */}
                             {isTeamMember && (
                                 <li className="team-member">
                                     <button
@@ -218,7 +228,6 @@ const TeamDetail = () => {
                             )}
                         </ul>
 
-                        {/* Join/Exit buttons */}
                         <div className="team-actions">
                             {isTeamMember ? (
                                 <button
@@ -229,19 +238,16 @@ const TeamDetail = () => {
                                 </button>
                             ) : status === "PENDING" ? (
                                 <button className="pending-button" disabled>
-                                    ⏳ Request Sent
+                                    ⏳ Заявка отправлена
                                 </button>
-                            ) : status === null ? (
+                            ) : (
                                 <button
-                                    onClick={() => {
-                                        handleJoinRequest();
-                                        setStatus("PENDING");
-                                    }}
+                                    onClick={handleJoinRequest}
                                     className="join-button"
                                 >
                                     Подать заявку
                                 </button>
-                            ) : null}
+                            )}
                         </div>
                     </>
                 ) : (

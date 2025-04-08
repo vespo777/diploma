@@ -8,7 +8,7 @@ const API_URL = 'http://localhost:8080';
 
 const TeamDetail = () => {
     const navigate = useNavigate();
-    const userStr = localStorage.getItem("userData");
+    const userStr = localStorage.getItem("user");
     const user = userStr ? JSON.parse(userStr) : null;
     const [loading, setLoading] = useState(true);
     const [userTeam, setUserTeam] = useState(null);
@@ -75,14 +75,10 @@ const TeamDetail = () => {
             }
 
             const data = await response.json();
-            const userTeamId = user.team.id;
-            const filteredTeams = data.filter(team => team.id !== userTeamId);
             const teamsWithMembers = await Promise.all(
-                filteredTeams.map(async (team) => {
-                    if(team.id){
-                        const memberProfiles = await fetchMemberProfiles(team.members);
-                        return { ...team, memberProfiles };
-                    }
+                data.map(async (team) => {
+                    const memberProfiles = await fetchMemberProfiles(team.members);
+                    return { ...team, memberProfiles };
                 })
             );
 
@@ -179,27 +175,27 @@ const TeamDetail = () => {
                     {allTeams.length > 0 ? (
                         <ul className="teams-list">
                             {allTeams.map((team) => (
-                                        <li key={team.id} className="team-card">
-                                            <h3 className="team-name">{team.name}</h3>
-                                            <div className="team-members">
-                                                <h4>Members ({team.memberProfiles.length}):</h4>
-                                                <ul>
-                                                    {team.memberProfiles.slice(0, 3).map((member, index) => (
-                                                        <li key={index} className="member-item">
-                                                            <Link to={`/profile/${member.userId}`} className="member-link">
-                                                                {member.personalInfo?.name} {member.personalInfo?.surname}
-                                                            </Link>
-                                                        </li>
-                                                    ))}
-                                                    {team.memberProfiles.length > 3 && (
-                                                        <li className="more-members">+{team.memberProfiles.length - 3} more</li>
-                                                    )}
-                                                </ul>
-                                            </div>
-                                            <Link to={`/teams/${team.id}`} className="view-team-button">
-                                                View Team
-                                            </Link>
-                                        </li>
+                                <li key={team.id} className="team-card">
+                                    <h3 className="team-name">{team.name}</h3>
+                                    <div className="team-members">
+                                        <h4>Members ({team.memberProfiles.length}):</h4>
+                                        <ul>
+                                            {team.memberProfiles.slice(0, 3).map((member, index) => (
+                                                <li key={index} className="member-item">
+                                                    <Link to={`/profile/${member.userId}`} className="member-link">
+                                                        {member.personalInfo?.name} {member.personalInfo?.surname}
+                                                    </Link>
+                                                </li>
+                                            ))}
+                                            {team.memberProfiles.length > 3 && (
+                                                <li className="more-members">+{team.memberProfiles.length - 3} more</li>
+                                            )}
+                                        </ul>
+                                    </div>
+                                    <Link to={`/teams/${team.id}`} className="view-team-button">
+                                        View Team
+                                    </Link>
+                                </li>
                             ))}
                         </ul>
                     ) : (

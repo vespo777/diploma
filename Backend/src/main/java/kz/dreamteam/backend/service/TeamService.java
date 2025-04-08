@@ -28,9 +28,6 @@ public class TeamService {
     private final UserRepository userRepository;
     private final UserService userService;
 
-
-
-
     public TeamService(TeamRepository teamRepository,
                               ApplicationContext applicationContext,
                               TeammateRequestRepository teammateRequestRepository,
@@ -56,6 +53,17 @@ public class TeamService {
     public Team getTeam(Long teamId) {
         return teamRepository.findById(teamId)
                 .orElseThrow(() -> new EntityNotFoundException("Team not found"));
+    }
+
+    public Boolean isUserToTeamRequestSent(Long userId, Long teamId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new EntityNotFoundException("Team not found"));
+
+        Long receiverId = team.getOwner().getUserId();
+        Long senderId = userId;
+
+        // Check if request already exists
+        return teammateRequestRepository.existsBySenderIdAndReceiverIdAndStatus(senderId, receiverId, RequestStatus.PENDING); // Request already pending
     }
 
     public List<NotificationDTO> getAllInvitesAndRequestsForUser(Long userId) {
@@ -84,7 +92,29 @@ public class TeamService {
         return inviteRequestList;
     }
 
-    public String sendJoinRequest(Long senderId, Long receiverId) {
+//    public String sendJoinRequest(Long senderId, Long receiverId) {
+//
+//        // Check if request already exists
+//        if (teammateRequestRepository.existsBySenderIdAndReceiverIdAndStatus(senderId, receiverId, RequestStatus.PENDING)) {
+//            return "Request already pending"; // Request already pending
+//        }
+//
+//        // Create new request
+//        TeammateRequest request = new TeammateRequest();
+//        request.setSenderId(senderId);
+//        request.setReceiverId(receiverId);
+//        request.setStatus(RequestStatus.PENDING);
+//
+//        teammateRequestRepository.save(request);
+//        return "Request sent successfully";
+//    }
+
+    public String sendJoinRequest(Long senderId, Long teamId) {
+
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new EntityNotFoundException("Team not found"));
+
+        Long receiverId = team.getOwner().getUserId();
 
         // Check if request already exists
         if (teammateRequestRepository.existsBySenderIdAndReceiverIdAndStatus(senderId, receiverId, RequestStatus.PENDING)) {
@@ -286,8 +316,5 @@ public class TeamService {
         teamRepository.save(newTeam);
         userRepository.save(user);
     }
-
-
-
 
 }
