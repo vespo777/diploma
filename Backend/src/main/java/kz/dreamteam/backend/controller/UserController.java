@@ -54,9 +54,8 @@ public class UserController {
     }
 
     @PutMapping("/upload-avatar")
-    public ResponseEntity<String> updateProfile(@RequestParam Long userId, @RequestParam String profilePhotoPath ) {
-        System.out.println("DEBUG -- userId" + userId + ", profilePhotoPath: " + profilePhotoPath);
-                                                
+    public ResponseEntity<String> updateProfile(@RequestParam Long userId, @RequestBody String profilePhotoPath ) {
+//        log.info("DEBUG -- userId" + userId + ", profilePhotoPath: " + profilePhotoPath);
         userService.updateProfilePhoto(userId, profilePhotoPath);
         return ResponseEntity.ok("Profile photo updated successfully");
     }
