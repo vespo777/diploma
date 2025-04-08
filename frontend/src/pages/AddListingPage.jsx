@@ -23,7 +23,8 @@ const AddListingPage = () => {
     petsAllowed: false,
     parkingAvailable: false,
     location2Gis: '',
-    linkToKrishaKz: ''
+    linkToKrishaKz: '',
+    propertyType: ''
   });
 
   const [error, setError] = useState('');
@@ -145,7 +146,6 @@ const AddListingPage = () => {
                 onChange={handleInputChange}
                 required
               >
-                <option value="">Select Location</option>
                 <option value="ALMATY">Almaty</option>
                 <option value="ASTANA">Astana</option>
                 <option value="KASKELEN">Kaskelen</option>
@@ -196,7 +196,7 @@ const AddListingPage = () => {
               <select
                 name="type"
                 className="auth-input"
-                value={formData.type}
+                value={formData.propertyType}
                 onChange={handleInputChange}
                 required
               >

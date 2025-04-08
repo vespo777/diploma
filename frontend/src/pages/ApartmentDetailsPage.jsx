@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import LoadingRabbit from "../components/pixi/Loading";
 import '../styles/ApartmentDetailsPage.css';
 
 const ApartmentDetailsPage = () => {
@@ -8,16 +9,17 @@ const ApartmentDetailsPage = () => {
   const [apartment, setApartment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isOwner, setIsOwner] = useState(false); // Для проверки, является ли пользователь владельцем
+  const [isOwner, setIsOwner] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
   const API_URL = 'http://localhost:8080';
 
-  // Безопасное получение userData
-  const userData = JSON.parse(localStorage.getItem('user')) || {};
 
   useEffect(() => {
     const fetchApartment = async () => {
       try {
+        const storedUserData = JSON.parse(localStorage.getItem('userData')) || {};
+
         const response = await fetch(`${API_URL}/apartments/${id}`, {
           headers: {
             Authorization: `${localStorage.getItem('token')}`
@@ -30,10 +32,8 @@ const ApartmentDetailsPage = () => {
 
         const data = await response.json();
         setApartment(data);
-        
-        console.log(data.userId, userData, )
-        // Проверяем наличие userData и userId
-        if (userData && data.userId === userData.userId) {
+        setImagePreview(data.photoPath);
+        if (storedUserData && data.userId === storedUserData.userId) {
           setIsOwner(true);
         }
       } catch (err) {
@@ -44,7 +44,39 @@ const ApartmentDetailsPage = () => {
     };
 
     fetchApartment();
-  }, [id, userData.userId]);
+  }, [id]);
+
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please select a valid image file (JPEG or PNG)');
+      return;
+    }
+
+    // Validate file size (e.g., 5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64String = event.target.result;
+      setImagePreview(base64String);
+      setApartment(prev => ({
+        ...prev,
+        photoBase64: base64String  // Store base64 string
+      }));
+      setHasChanges(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -67,7 +99,7 @@ const ApartmentDetailsPage = () => {
         });
 
         if (!response.ok) throw new Error('Failed to delete apartment');
-        
+
         navigate('/apartments'); // Redirect after deletion
       } catch (err) {
         console.error('Delete error:', err);
@@ -79,31 +111,42 @@ const ApartmentDetailsPage = () => {
 
   const handleSave = async () => {
     try {
+      // Create a copy of apartment data without circular references
+      const apartmentData = {
+        ...apartment,
+        photoBase64: apartment.photoBase64
+      };
+
+
       const response = await fetch(`${API_URL}/apartments/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `${localStorage.getItem('token')}`
         },
-        body: JSON.stringify(apartment)
+        body: JSON.stringify(apartmentData)
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to update apartment');
       }
-  
+
       const updatedData = await response.json();
       setApartment(updatedData);
       setHasChanges(false);
-      // Можно добавить уведомление об успешном сохранении
-      alert('Изменения успешно сохранены!');
+      alert('Changes saved successfully!');
+
+      // Update the image preview with the new path from server
+      if (updatedData.photoPath) {
+        setImagePreview(updatedData.photoPath);
+      }
     } catch (err) {
       console.error('Error saving changes:', err);
-      alert('Ошибка при сохранении изменений');
+      alert('Error saving changes');
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingRabbit />;
   if (error) return <div className="error">Error: {error}</div>;
   if (!apartment) return <div>No apartment found</div>;
 
@@ -138,10 +181,24 @@ const ApartmentDetailsPage = () => {
             ) : (
                 <h1 className="title-text">{apartment.title}</h1>
             )}
-
-        {apartment.photoPath && (
-          <img src={apartment.photoPath} alt="Apartment" className="apartment-photo" />
-        )}
+        <div className="image-upload-container">
+          {imagePreview && (
+              <img src={imagePreview} alt="Apartment" className="apartment-photo" />
+          )}
+          {isOwner && (
+              <div className="image-upload-controls">
+                <label className="upload-label">
+                  Change Photo
+                  <input
+                      type="file"
+                      accept="image/png image/jpg image/jpeg"
+                      onChange={handleImageChange}
+                      className="file-input"
+                  />
+                </label>
+              </div>
+          )}
+        </div>
       </div>
 
       <div className="apartment-info">
@@ -226,7 +283,7 @@ const ApartmentDetailsPage = () => {
             <option value="true">Да</option>
             <option value="false">Нет</option>
           </select>
-        ) : (apartment.internetIncluded ? 'Да' : 'Нет')}</p>   
+        ) : (apartment.internetIncluded ? 'Да' : 'Нет')}</p>
 
 <p><strong>Pets Allowed:</strong> {isOwner ? (
           <select
@@ -237,7 +294,7 @@ const ApartmentDetailsPage = () => {
             <option value="true">Да</option>
             <option value="false">Нет</option>
           </select>
-        ) : (apartment.petsAllowed ? 'Да' : 'Нет')}</p>  
+        ) : (apartment.petsAllowed ? 'Да' : 'Нет')}</p>
 
 <p><strong>Parking Available:</strong> {isOwner ? (
           <select
@@ -248,7 +305,7 @@ const ApartmentDetailsPage = () => {
             <option value="true">Да</option>
             <option value="false">Нет</option>
           </select>
-        ) : (apartment.parkingAvailable ? 'Да' : 'Нет')}</p>  
+        ) : (apartment.parkingAvailable ? 'Да' : 'Нет')}</p>
 
 <p><strong>Phone Number:</strong> {isOwner ? (
           <input
@@ -292,7 +349,6 @@ const ApartmentDetailsPage = () => {
           )}</p>
         )}
 
-        {/* Остальные поля, аналогичные примеру выше */}
       </div>
     </div>
   );

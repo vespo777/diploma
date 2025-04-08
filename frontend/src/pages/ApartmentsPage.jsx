@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ApartmentCard from '../components/ApartmentCard';
-import ApartmentForm from '../components/ApartmentForm';
+import ApartmentCard from "../components/ApartmentCard";
 import LoadingRabbit from '../components/pixi/Loading';
 import '../styles/ApartmentsPage.css';
+import '../components/ApartmentCard.css';
 
 const ApartmentsPage = () => {
   const userData = JSON.parse(localStorage.getItem('userData')); // Теперь это объект
   const [apartments, setApartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showForm, setShowForm] = useState(false);
   const [ setResults] = useState([]);
   const [searchParams, setSearchParams] = useState({
     query: '',
@@ -55,31 +54,8 @@ const ApartmentsPage = () => {
     };
 
     fetchApartments();
-  }, [searchParams, API_URL]);
+  }, []);
 
-  const handleCreateApartment = async (apartmentData) => {
-    try {
-      const response = await fetch(`${API_URL}/apartments/create-apartment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          ...apartmentData,
-          userId: userData.userId
-        })
-      });
-
-      if (!response.ok) throw new Error('Failed to create apartment');
-
-      const newApartment = await response.json();
-      setApartments([...apartments, newApartment]);
-      setShowForm(false);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
 
   const handleDeleteApartment = async (id) => {
     try {
@@ -117,8 +93,6 @@ const ApartmentsPage = () => {
   };
 
 
-  const canAddListing = userData?.roommateSearch?.searchStatus === 2;
-
   if (loading) return <LoadingRabbit />;
   if (error) return <div className="error">Error: {error}</div>;
 
@@ -126,14 +100,12 @@ const ApartmentsPage = () => {
       <div className="apartments-container">
         <div className="apartments-header">
           <h1>Available Apartments</h1>
-          {true && (
               <button
                   className="add-listing-btn"
                   onClick={() => navigate('/add-listing')}
               >
                 Add Listing
               </button>
-          )}
         </div>
 
         <div className="search-filters">
@@ -183,12 +155,6 @@ const ApartmentsPage = () => {
           </div>
         </div>
 
-        {showForm && (
-            <ApartmentForm
-                onSubmit={handleCreateApartment}
-                onCancel={() => setShowForm(false)}
-            />
-        )}
 
         <div className="apartments-grid">
           {apartments.length > 0 ? (

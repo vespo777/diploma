@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import "./ApartmentCard.css";
 
 const ApartmentCard = ({ apartment, onDelete, isOwner }) => {
     return (
@@ -16,13 +17,12 @@ const ApartmentCard = ({ apartment, onDelete, isOwner }) => {
                 <p><strong>Rooms:</strong> {apartment.roomQuantity}</p>
                 <p><strong>Size:</strong> {apartment.sizeSquareMeter} m²</p>
 
-                {/* Separate link containers */}
                 <div className="links-container">
                     {apartment.location2Gis && (
                         <div className="gis-link">
-                            <a 
-                                href={apartment.location2Gis} 
-                                target="_blank" 
+                            <a
+                                href={apartment.location2Gis}
+                                target="_blank"
                                 rel="noopener noreferrer"
                             >
                                 <span className="link-icon">🗺️ </span>
@@ -33,9 +33,9 @@ const ApartmentCard = ({ apartment, onDelete, isOwner }) => {
 
                     {apartment.linkToKrishaKz && (
                         <div className="krisha-link">
-                            <a 
-                                href={apartment.linkToKrishaKz} 
-                                target="_blank" 
+                            <a
+                                href={apartment.linkToKrishaKz}
+                                target="_blank"
                                 rel="noopener noreferrer"
                             >
                                 <span className="link-icon">🏠 </span>
@@ -49,14 +49,14 @@ const ApartmentCard = ({ apartment, onDelete, isOwner }) => {
                     <Link to={`/apartments/${apartment.apartmentId}`} className="view-btn">
                         View Details
                     </Link>
-                    {/* {isOwner && (
+                     {isOwner && (
                         <button
                             className="delete-btn"
                             onClick={() => onDelete(apartment.apartmentId)}
                         >
                             Delete
                         </button>
-                    )} */}
+                    )}
                 </div>
             </div>
         </div>
