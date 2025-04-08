@@ -126,13 +126,13 @@ const ApartmentsPage = () => {
       <div className="apartments-container">
         <div className="apartments-header">
           <h1>Available Apartments</h1>
-          {canAddListing && (
+          {true && (
               <button
                   className="add-listing-btn"
-                  onClick={() => setShowForm(true)}
+                  onClick={() => navigate('/add-listing')}
               >
-                Add Listing
-              </button>
+                Add Listing 
+              </button> 
           )}
         </div>
 

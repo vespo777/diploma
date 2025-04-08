@@ -12,29 +12,39 @@ const ApartmentCard = ({ apartment, onDelete, isOwner }) => {
                 )}
             </div>
             <div className="apartment-details">
-                <h3>{apartment.description || 'No description'}</h3>
+                <h3>Title: {apartment.title || 'No title provided'}</h3>
                 <p><strong>Rooms:</strong> {apartment.roomQuantity}</p>
                 <p><strong>Size:</strong> {apartment.sizeSquareMeter} m²</p>
-                {apartment.location2Gis && (
-                    <a
-                        href={apartment.location2Gis}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="location-link"
-                    >
-                        View on 2GIS
-                    </a>
-                )}
-                {apartment.linkToKrishaKz && (
-                    <a
-                        href={apartment.linkToKrishaKz}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="krisha-link"
-                    >
-                        View on Krisha.kz
-                    </a>
-                )}
+
+                {/* Separate link containers */}
+                <div className="links-container">
+                    {apartment.location2Gis && (
+                        <div className="gis-link">
+                            <a 
+                                href={apartment.location2Gis} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                            >
+                                <span className="link-icon">🗺️ </span>
+                                2GIS Location
+                            </a>
+                        </div>
+                    )}
+
+                    {apartment.linkToKrishaKz && (
+                        <div className="krisha-link">
+                            <a 
+                                href={apartment.linkToKrishaKz} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                            >
+                                <span className="link-icon">🏠 </span>
+                                Krisha.kz Link
+                            </a>
+                        </div>
+                    )}
+                </div>
+
                 <div className="apartment-actions">
                     <Link to={`/apartments/${apartment.apartmentId}`} className="view-btn">
                         View Details

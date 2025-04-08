@@ -232,8 +232,8 @@ const Navbar = () => {
 
           {isActive('/apartments') && (
               <div className="nav-link-container">
-                <Link to="/add-listing" className="nav-link">+</Link>
-                <span className="nav-link-label">Add Listing</span>
+                {/* <Link to="/add-listing" className="nav-link">+</Link>
+                <span className="nav-link-label">Add Listing</span> */}
               </div>
           )}
         </div>

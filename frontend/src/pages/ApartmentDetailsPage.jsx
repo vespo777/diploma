@@ -55,6 +55,28 @@ const ApartmentDetailsPage = () => {
     setHasChanges(true);
   };
 
+  // Add this function in your component
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this apartment listing?')) {
+      try {
+        const response = await fetch(`${API_URL}/apartments/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `${localStorage.getItem('token')}`
+          }
+        });
+
+        if (!response.ok) throw new Error('Failed to delete apartment');
+        
+        navigate('/apartments'); // Redirect after deletion
+      } catch (err) {
+        console.error('Delete error:', err);
+        alert('Error deleting apartment');
+      }
+    }
+  };
+
+
   const handleSave = async () => {
     try {
       const response = await fetch(`${API_URL}/apartments/${id}`, {
@@ -88,15 +110,21 @@ const ApartmentDetailsPage = () => {
   return (
     <div className="apartment-details-container">
       <button className="back-button" onClick={() => navigate(-1)}>
-        ← Назад
+        ← Back
       </button>
 
-      {isOwner && hasChanges && (
-        <button className="save-button" onClick={handleSave}>
-        Сохранить изменения
-        </button>
-      )}
-
+      {isOwner && (
+  <div className="owner-buttons">
+    {hasChanges && (
+      <button className="save-button" onClick={handleSave}>
+        Save Changes
+      </button>
+    )}
+    <button className="delete-button" onClick={handleDelete}>
+      Delete from listing
+    </button>
+  </div>
+)}
       <div className="apartment-header">
          {isOwner ? (
             <input
@@ -118,7 +146,7 @@ const ApartmentDetailsPage = () => {
 
       <div className="apartment-info">
         <div className="description-field">
-            <strong>Описание:</strong>
+        <strong>Description:</strong>
             {isOwner ? (
             <textarea
                 name="description"
@@ -133,7 +161,7 @@ const ApartmentDetailsPage = () => {
         </div>
 
         <div className="info-field">
-            <strong>Цена:</strong> {isOwner ? (
+        <strong>Price:</strong> {isOwner ? (
             <input
                 type="number"
                 name="price"
@@ -146,7 +174,7 @@ const ApartmentDetailsPage = () => {
         </div>
 
         <div className="info-field">
-            <strong>Адрес:</strong> {isOwner ? (
+        <strong>Address:</strong> {isOwner ? (
             <input
                 type="text"
                 name="address"
@@ -158,7 +186,7 @@ const ApartmentDetailsPage = () => {
             ) : apartment.address}
         </div>
 
-        <p><strong>Комнат:</strong> {isOwner ? (
+        <p><strong>Rooms:</strong> {isOwner ? (
           <input
             type="number"
             name="roomQuantity"
@@ -168,7 +196,7 @@ const ApartmentDetailsPage = () => {
           />
         ) : apartment.roomQuantity}</p>
 
-        <p><strong>Площадь:</strong> {isOwner ? (
+<p><strong>Size:</strong> {isOwner ? (
           <input
             type="number"
             name="sizeSquareMeter"
@@ -178,7 +206,7 @@ const ApartmentDetailsPage = () => {
           />
         ) : apartment.sizeSquareMeter} м²</p>
 
-        <p><strong>Мебель:</strong> {isOwner ? (
+<p><strong>Furnished:</strong> {isOwner ? (
           <select
             name="furnished"
             value={apartment.furnished}
@@ -189,7 +217,7 @@ const ApartmentDetailsPage = () => {
           </select>
         ) : (apartment.furnished ? 'Да' : 'Нет')}</p>
 
-        <p><strong>Интернет включен:</strong> {isOwner ? (
+<p><strong>Internet Included:</strong> {isOwner ? (
           <select
             name="internetIncluded"
             value={apartment.internetIncluded}
@@ -200,7 +228,7 @@ const ApartmentDetailsPage = () => {
           </select>
         ) : (apartment.internetIncluded ? 'Да' : 'Нет')}</p>   
 
-        <p><strong>Домашние животные разрешены:</strong> {isOwner ? (
+<p><strong>Pets Allowed:</strong> {isOwner ? (
           <select
             name="petsAllowed"
             value={apartment.petsAllowed}
@@ -211,7 +239,7 @@ const ApartmentDetailsPage = () => {
           </select>
         ) : (apartment.petsAllowed ? 'Да' : 'Нет')}</p>  
 
-        <p><strong>Парковка доступна:</strong> {isOwner ? (
+<p><strong>Parking Available:</strong> {isOwner ? (
           <select
             name="parkingAvailable"
             value={apartment.parkingAvailable}
@@ -222,7 +250,7 @@ const ApartmentDetailsPage = () => {
           </select>
         ) : (apartment.parkingAvailable ? 'Да' : 'Нет')}</p>  
 
-        <p><strong>Номер телефона:</strong> {isOwner ? (
+<p><strong>Phone Number:</strong> {isOwner ? (
           <input
             type="text"
             name="phoneNumber"
@@ -272,112 +300,3 @@ const ApartmentDetailsPage = () => {
 
 export default ApartmentDetailsPage;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useEffect, useState } from 'react';
-// import { useParams } from 'react-router-dom';
-// import './../styles/ApartmentDetailsPage.css';
-// import { useNavigate } from 'react-router-dom';
-
-
-// const API_URL = 'http://localhost:8080'; // Подстрой под свой адрес
-
-
-
-// const ApartmentDetailsPage = () => {
-//   const { id } = useParams();
-//   const [apartment, setApartment] = useState(null);
-//   const [error, setError] = useState('');
-//   const [loading, setLoading] = useState(true);
-//   const navigate = useNavigate();
-
-
-//   useEffect(() => {
-
-
-//     const fetchApartment = async () => {
-//       try {
-//         const response = await fetch(`${API_URL}/apartments/${id}`, {
-//           headers: {
-//             Authorization: `${localStorage.getItem('token')}`
-//           }
-//         });
-
-//         if (!response.ok) throw new Error('Failed to fetch apartment');
-
-//         const data = await response.json();
-//         setApartment(data);
-//       } catch (err) {
-//         setError(err.message);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchApartment();
-//   }, [id]);
-
-//   if (loading) return <div>Loading...</div>;
-//   if (error || !apartment) return <div>Error: {error || 'Apartment not found'}</div>;
-
-//   return (
-    
-//     <div className="apartment-details-container">
-
-//         {/* 🟡 Вот сюда вставляем кнопку "Назад" */}
-//       <button className="back-button" onClick={() => navigate(-1)}>
-//         ← Назад
-//       </button>
-
-//       <h2>{apartment.title}</h2>
-//       <img
-//         src={apartment.photoPath || 'https://via.placeholder.com/400'}
-//         alt={apartment.description}
-//         style={{ maxWidth: '400px', marginBottom: '1rem' }}
-//       />
-//       <p><strong>Description:</strong> {apartment.description}</p>
-//       <p><strong>Price:</strong> {apartment.price} ₸</p>
-//       <p><strong>Location:</strong> {apartment.location}</p>
-//       <p><strong>Address:</strong> {apartment.address}</p>
-//       <p><strong>Rooms:</strong> {apartment.roomQuantity}</p>
-//       <p><strong>Size:</strong> {apartment.sizeSquareMeter} m²</p>
-//       <p><strong>Type:</strong> {apartment.propertyType}</p>
-//       <p><strong>Furnished:</strong> {apartment.furnished ? 'Yes' : 'No'}</p>
-//       <p><strong>Internet Included:</strong> {apartment.internetIncluded ? 'Yes' : 'No'}</p>
-//       <p><strong>Utilities Included:</strong> {apartment.utilitiesIncluded ? 'Yes' : 'No'}</p>
-//       <p><strong>Pets Allowed:</strong> {apartment.petsAllowed ? 'Yes' : 'No'}</p>
-//       <p><strong>Parking Available:</strong> {apartment.parkingAvailable ? 'Yes' : 'No'}</p>
-//       <p><strong>Phone Number:</strong> {apartment.phoneNumber}</p>
-
-//       {apartment.location2Gis && (
-//         <p>
-//           <a href={apartment.location2Gis} target="_blank" rel="noopener noreferrer">
-//             View on 2GIS
-//           </a>
-//         </p>
-//       )}
-
-//       {apartment.linkToKrishaKz && (
-//         <p>
-//           <a href={apartment.linkToKrishaKz} target="_blank" rel="noopener noreferrer">
-//             View on Krisha.kz
-//           </a>
-//         </p>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default ApartmentDetailsPage;
