@@ -19,6 +19,7 @@ import useAuthCheck from './hooks/AuthCheck';
 import Teams from './pages/Teams';
 import TeamDetail from './pages/TeamDetail';
 import NotFoundPage from './pages/NotFoundPage';
+import ApartmentDetailsPage from './pages/ApartmentDetailsPage';
 
 
 import './index.css';
@@ -51,6 +52,7 @@ function App() {
             <Route path="/ml-questions" element={<MLQPage />} />
             <Route path="teams" element={<Teams />} />
             <Route path="/teams/:id" element={<TeamDetail />} />
+            <Route path="/apartments/:id" element={<ApartmentDetailsPage />} />
           </Routes>
         </div>
       </AuthProvider>

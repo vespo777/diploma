@@ -34,15 +34,25 @@ public class TeamController {
         return ResponseEntity.ok(teamService.getTeam(teamId));
     }
 
+    @GetMapping("/is-user-team-request-sent")
+    public ResponseEntity<Boolean> isUserToTeamRequestSent(@RequestParam Long userId, @RequestParam Long teamId) {
+        return ResponseEntity.ok(teamService.isUserToTeamRequestSent(userId, teamId));
+    }
+
     @GetMapping("/received-invitations-and-requests")
     public ResponseEntity<List<NotificationDTO>> getAllInvitesAndRequests(@RequestParam Long userId) {
         List<NotificationDTO> receivedInvitesAndRequests = teamService.getAllInvitesAndRequestsForUser(userId);
         return ResponseEntity.ok(receivedInvitesAndRequests);
     }
 
+//    @PostMapping("/send-join-request")
+//    public ResponseEntity<String> sendJoinRequest(@RequestParam Long senderId, @RequestParam Long receiverId) {
+//        return ResponseEntity.ok(this.teamService.sendJoinRequest(senderId, receiverId));
+//    }
+
     @PostMapping("/send-join-request")
-    public ResponseEntity<String> sendJoinRequest(@RequestParam Long senderId, @RequestParam Long receiverId) {
-        return ResponseEntity.ok(this.teamService.sendJoinRequest(senderId, receiverId));
+    public ResponseEntity<String> sendJoinRequest(@RequestParam Long senderId, @RequestParam Long teamId) {
+        return ResponseEntity.ok(this.teamService.sendJoinRequest(senderId, teamId));
     }
 
     @PostMapping("/exit-team")

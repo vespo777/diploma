@@ -172,7 +172,7 @@ public class PasswordService {
             createEmptyRoommatePreferences(user);
             createEmptyLocationDetails(user);
             createEmptyContacts(user);
-            createEmptyRoommateRating(user);
+//            createEmptyRoommateRating(user);
             userRepository.save(user);
 
 //             saveToElasticsearch(user);

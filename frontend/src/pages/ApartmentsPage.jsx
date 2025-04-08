@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ApartmentCard from '../components/ApartmentCard';
 import ApartmentForm from '../components/ApartmentForm';
+import LoadingRabbit from '../components/pixi/Loading';
 import '../styles/ApartmentsPage.css';
 
 const ApartmentsPage = () => {
@@ -31,13 +32,19 @@ const ApartmentsPage = () => {
         if (searchParams.minSize) query.append('minSize', searchParams.minSize);
         if (searchParams.maxSize) query.append('maxSize', searchParams.maxSize);
 
-        const response = await fetch(`${API_URL}/apartments/search?${query.toString()}`, {
+        // const response = await fetch(`${API_URL}/apartments/search?${query.toString()}`, {
+        //   method: 'GET',
+        //     headers: {
+        //       Authorization: `${localStorage.getItem('token')}`
+        //     }
+        // });
+        // if (!response.ok) throw new Error('Failed to fetch apartments');
+        const response = await fetch(`${API_URL}/apartments`, {
           method: 'GET',
             headers: {
               Authorization: `${localStorage.getItem('token')}`
             }
         });
-        if (!response.ok) throw new Error('Failed to fetch apartments');
         const data = await response.json();
         setApartments(data);
       } catch (err) {
@@ -112,7 +119,7 @@ const ApartmentsPage = () => {
 
   const canAddListing = userData?.roommateSearch?.searchStatus === 2;
 
-  if (loading) return <div className="loading">Loading apartments...</div>;
+  if (loading) return <LoadingRabbit />;
   if (error) return <div className="error">Error: {error}</div>;
 
   return (

@@ -23,7 +23,7 @@ public class User {
     @Column(nullable = false, length = 255)
     private String passwordHash;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String profilePhotoPath;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)

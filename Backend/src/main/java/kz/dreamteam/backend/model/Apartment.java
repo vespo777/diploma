@@ -33,8 +33,7 @@ public class Apartment {
     private String location;
     private String address;
     private String location2Gis;
-    @Enumerated(EnumType.STRING)
-    private PropertyType propertyType; // room, house, hostel
+    private String propertyType; // room, house, hostel
     private Boolean furnished;
     private Boolean internetIncluded;
     private Boolean utilitiesIncluded;
@@ -165,11 +164,11 @@ public class Apartment {
         this.address = address;
     }
 
-    public PropertyType getPropertyType() {
+    public String getPropertyType() {
         return propertyType;
     }
 
-    public void setPropertyType(PropertyType propertyType) {
+    public void setPropertyType(String propertyType) {
         this.propertyType = propertyType;
     }
 

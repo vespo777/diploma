@@ -1,0 +1,174 @@
+.apartment-details-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+  }
+  
+  .apartment-details-container h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+  }
+  
+  .apartment-details-container img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .apartment-details-container p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+  }
+  
+  .apartment-details-container strong {
+    color: #34495e;
+  }
+  
+  .apartment-details-container a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .apartment-details-container a:hover {
+    text-decoration: underline;
+  }
+
+  .back-button {
+    background-color: #3498db;
+    color: white;
+    padding: 0.5rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .back-button:hover {
+    background-color: #2980b9;
+  }
+  
+
+  .description-field {
+    margin-bottom: 20px;
+  }
+  
+  .description-input {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: inherit;
+  }
+  
+  .description-text {
+    white-space: pre-wrap;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    line-height: 1.5;
+  }
+
+  /* Стили для контейнера заголовка */
+.title-container {
+    margin: 20px 0 30px;
+    position: relative;
+  }
+  
+  /* Стили для input (режим редактирования) */
+  .title-input.editable {
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    background: #f9f9f9;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .title-input.editable:focus {
+    border-color: #3498db;
+    box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
+    background: white;
+    outline: none;
+  }
+  
+  /* Стили для текста заголовка (режим просмотра) */
+  .title-text {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+    padding: 0 0 15px 0;
+    position: relative;
+    line-height: 1.3;
+  }
+  
+  .title-text::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    border-radius: 2px;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+  
+  .save-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+  }
+  
+  .save-button:hover {
+    background-color: #45a049;
+  }
+  
+  .save-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  /* .info-field {
+    margin: 15px 0;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .info-input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-left: 10px;
+  } */
+  
+  /* Оставьте существующие стили для description-field и description-input */

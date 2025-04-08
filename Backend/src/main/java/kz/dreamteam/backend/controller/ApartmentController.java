@@ -63,8 +63,8 @@ public class ApartmentController {
 
     // Update apartment
     @PutMapping("/{id}")
-    public ResponseEntity<Apartment> updateApartment(@PathVariable Long id, @RequestBody Apartment updatedApartment) {
-        Apartment apartment = apartmentService.updateApartment(id, updatedApartment);
+    public ResponseEntity<Apartment> updateApartment(@PathVariable Long id, @RequestBody ApartmentDTO apartmentDTO) {
+        Apartment apartment = apartmentService.updateApartment(id, apartmentDTO);
         return ResponseEntity.ok(apartment);
     }
 
