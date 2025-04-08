@@ -16,23 +16,18 @@ const AddListingPage = () => {
     roomQuantity: '1',
     sizeSquareMeter: '1',
     furnished: false,
+    photoPath: '',
     internetIncluded: false,
     utilitiesIncluded: false,
-    photos: [],
     phoneNumber: '',
-    // preferredGender: 'ANY', // MALE, FEMALE, ANY
-    // maxTenants: '1',
-    // availableFrom: '',
-    // minimumStayMonths: '1',
     petsAllowed: false,
-    // smokingAllowed: false,
     parkingAvailable: false,
     location2Gis: '',
     linkToKrishaKz: ''
   });
 
   const [error, setError] = useState('');
-  const [previewUrls, setPreviewUrls] = useState([]);
+  const [apartmentPhotoPreview, setApartmentPhotoPreview] = useState('default');
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -51,45 +46,29 @@ const AddListingPage = () => {
   };
 
   const handlePhotoChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 5) {
-      setError('Maximum 5 photos allowed');
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const isValidType = ['image/jpeg', 'image/png', 'image/jpg'].includes(file.type);
+    if (!isValidType) {
+      alert('Please upload only JPEG, JPG, or PNG images.');
       return;
     }
 
-    setFormData(prev => ({
-      ...prev,
-      photos: files
-    }));
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64String = event.target.result;
 
-    // Create preview URLs
-    const urls = files.map(file => URL.createObjectURL(file));
-    setPreviewUrls(urls);
+      setFormData(prev => ({
+        ...prev,
+        photoPath: base64String,
+      }));
+
+      setApartmentPhotoPreview(base64String);
+    };
+    reader.readAsDataURL(file);
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setError('');
-  //   console.log("DEBUG ---- formData:", formData);
-
-  //   try {
-  //     const formDataToSend = new FormData();
-  //     Object.keys(formData).forEach(key => {
-  //       if (key === 'photos') {
-  //         // formData.photos.forEach(photo => {
-  //         //   formDataToSend.append('photos', photo);
-  //         // });
-  //       } else {
-  //         formDataToSend.append(key, formData[key]);
-  //       }
-  //     });
-  //     console.log("DEBUG ---- formDataToSend:", formDataToSend);
-  //     await addListing(formDataToSend);
-  //     navigate('/');
-  //   } catch (err) {
-  //     setError('Failed to add listing. Please try again.');
-  //   }
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -97,16 +76,6 @@ const AddListingPage = () => {
     console.log("DEBUG ---- formData:", formData);
 
     try {
-      // const formDataToSend = new FormData();
-      // Object.keys(formData).forEach(key => {
-      //   if (key === 'photos') {
-      //     // formData.photos.forEach(photo => {
-      //     //   formDataToSend.append('photos', photo);
-      //     // });
-      //   } else {
-      //     formDataToSend.append(key, formData[key]);
-      //   }
-      // });
       console.log("DEBUG ---- formDataToSend:", formData);
       await addListing(formData);
       navigate('/apartments');
@@ -115,9 +84,6 @@ const AddListingPage = () => {
     }
   };
 
-  if (!user) {
-    return null;
-  }
 
   return (
     <div className="auth-container">
@@ -305,22 +271,21 @@ const AddListingPage = () => {
 
           {/* Photos */}
           <div className="form-section">
-            <h3>Photos (Max 5)</h3>
+            <h3>Photo</h3>
             <div className="input-group">
               <input
                 type="file"
-                name="photos"
+                name="photo"
                 className="auth-input file-input"
                 onChange={handlePhotoChange}
                 multiple
-                accept="image/*"
-                // required
+                accept="image/png image/jpeg image/jpg"
+                required
               />
             </div>
             <div className="photo-preview">
-              {previewUrls.map((url, index) => (
-                <img key={index} src={url} alt={`Preview ${index + 1}`} />
-              ))}
+              <span className="apartment-preview-cancellation" onClick={() => setApartmentPhotoPreview('default')}></span>
+              <img alt="Preview" src={apartmentPhotoPreview} />
             </div>
           </div>
 

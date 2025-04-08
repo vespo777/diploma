@@ -33,20 +33,22 @@ const Profile = () => {
     hasFetched.current = true
 
     try {
-      // задержка чтобы предотвратить concurrency exception
-      // await new Promise(resolve => setTimeout(resolve, 100));
 
       const response = await fetch(`http://localhost:8080/get-matching-score?userId=${myId}`, {
         headers: { 'Authorization': token }
       });
 
-      const isconnected_response = await fetch(`http://localhost:8080/connections/is-connected?userId1=${myId}&userId2=${id}`, {
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+
+      const isconnectedResponse = await fetch(`http://localhost:8080/connections/is-connected?userId1=${myId}&userId2=${id}`, {
         headers: { 'Authorization': token }
       });
 
-      const isconnected_response_data = await isconnected_response.text();
+      const isconnectedResponseData = await isconnectedResponse.text();
+      console.log(isconnectedResponse);
 
-      if (isconnected_response_data == "Connection exists with status: ACCEPTED") {
+      if (isconnectedResponseData === "Connection exists with status: ACCEPTED") {
         connection_exists.current = true;
       }
 
@@ -94,6 +96,11 @@ const Profile = () => {
       if (!token) return;
 
       try {
+        await fetchMatchingLevels();
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+
+
         const response = await fetch(`${API_URL}/profile/${id}`, {
           method: "GET",
           headers: {
@@ -107,7 +114,6 @@ const Profile = () => {
         const data = await response.json();
         setUser(data);
 
-        await fetchMatchingLevels();
 
 
       } catch (error) {

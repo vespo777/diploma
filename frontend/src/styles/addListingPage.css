@@ -169,6 +169,8 @@ background: #2563eb;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+
+
 .team-name {
   color: #2c3e50;
   margin-bottom: 1rem;
@@ -306,6 +308,7 @@ background: #2563eb;
   margin-top: 1rem;
   overflow-x: auto;
   padding: 1rem 0;
+  position: relative;
 }
 
 .photo-preview img {
@@ -437,6 +440,35 @@ text-decoration: underline;
 
 .dropdown-item:hover {
   background: #f0f0f0;
+}
+
+.apartment-preview-cancellation {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.apartment-preview-cancellation::before,
+.apartment-preview-cancellation::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background-color: #333; /* цвет крестика */
+  transform-origin: center;
+}
+
+.apartment-preview-cancellation::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.apartment-preview-cancellation::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 
