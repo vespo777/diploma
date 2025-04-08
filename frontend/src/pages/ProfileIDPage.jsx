@@ -25,6 +25,7 @@ const Profile = () => {
   const matchingLevelsMap = useRef({});
   const hasFetched = useRef(false);
 
+  const connection_exists = useRef(false);
 
   const fetchMatchingLevels = async () => {
     if (!myId || hasFetched.current) return;
@@ -41,6 +42,19 @@ const Profile = () => {
       console.log("DEBUG -- response: ", response);
       console.log("DEBUG -- my id: ", myId);
       console.log("DEBUG -- user id: ", id);
+
+      const isconnected_response = await fetch(`http://localhost:8080/connections/is-connected?userId1=${myId}&userId2=${id}`, {
+        headers: { 'Authorization': token }
+      });
+
+      const isconnected_response_data = await isconnected_response.text();
+      console.log("DEBUG -- isconnected_response_data:", isconnected_response_data);
+      
+      if (isconnected_response_data == "Connection exists with status: ACCEPTED") {
+        connection_exists.current = true;
+      }
+
+      console.log("DEBUG -- connection_exists:", connection_exists);
 
 
       if (!response.ok) {
@@ -259,30 +273,23 @@ const Profile = () => {
       <div className="profile-header">
         <h1>
           {user.personalInfo.name} {user.personalInfo.surname}
-          {id && (
-            <span className="matching-score">Matching Score: {getMatchingLevel(id)}</span>
-          )}
         </h1>
       </div>
 
       <div className="profile-content">
 
+        {/* Matching Score */}
         <div className="profile-section">
-          {/* Basic Information Section */}
-          <h2>Basic Information</h2>
+          <h2>Compatibilty:</h2>
           <div className="info-grid">
             <div>
-              <strong>Email:</strong> {user.email}
+              <strong>Matching Score:</strong> {getMatchingLevel(id)}
             </div>
             <div>
-              <strong>Gender:</strong> {user.personalInfo.gender === 'M' ? 'Male' : 'Female'}
+              <strong>Personality Type:</strong> {user.roommateSearch.scoreTest}
             </div>
-            <div>
-              <strong>Date of Birth:</strong> {user.personalInfo.birthDate}
-            </div>
-            <div>
-              <strong>Religion:</strong> {user.personalInfo.religion || 'Not specified'}
-            </div>
+
+
           </div>
         </div>
 
@@ -298,25 +305,6 @@ const Profile = () => {
             </div>
           </div>
         </div>
-
-        {/* Contact Information */}
-        {user.contacts && (
-          <div className="profile-section">
-            <h2>Contact Information</h2>
-            <div className="info-grid">
-              {user.contacts.numberVisible && (
-                <div>
-                  <strong>Phone:</strong> {user.contacts.callNumber}
-                </div>
-              )}
-              {user.contacts.telegramNickname && (
-                <div>
-                  <strong>Telegram:</strong> @{user.contacts.telegramNickname}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
 
         {/* Roommate Preferences */}
         <div className="profile-section">
@@ -345,18 +333,26 @@ const Profile = () => {
               <strong>Budget:</strong> {user.roommateSearch.budgetMin} - {user.roommateSearch.budgetMax} KZT
             </div>
             <div>
-              <strong>Personality Type:</strong> {user.roommateSearch.scoreTest}
-            </div>
-            <div>
               <strong>Available from:</strong> {user.roommateSearch.startDate}
             </div>
           </div>
         </div>
 
+
+        
+
+
         {/* Social Details */}
         <div className="profile-section">
           <h2>Social & Education</h2>
           <div className="info-grid">
+            <div>
+                <strong>Gender:</strong> {user.personalInfo.gender === 'M' ? 'Male' : 'Female'}
+              </div>
+              <div>
+                <strong>Date of Birth:</strong> {user.personalInfo.birthDate}
+              </div>
+
             {user.socialDetails.profession && (
               <div>
                 <strong>Profession:</strong> {user.socialDetails.profession}
@@ -388,6 +384,12 @@ const Profile = () => {
             <div>
               <strong>Drinking:</strong> {user.socialDetails.drinking ? 'Yes' : 'No'}
             </div>
+            <div>
+              <strong>Religion:</strong> {user.personalInfo.religion || 'Not specified'}
+            </div>
+            <div>
+              <strong>Language:</strong> {user.personalInfo.language || 'Not specified'}
+            </div>
           </div>
         </div>
 
@@ -397,29 +399,59 @@ const Profile = () => {
             <h2>Interests</h2>
             <div className="interests-container">
               {user.socialDetails.interests.map((interest, index) => (
-                <span key={index} className="interest-tag">
-                  {interest}
-                </span>
-              ))}
+                      <div key={index} className="interest-item">
+                        • {interest}{' '}
+                      </div>
+                    ))}
             </div>
           </div>
         )}
 
-        {/* Team Information */}
+
+      {/* Team Information */}
         {user.team && (
+          <div className="profile-section">
+          <h2>Team</h2>
+          <div className="info-grid">
           <div>
-            <h2>Team</h2>
-            <div>
-              <div>
-                <strong>Team Name:</strong>{" "}
-                <Link to={`/teams/${user.team.id}`} className="team-link">
-                  {user.team.name}
-                </Link>
+                <div>
+                  <strong>Team Name:</strong>{" "}
+                  <Link to={`/teams/${user.team.id}`} className="team-link">
+                    {user.team.name}
+                  </Link>
+                </div>
               </div>
+          </div>
+        </div>
+      )}
+
+
+
+
+
+        {/* Contact Information */}
+        {user.contacts && connection_exists.current && (
+          <div className="profile-section">
+            <h2>Contact Information</h2>
+            <div className="info-grid">
+              {user.email && (
+                  <div>
+                    <strong>Email:</strong> {user.email}
+                  </div>
+              )}
+              {user.contacts.callNumber && (
+                <div>
+                  <strong>Phone:</strong> {user.contacts.callNumber}
+                </div>
+              )}
+              {user.contacts.telegramNickname && (
+                <div>
+                  <strong>Telegram:</strong> @{user.contacts.telegramNickname}
+                </div>
+              )}
             </div>
           </div>
         )}
-
 
 
         <div className="profile-section">

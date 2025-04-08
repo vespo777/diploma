@@ -820,7 +820,7 @@ const ProfilePage = () => {
           <div className="profile-section">
             <h3>Contacts</h3>
             <input type="text" placeholder="Phone number" value={userData.contacts.callNumber} onChange={(e) => handleChange('contacts', 'callNumber', e.target.value)} />
-            <label>
+            {/* <label>
               Is your phone number visible?
               <input
                   type="checkbox"
@@ -828,7 +828,7 @@ const ProfilePage = () => {
                   checked={userData.contacts.numberVisible}
                   onChange={(e) => handleChange('contacts', 'numberVisible', e.target.checked)}
               />
-            </label>
+            </label> */}
             <input type="text" placeholder="Telegram nickname" value={userData.contacts.telegramNickname} onChange={(e) => handleChange('contacts', 'telegramNickname', e.target.value)} />
           </div>
 
