@@ -7,6 +7,9 @@ import kz.dreamteam.backend.model.User;
 import kz.dreamteam.backend.model.dto.ApartmentDTO;
 import kz.dreamteam.backend.repository.UserRepository;
 import kz.dreamteam.backend.service.ApartmentService;
+import kz.dreamteam.backend.service.GraphSearchService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/apartments")
 public class ApartmentController {
+    private static final Logger log = LoggerFactory.getLogger(ApartmentController.class);
 
     private ApartmentService apartmentService;
 
@@ -41,6 +45,8 @@ public class ApartmentController {
         String token = authorizationHeader.startsWith("Bearer ")
                 ? authorizationHeader.substring(7)
                 : authorizationHeader;
+
+        log.info(apartmentDTO.getPhotoPath());
 
         Apartment savedApartment = apartmentService.createApartment(token, apartmentDTO);
         return ResponseEntity.ok(savedApartment);

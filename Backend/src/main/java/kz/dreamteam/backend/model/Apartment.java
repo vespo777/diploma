@@ -26,7 +26,7 @@ public class Apartment {
     private Long userId;  // Each apartment is associated with one user
 
     @Column(columnDefinition = "TEXT")
-    private String photoPath; // URL to the photo
+    private String photoPath;
 
     private String title;
     private String description;
@@ -45,9 +45,12 @@ public class Apartment {
     private String linkToKrishaKz; // URL to the listing on krisha.kz
     private Integer roomQuantity;
     private Integer sizeSquareMeter;
+
+    @Column(columnDefinition = "TEXT")
     @Field(type = FieldType.Text)
     private String descriptionJunk;
 
+    @Column(columnDefinition = "TEXT")
     @Field(type = FieldType.Keyword)
     private String descriptionJunkKeyword;
 
