@@ -26,6 +26,8 @@ const Navbar = () => {
   const API_URL = "http://localhost:8080";
   const wrapperRef = useRef(null);
   const [teamInvitations, setTeamInvitations] = useState([]);
+  const avatarPreview = user?.profilePhotoPath;
+  console.log(avatarPreview);
 
 
   useEffect(() => {
@@ -347,7 +349,7 @@ const Navbar = () => {
 
                 <div className="user-dropdown">
                   <button className="avatar-button" onClick={() => setShowDropdown(!showDropdown)}>
-                    <img src={user.avatar || avatarPlaceholder} alt="User Avatar" className="avatar" />
+                    <img src={avatarPreview || avatarPlaceholder} alt="User Avatar" className="avatar" />
                   </button>
                   <span className="nav-link-label">Profile</span>
 

@@ -305,12 +305,14 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAvatarChoosing, setAvatarChoosing] = useState(false);
 
   // Personality test states
   const [personalityTestCompleted, setPersonalityTestCompleted] = useState(null);
   const [personalityData, setPersonalityData] = useState(null);
   const [loadingPersonality, setLoadingPersonality] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(null);
+  const [avatarFirstPreview, setAvatarFirstPreview] = useState(null);
 
   useEffect(() => {
     if (!user?.userId) return;
@@ -329,6 +331,7 @@ const ProfilePage = () => {
           localStorage.setItem('userData', JSON.stringify(data));
           if (data.profilePhotoPath && data.profilePhotoPath !== 'default') {
             setAvatarPreview(data.profilePhotoPath);
+            setAvatarFirstPreview(data.profilePhotoPath);
           }
         })
         .catch(err => {
@@ -343,13 +346,11 @@ const ProfilePage = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Check file type
     if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
       alert('Please upload a JPEG, JPG or PNG image');
       return;
     }
 
-    // Check file size (e.g., 2MB max)
     if (file.size > 2 * 1024 * 1024) {
       alert('Image size should be less than 2MB');
       return;
@@ -367,26 +368,24 @@ const ProfilePage = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/upload-avatar`, {
-        method: 'POST',
+      const response = await fetch(`${API_URL}/upload-avatar?userId=${user?.userId}`, {
+        method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `${localStorage.getItem('token')}`
         },
-        body: JSON.stringify({
-          userId: user.userId,
-          base64Image: avatarPreview
-        })
+        body: avatarPreview
       });
 
       if (!response.ok) throw new Error('Failed to upload avatar');
 
-      const updatedUser = await response.json();
-      setUserData(updatedUser);
-      alert('Avatar uploaded successfully');
+      const updatedUser = await response.text();
+      alert(updatedUser);
+
+      setAvatarPreview(avatarPreview);
+      setAvatarChoosing(false);
     } catch (err) {
       console.error("Error uploading avatar:", err);
-      alert(err.message);
+      alert(err);
     } finally {
       setLoading(false);
     }
@@ -394,21 +393,17 @@ const ProfilePage = () => {
 
   const deleteAvatar = async () => {
     try {
-      const response = await fetch(`${API_URL}/delete-avatar`, {
-        method: 'DELETE',
+      const response = await fetch(`${API_URL}/delete-avatar?userId=${user?.userId}`, {
+        method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ userId: user.userId })
+        }
       });
 
-      if (!response.ok) throw new Error('Failed to delete avatar');
 
-      const updatedUser = await response.json();
-      setUserData(updatedUser);
-      setAvatarPreview(null);
-      alert('Avatar removed successfully');
+      const updatedUser = await response.text();
+      setAvatarPreview("default");
+      alert(updatedUser);
     } catch (err) {
       console.error("Error deleting avatar:", err);
       alert(err.message);
@@ -420,7 +415,7 @@ const ProfilePage = () => {
 
     setLoadingPersonality(true);
 
-    fetch(`${API_URL}/check-ml-questions?userId=${user.userId}`, {
+    fetch(`${API_URL}/check-ml-questions?userId=${user?.userId}`, {
       headers: {
         'Authorization': `${localStorage.getItem('token')}`
       }
@@ -429,7 +424,7 @@ const ProfilePage = () => {
         .then(completed => {
           setPersonalityTestCompleted(completed);
           if (completed) {
-            return fetch(`${API_URL}/user/get-personality-type?userId=${user.userId}`, {
+            return fetch(`${API_URL}/user/get-personality-type?userId=${user?.userId}`, {
               headers: {
                 'Authorization': `${localStorage.getItem('token')}`
               }
@@ -462,7 +457,7 @@ const ProfilePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${API_URL}/profile/${user.userId}`, {
+      const response = await fetch(`${API_URL}/profile/${user?.userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -470,10 +465,13 @@ const ProfilePage = () => {
         },
         body: JSON.stringify(userData)
       });
-      if (!response.ok) throw new Error('Failed to update profile');
-      alert('Profile updated successfully');
+      if (response.ok) {
+        throw new Error('Failed to update profile');
+      }else{
+        alert('Profile updated successfully');
+      }
     } catch (err) {
-      alert(err.message);
+      console.error(err.message);
     }
   };
 
@@ -581,9 +579,9 @@ const ProfilePage = () => {
 
     return (
         <div className="team-section">
-          <p>Active Team: <strong>{userData.team.name}</strong></p>
+          <p>Active Team: <strong>{userData?.team.name}</strong></p>
 
-          <Link to={`/teams/${userData.team.id}`} className="create-team-button">
+          <Link to={`/teams/${userData?.team.id}`} className="create-team-button">
             View team
           </Link>
         </div>
@@ -593,6 +591,11 @@ const ProfilePage = () => {
   if (loading) return < LoadingRabbit/>;
   if (error) return <p>Error: {error}</p>;
   if (!userData) return <p>No user data found</p>;
+
+  const cancelChoosing = () => {
+    setAvatarPreview(avatarFirstPreview);
+    setAvatarChoosing(false);
+  };
 
   return (
       <div className="profile-container">
@@ -606,7 +609,7 @@ const ProfilePage = () => {
                 {avatarPreview ? (
                     <img src={avatarPreview} alt="Profile Avatar" />
                 ) : (
-                    <div className="default-avatar">
+                    <div>
                       <img src={defaultAvatar} alt="Profile Avatar" />
                     </div>
                 )}
@@ -620,30 +623,34 @@ const ProfilePage = () => {
                     onChange={handleAvatarChange}
                     style={{ display: 'none' }}
                 />
-                <label htmlFor="avatar-upload" className="avatar-upload-button">
+                <label htmlFor="avatar-upload" className="avatar-upload-button" onClick={() => setAvatarChoosing(true)}>
                   Choose Image
                 </label>
 
                 {avatarPreview && (
                     <>
-                      <button
+                    {isAvatarChoosing && (
+                        <button
                           type="button"
                           onClick={uploadAvatar}
                           disabled={loading}
                       >
                         {loading ? 'Uploading...' : 'Save Avatar'}
                       </button>
-                      <button
-                          type="button"
-                          onClick={() => setAvatarPreview(null)}
-                          className="cancel-avatar-button"
-                      >
-                        Cancel
-                      </button>
+                    )}
+                      {isAvatarChoosing && (
+                          <button
+                              type="button"
+                              onClick={cancelChoosing}
+                              className="cancel-avatar-button"
+                          >
+                            Cancel
+                          </button>
+                      )}
                     </>
                 )}
 
-                {userData?.profilePhotoPath && userData.profilePhotoPath !== 'default' && !avatarPreview && (
+                {userData?.profilePhotoPath && userData?.profilePhotoPath !== 'default' && !avatarPreview && (
                     <button
                         type="button"
                         onClick={deleteAvatar}
@@ -656,15 +663,15 @@ const ProfilePage = () => {
             </div>
 
             <div className="profile-personal-info">
-              <input type="text" value={userData.personalInfo.name} onChange={(e) => handleChange('personalInfo', 'name', e.target.value)}/>
-              <input type="text" value={userData.personalInfo.surname} onChange={(e) => handleChange('personalInfo', 'surname', e.target.value)} />
-              <input type="date" value={userData.personalInfo.birthDate} onChange={(e) => handleChange('personalInfo', 'birthDate', e.target.value)} />
-              <select value={userData.personalInfo.gender} onChange={(e) => handleChange('personalInfo', 'gender', e.target.value)}>
+              <input type="text" value={userData?.personalInfo.name} onChange={(e) => handleChange('personalInfo', 'name', e.target.value)}/>
+              <input type="text" value={userData?.personalInfo.surname} onChange={(e) => handleChange('personalInfo', 'surname', e.target.value)} />
+              <input type="date" value={userData?.personalInfo.birthDate} onChange={(e) => handleChange('personalInfo', 'birthDate', e.target.value)} />
+              <select value={userData?.personalInfo.gender} onChange={(e) => handleChange('personalInfo', 'gender', e.target.value)}>
                 <option value="M">Male</option>
                 <option value="F">Female</option>
                 <option value="O">Other</option>
               </select>
-              <select value={userData.personalInfo.religion} onChange={(e) => handleChange('personalInfo', 'religion', e.target.value)}>
+              <select value={userData?.personalInfo.religion} onChange={(e) => handleChange('personalInfo', 'religion', e.target.value)}>
                 <option value="Islam">Islam</option>
                 <option value="Christian">Christian</option>
                 <option value="Buddhism">Buddhism</option>
@@ -682,10 +689,10 @@ const ProfilePage = () => {
           {/* Social Details Section */}
           <div className="profile-section">
             <h3>Social Details</h3>
-            <input type="text" placeholder="School Name" value={userData.socialDetails.schoolName} onChange={(e) => handleChange('socialDetails', 'schoolName', e.target.value)} />
+            <input type="text" placeholder="School Name" value={userData?.socialDetails.schoolName} onChange={(e) => handleChange('socialDetails', 'schoolName', e.target.value)} />
             <select
                 name="socialDetails.universityName"
-                value={userData.socialDetails.universityName}
+                value={userData?.socialDetails.universityName}
                 onChange={(e) => handleChange('socialDetails', 'universityName', e.target.value)}
                 required
             >
@@ -695,11 +702,11 @@ const ProfilePage = () => {
                   </option>
               ))}
             </select>
-            <input type="text" placeholder="University Speciality" value={userData.socialDetails.universitySpecialty ?? ""} onChange={(e) => handleChange('socialDetails', 'universitySpecialty', e.target.value)} />
-            <input type="text" placeholder="Company" value={userData.socialDetails.company ?? ""} onChange={(e) => handleChange('socialDetails', 'company', e.target.value)} />
+            <input type="text" placeholder="University Speciality" value={userData?.socialDetails.universitySpecialty ?? ""} onChange={(e) => handleChange('socialDetails', 'universitySpecialty', e.target.value)} />
+            <input type="text" placeholder="Company" value={userData?.socialDetails.company ?? ""} onChange={(e) => handleChange('socialDetails', 'company', e.target.value)} />
             <select
                 name="socialDetails.profession"
-                value={userData.socialDetails.profession}
+                value={userData?.socialDetails.profession}
                 onChange={(e) => handleChange('socialDetails', 'profession', e.target.value)}
                 required
             >
@@ -714,7 +721,7 @@ const ProfilePage = () => {
               <input
                   type="checkbox"
                   name="socialDetails.smoking"
-                  checked={userData.socialDetails.smoking}
+                  checked={userData?.socialDetails.smoking}
                   onChange={(e) => handleChange('socialDetails', 'smoking', e.target.checked)}
               />
             </label>
@@ -723,12 +730,12 @@ const ProfilePage = () => {
               <input
                   type="checkbox"
                   name="socialDetails.drinking"
-                  checked={userData.socialDetails.drinking}
+                  checked={userData?.socialDetails.drinking}
                   onChange={(e) => handleChange('socialDetails', 'drinking', e.target.checked)}
               />
             </label>
             <button type="button" className="save-button-interests" onClick={() => setIsModalOpen(true)}>Select Interests</button>
-            <p>Selected Interests: {userData.socialDetails.interests.join(", ")}</p>
+            <p>Selected Interests: {userData?.socialDetails.interests.join(", ")}</p>
 
             {isModalOpen && (
                 <div className="modal">
@@ -740,7 +747,7 @@ const ProfilePage = () => {
                               className="checkbox-interests"
                               type="checkbox"
                               id={`interest-${index}`}
-                              checked={userData.socialDetails.interests.includes(interest)}
+                              checked={userData?.socialDetails.interests.includes(interest)}
                               onChange={() => handleInterestsChange(interest)}
                           />
                           <label className="interests-label" htmlFor={`interest-${index}`}>
@@ -757,10 +764,10 @@ const ProfilePage = () => {
           {/* Roommate Search Section */}
           <div className="profile-section">
             <h3>Roommate Search</h3>
-            <input type="number" value={userData.roommateSearch.budgetMin ?? 15000} onChange={(e) => handleChange('roommateSearch', 'budgetMin', Number(e.target.value))} />
-            <input type="number" value={userData.roommateSearch.budgetMax ?? 450000} onChange={(e) => handleChange('roommateSearch', 'budgetMax', Number(e.target.value))} />
+            <input type="number" value={userData?.roommateSearch.budgetMin ?? 15000} onChange={(e) => handleChange('roommateSearch', 'budgetMin', Number(e.target.value))} />
+            <input type="number" value={userData?.roommateSearch.budgetMax ?? 450000} onChange={(e) => handleChange('roommateSearch', 'budgetMax', Number(e.target.value))} />
             <label>Search Status</label>
-            <select value={userData.roommateSearch.searchStatus} onChange={(e) => handleChange('roommateSearch', 'searchStatus', e.target.value)}>
+            <select value={userData?.roommateSearch.searchStatus} onChange={(e) => handleChange('roommateSearch', 'searchStatus', e.target.value)}>
               <option value="1">I am roommate and I don't have an apartment</option>
               <option value="2">I am roommate and I have an apartment</option>
               <option value="3">Not searching</option>
@@ -773,17 +780,17 @@ const ProfilePage = () => {
             <label>Wake up time</label>
             <input
                 type="time"
-                value={userData.roommatePreferences.wakeTime}
+                value={userData?.roommatePreferences.wakeTime}
                 onChange={(e) => handleTimeChange('wakeTime', e.target.value)}
             />
             <label>Sleep Time</label>
             <input
                 type="time"
-                value={userData.roommatePreferences.sleepTime}
+                value={userData?.roommatePreferences.sleepTime}
                 onChange={(e) => handleTimeChange('sleepTime', e.target.value)}
             />
             <label>Pets:</label>
-            <select name="roommate_search.pets" value={userData.roommatePreferences.pets} onChange={(e) => handleChange('roommatePreferences', 'pets', e.target.value)} required>
+            <select name="roommate_search.pets" value={userData?.roommatePreferences.pets} onChange={(e) => handleChange('roommatePreferences', 'pets', e.target.value)} required>
               <option value="dont_have_dont_want">I dont have & dont want</option>
               <option value="dont_have_doesnt_matter">I dont have & doesn't matter</option>
               <option value="have_cat">I have a cat</option>
@@ -796,7 +803,7 @@ const ProfilePage = () => {
           <div className="profile-section">
             <h3>LocationDetails</h3>
             <label>Current City:</label>
-            <select value={userData.locationDetails.currentCity} onChange={(e) => handleChange('locationDetails', 'currentCity', e.target.value)}>
+            <select value={userData?.locationDetails.currentCity} onChange={(e) => handleChange('locationDetails', 'currentCity', e.target.value)}>
               <option value="Almaty">Almaty</option>
               <option value="Nur-Sultan">Nur-Sultan</option>
             </select>
@@ -804,7 +811,7 @@ const ProfilePage = () => {
             <label>Region From:</label>
             <select
                 name="location_details.regionFrom"
-                value={userData.locationDetails.regionFrom}
+                value={userData?.locationDetails.regionFrom}
                 onChange={(e) => handleChange('locationDetails', 'regionFrom', e.target.value)}
             >
               <option value="">Select Region</option>
@@ -819,17 +826,17 @@ const ProfilePage = () => {
           {/* Contacts Section */}
           <div className="profile-section">
             <h3>Contacts</h3>
-            <input type="text" placeholder="Phone number" value={userData.contacts.callNumber} onChange={(e) => handleChange('contacts', 'callNumber', e.target.value)} />
-            {/* <label>
+            <input type="text" placeholder="Phone number" value={userData?.contacts.callNumber} onChange={(e) => handleChange('contacts', 'callNumber', e.target.value)} />
+            <label>
               Is your phone number visible?
               <input
                   type="checkbox"
                   name="contacts.numberVisible"
-                  checked={userData.contacts.numberVisible}
+                  checked={userData?.contacts.numberVisible}
                   onChange={(e) => handleChange('contacts', 'numberVisible', e.target.checked)}
               />
-            </label> */}
-            <input type="text" placeholder="Telegram nickname" value={userData.contacts.telegramNickname} onChange={(e) => handleChange('contacts', 'telegramNickname', e.target.value)} />
+            </label>
+            <input type="text" placeholder="Telegram nickname" value={userData?.contacts.telegramNickname} onChange={(e) => handleChange('contacts', 'telegramNickname', e.target.value)} />
           </div>
 
           {/* Team Section */}
