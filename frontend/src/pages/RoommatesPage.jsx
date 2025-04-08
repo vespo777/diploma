@@ -16,7 +16,7 @@ const RoommatesPage = () => {
   const [visibleUsers, setVisibleUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [priceRange, setPriceRange] = useState({ min: '0', max: '1000000' });
+  const [priceRange, setPriceRange] = useState({ min: '-100000000000', max: '100000000000' });
   const [hasMore, setHasMore] = useState(true);
   const [cityFilter, setCityFilter] = useState('');
   const [ageRange, setAgeRange] = useState({ min: '-100', max: '100' });
@@ -142,37 +142,62 @@ const RoommatesPage = () => {
   };
 
   const filteredUsers = visibleUsers.filter(user => {
+    // Search by name
     const fullName = `${user.personalInfo?.name ?? ''} ${user.personalInfo?.surname ?? ''}`.toLowerCase();
-    const matchesSearch = fullName.includes(searchTerm.toLowerCase());
+    const matchesSearch = !searchTerm || fullName.includes(searchTerm.toLowerCase());
+  
+  // Budget range
+  const userPriceMin = user.roommateSearch?.budgetMin ?? (-1 * Infinity);
+  const userPriceMax = user.roommateSearch?.budgetMax ?? Infinity;
+  const matchesPrice = 
+    (priceRange.min === '-100000000000' || priceRange.min === '' || userPriceMin >= Number(priceRange.min)) && 
+    (priceRange.max === '100000000000' || priceRange.max === '' || userPriceMax <= Number(priceRange.max));
 
-    const userPriceMin = user.roommateSearch?.budgetMin ?? 0;
-    const userPriceMax = user.roommateSearch?.budgetMax ?? Infinity;
-    const matchesPrice = userPriceMin >= Number(priceRange.min) && userPriceMax <= Number(priceRange.max);
+  
+  // City filter
+  const matchesCity = !cityFilter || 
+    (user.locationDetails?.regionFrom && 
+     user.locationDetails.regionFrom.toLowerCase().includes(cityFilter.toLowerCase()));
+  
+  // Age filter
+  const birthDate = user.personalInfo?.birthDate;
+  const userAge = birthDate ? calculateAge(birthDate) : null;
+  const matchesAge = 
+    !userAge || 
+    ((ageRange.min === '-100' || ageRange.min === '' || userAge >= Number(ageRange.min)) && 
+     (ageRange.max === '100' || ageRange.max === '' || userAge <= Number(ageRange.max)));
+  
+  // Gender filter
+  const matchesGender = genderFilter === 'Any' || !genderFilter || 
+    (user.personalInfo?.gender && user.personalInfo.gender === genderFilter);
+  
+  // Profession filter
+  const matchesProfession = !professionFilter || 
+    (user.socialDetails?.profession && 
+     user.socialDetails.profession.toLowerCase().includes(professionFilter.toLowerCase()));
 
-    const matchesCity = !cityFilter || user.locationDetails?.regionFrom?.toLowerCase().includes(cityFilter.toLowerCase()); // Улучшенная проверка для cityFilter
+  // Smoking filter
+  const matchesSmoking = smokingFilter === 'Any' || 
+    (user.socialDetails?.smoking === (smokingFilter === 'true'));
 
-    // const birthYear = user.personalInfo?.birthDate ? new Date(user.personalInfo.birthDate).getFullYear() : null;
-    // const userAge = birthYear ? new Date().getFullYear() - birthYear : null;
-    // const matchesAge = userAge ? userAge >= Number(ageRange.min) && userAge <= Number(ageRange.max) : true;
+  // Drinking filter
+  const matchesDrinking = drinkingFilter === 'Any' || 
+    (user.socialDetails?.drinking === (drinkingFilter === 'true'));
+  
+  // University filter
+  const matchesUniversity = !universityFilter || 
+    (user.socialDetails?.universityName && 
+     user.socialDetails.universityName.toLowerCase().includes(universityFilter.toLowerCase()));
 
-    const birthDate = user.personalInfo?.birthDate;
-    const userAge = birthDate ? calculateAge(birthDate) : null;
-    const matchesAge = !userAge || (userAge >= Number(ageRange.min) && userAge <= Number(ageRange.max));
-
-
-    const matchesGender = genderFilter === '' || genderFilter === 'Any' || user.personalInfo?.gender === genderFilter; // Исправлено для учета значения 'Any'
-
-    const matchesProfession = !professionFilter || user.socialDetails?.profession?.toLowerCase().includes(professionFilter.toLowerCase()); // Исправлено для учета значения 'Any'
-
-    const matchesSmoking = smokingFilter === null || smokingFilter === 'Any' || user.socialDetails?.smoking === (smokingFilter === 'true'); // Исправлено для учета значения 'Any'
-    const matchesDrinking = drinkingFilter === null || drinkingFilter === 'Any' || user.socialDetails?.drinking === (drinkingFilter === 'true'); // Исправлено для учета значения 'Any'
-
-    const matchesUniversity = !universityFilter || user.socialDetails?.universityName?.toLowerCase().includes(universityFilter.toLowerCase()); // Исправлено для учета пустых значений
-
-    const matchesInterests = !interestFilter || user.socialDetails?.interests?.some(interest =>
-      interest.toLowerCase().includes(interestFilter.toLowerCase())
-    );
-
+  // Interests filter
+  const matchesInterests = !interestFilter || 
+    (user.socialDetails?.interests && 
+     Array.isArray(user.socialDetails.interests) &&
+     user.socialDetails.interests.length > 0 &&
+     user.socialDetails.interests.some(interest => 
+       interest.toLowerCase().includes(interestFilter.toLowerCase())
+     ));
+  
     return (
       matchesSearch &&
       matchesPrice &&
@@ -186,7 +211,7 @@ const RoommatesPage = () => {
       matchesInterests
     );
   });
-
+  
 
   if (!user) return <Navigate to="/login" />;
   if (loading && allUsers.length === 0) return <div className="loading">Loading...</div>;
@@ -278,13 +303,13 @@ const RoommatesPage = () => {
           {/* Кнопка сброса */}
           <button className="reset-btn" onClick={() => {
             setSearchTerm('');
-            setPriceRange({ min: '0', max: '1000000' });
+            setPriceRange({ min: '-100000000000', max: '100000000000' });
             setCityFilter('');
             setAgeRange({ min: '-100', max: '100' });
-            setGenderFilter('');
+            setGenderFilter('Any');
             setProfessionFilter('');
-            setSmokingFilter(null);
-            setDrinkingFilter(null);
+            setSmokingFilter('Any');
+            setDrinkingFilter('Any');
             setUniversityFilter('');
             setInterestFilter('');
           }}>
