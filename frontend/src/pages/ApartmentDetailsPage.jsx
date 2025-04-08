@@ -12,7 +12,8 @@ const ApartmentDetailsPage = () => {
   const [hasChanges, setHasChanges] = useState(false);
   const API_URL = 'http://localhost:8080';
 
-  const userData = JSON.parse(localStorage.getItem('userData')); // Получаем данные о текущем пользователе
+  // Безопасное получение userData
+  const userData = JSON.parse(localStorage.getItem('user')) || {};
 
   useEffect(() => {
     const fetchApartment = async () => {
@@ -30,9 +31,9 @@ const ApartmentDetailsPage = () => {
         const data = await response.json();
         setApartment(data);
         
-        // Проверка, является ли текущий пользователь владельцем
-        console.log(data.userId, )
-        if (data.userId === userData.userId) {
+        console.log(data.userId, userData, )
+        // Проверяем наличие userData и userId
+        if (userData && data.userId === userData.userId) {
           setIsOwner(true);
         }
       } catch (err) {
@@ -116,40 +117,46 @@ const ApartmentDetailsPage = () => {
       </div>
 
       <div className="apartment-info">
-      <p className="description-field">
-        <strong>Описание:</strong>
-        {isOwner ? (
+        <div className="description-field">
+            <strong>Описание:</strong>
+            {isOwner ? (
             <textarea
-            name="description"
-            value={apartment.description}
-            onChange={handleInputChange}
-            placeholder="Apartment description"
-            className="description-input"
+                name="description"
+                value={apartment.description}
+                onChange={handleInputChange}
+                placeholder="Apartment description"
+                className="description-input"
             />
-        ) : (
+            ) : (
             <div className="description-text">{apartment.description}</div>
-        )}
-        </p>
+            )}
+        </div>
 
-        <p><strong>Цена:</strong> {isOwner ? (
-          <input
-            type="number"
-            name="price"
-            value={apartment.price}
-            onChange={handleInputChange}
-            placeholder="Price"
-          />
-        ) : apartment.price} ₸</p>
+        <div className="info-field">
+            <strong>Цена:</strong> {isOwner ? (
+            <input
+                type="number"
+                name="price"
+                value={apartment.price}
+                onChange={handleInputChange}
+                placeholder="Price"
+                className="info-input"
+            />
+            ) : apartment.price} ₸
+        </div>
 
-        <p><strong>Адрес:</strong> {isOwner ? (
-          <input
-            type="text"
-            name="address"
-            value={apartment.address}
-            onChange={handleInputChange}
-            placeholder="Address"
-          />
-        ) : apartment.address}</p>
+        <div className="info-field">
+            <strong>Адрес:</strong> {isOwner ? (
+            <input
+                type="text"
+                name="address"
+                value={apartment.address}
+                onChange={handleInputChange}
+                placeholder="Address"
+                className="info-input"
+            />
+            ) : apartment.address}
+        </div>
 
         <p><strong>Комнат:</strong> {isOwner ? (
           <input
