@@ -11,7 +11,7 @@ const AddListingPage = () => {
     description: '',
     price: '',
     location: '',
-    type: 'ROOM', // ROOM, HOUSE, HOSTEL
+    propertyType: 'ROOM', // ROOM, HOUSE, HOSTEL
     address: '',
     roomQuantity: '1',
     sizeSquareMeter: '1',
@@ -24,7 +24,6 @@ const AddListingPage = () => {
     parkingAvailable: false,
     location2Gis: '',
     linkToKrishaKz: '',
-    propertyType: ''
   });
 
   const [error, setError] = useState('');
@@ -103,34 +102,32 @@ const AddListingPage = () => {
               <input
                 type="text"
                 name="title"
-                className="auth-input"
-                placeholder="Title"
+                className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"                placeholder="Title"
                 value={formData.title}
                 onChange={handleInputChange}
                 required
               />
             </div>
 
-            <div className="input-group">
-              <textarea
-                name="description"
-                className="auth-input textarea"
-                placeholder="Description"
-                value={formData.description}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
 
             <div className="input-group">
               <input
                 type="number"
                 name="price"
-                className="auth-input"
-                placeholder="Price per month (KZT)"
+                className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"                placeholder="Price per month (KZT)"
                 value={formData.price}
                 onChange={handleInputChange}
                 required
+              />
+            </div>
+            <div className="input-group">
+              <textarea
+                  name="description"
+                  className="auth-input textarea"
+                  placeholder="Description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  required
               />
             </div>
           </div>
@@ -156,8 +153,7 @@ const AddListingPage = () => {
               <input
                 type="text"
                 name="address"
-                className="auth-input"
-                placeholder="Address"
+                className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"                placeholder="Address"
                 value={formData.address}
                 onChange={handleInputChange}
                 required
@@ -168,8 +164,7 @@ const AddListingPage = () => {
               <input
                 type="text"
                 name="location2Gis"
-                className="auth-input"
-                placeholder="Location 2GIS link"
+                className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"                placeholder="Location 2GIS link"
                 value={formData.location2Gis}
                 onChange={handleInputChange}
                 required
@@ -180,8 +175,7 @@ const AddListingPage = () => {
               <input
                 type="text"
                 name="linkToKrishaKz"
-                className="auth-input"
-                placeholder="Link to Krisha.kz"
+                className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"                placeholder="Link to Krisha.kz"
                 value={formData.linkToKrishaKz}
                 onChange={handleInputChange}
                 required
@@ -189,12 +183,11 @@ const AddListingPage = () => {
             </div>
           </div>
 
-          {/* Property Details */}
           <div className="form-section">
             <h3>Property Details</h3>
             <div className="input-group">
               <select
-                name="type"
+                name="propertyType"
                 className="auth-input"
                 value={formData.propertyType}
                 onChange={handleInputChange}
@@ -207,12 +200,14 @@ const AddListingPage = () => {
             </div>
 
             <div className="input-row">
-              <div className="input-group half">
+              <div className="input-group-half">
+                <label className="flex items-center space-x-2 text-gray-700">
+                  Amount of rooms
+                </label>
                 <input
                   type="number"
                   name="roomQuantity"
-                  className="auth-input"
-                  placeholder="Number of rooms"
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"                  placeholder="Number of rooms"
                   value={formData.roomQuantity}
                   onChange={handleInputChange}
                   min="1"
@@ -220,12 +215,14 @@ const AddListingPage = () => {
                 />
               </div>
 
-              <div className="input-group half">
+              <div className="input-group-half">
+                <label className="flex items-center space-x-2 text-gray-700">
+                  Size of room in squere meter
+                </label>
                 <input
                   type="number"
                   name="sizeSquareMeter"
-                  className="auth-input"
-                  placeholder="Size in Square Meters"
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"                  placeholder="Size in Square Meters"
                   value={formData.sizeSquareMeter}
                   onChange={handleInputChange}
                   min="1"
@@ -239,28 +236,31 @@ const AddListingPage = () => {
           <div className="form-section">
             <h3>Amenities</h3>
             <div className="checkbox-group">
-              <label>
+              <label className="flex items-center space-x-2 text-gray-700">
                 <input
                   type="checkbox"
                   name="furnished"
+                  className="mr-2 accent-blue-500 w-4 h-4"
                   checked={formData.furnished}
                   onChange={handleInputChange}
                 />
                 Furnished
               </label>
-              <label>
+              <label className="flex items-center space-x-2 text-gray-700">
                 <input
                   type="checkbox"
                   name="internetIncluded"
+                  className="mr-2 accent-blue-500 w-4 h-4"
                   checked={formData.internetIncluded}
                   onChange={handleInputChange}
                 />
                 Internet Included
               </label>
-              <label>
+              <label className="flex items-center space-x-2 text-gray-700">
                 <input
                   type="checkbox"
                   name="utilitiesIncluded"
+                  className="mr-2 accent-blue-500 w-4 h-4"
                   checked={formData.utilitiesIncluded}
                   onChange={handleInputChange}
                 />
@@ -273,7 +273,7 @@ const AddListingPage = () => {
           <div className="form-section">
             <h3>Photo</h3>
             <div className="input-group">
-              <label className="file-input-label">
+              <label>
                 Choose Photo
                 <input
                     type="file"
@@ -323,59 +323,8 @@ const AddListingPage = () => {
           {/* Preferences */}
           <div className="form-section">
             <h3>Preferences</h3>
-            {/* <div className="input-group">
-              <select
-                name="preferredGender"
-                className="auth-input"
-                value={formData.preferredGender}
-                onChange={handleInputChange}
-              >
-                <option value="ANY">Any Gender</option>
-                <option value="MALE">Male Only</option>
-                <option value="FEMALE">Female Only</option>
-              </select>
-            </div> */}
-
-            {/* <div className="input-row">
-              <div className="input-group half">
-                <input
-                  type="number"
-                  name="maxTenants"
-                  className="auth-input"
-                  placeholder="Max number of tenants"
-                  value={formData.maxTenants}
-                  onChange={handleInputChange}
-                  min="1"
-                  required
-                />
-              </div>
-              <div className="input-group half">
-                <input
-                  type="number"
-                  name="minimumStayMonths"
-                  className="auth-input"
-                  placeholder="Minimum stay (months)"
-                  value={formData.minimumStayMonths}
-                  onChange={handleInputChange}
-                  min="1"
-                  required
-                />
-              </div>
-            </div> */}
-
-            {/* <div className="input-group">
-              <input
-                type="date"
-                name="availableFrom"
-                className="auth-input"
-                value={formData.availableFrom}
-                onChange={handleInputChange}
-                required
-              />
-            </div> */}
-
             <div className="checkbox-group">
-              <label>
+              <label className="flex items-center space-x-2 text-gray-700">
                 <input
                   type="checkbox"
                   name="petsAllowed"
@@ -384,16 +333,8 @@ const AddListingPage = () => {
                 />
                 Pets Allowed
               </label>
-              {/* <label>
-                <input
-                  type="checkbox"
-                  name="smokingAllowed"
-                  checked={formData.smokingAllowed}
-                  onChange={handleInputChange}
-                />
-                Smoking Allowed
-              </label> */}
-              <label>
+
+              <label className="flex items-center space-x-2 text-gray-700">
                 <input
                   type="checkbox"
                   name="parkingAvailable"

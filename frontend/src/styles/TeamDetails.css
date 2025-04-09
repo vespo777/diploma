@@ -1,0 +1,293 @@
+/* Team Detail Page Container */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 2rem;
+    background-color: #f5f7fa;
+}
+
+/* Main Content Box */
+.auth-box.listing-box {
+    width: 100%;
+    max-width: 900px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    padding: 2.5rem;
+    margin: 1rem;
+}
+
+/* Team Header */
+.team-header {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    border-bottom: 2px solid #eaeaea;
+    padding-bottom: 0.75rem;
+}
+
+/* Owner Section */
+.link-owner {
+    display: inline-block;
+    font-size: 1.2rem;
+    color: #3498db;
+    text-decoration: none;
+    margin-bottom: 2rem;
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.link-owner:hover {
+    color: #2980b9;
+    background-color: #e9f5fe;
+    transform: translateY(-1px);
+}
+
+/* Team Members List */
+.team-members {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.team-member {
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    display: flex;
+    position: relative;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    gap: 1.5rem;
+}
+
+
+
+.team-member:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-color: #d0d0d0;
+}
+
+/* Member Avatar */
+.team-member img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Member Info */
+.team-member-link {
+    font-size: 1.1rem;
+    color: #34495e;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    transition: color 0.2s;
+}
+
+.team-member-link:hover {
+    color: #3498db;
+}
+
+.team-member p {
+    margin: 0.3rem 0;
+    color: #7f8c8d;
+    font-size: 0.95rem;
+}
+
+.team-member p i {
+    color: #555;
+}
+
+.team-member p strong {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+/* Owner Crown Indicator */
+.team-owner-crown {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 24px;
+    height: 24px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="%23f1c40f" d="M576 136c0 22.09-17.91 40-40 40c-.248 0-.4551-.1266-.7031-.1305l-50.52 277.9C482 468.9 468.8 480 453.3 480H122.7c-15.46 0-28.72-11.06-31.48-26.27L40.71 175.9C40.46 175.9 40.25 176 40 176c-22.09 0-40-17.91-40-40S17.91 96 40 96s40 17.91 40 40c0 8.998-3.521 16.89-8.537 23.57l89.63 71.7c15.91 12.73 39.5 7.544 48.61-10.68l57.6-115.2C255.1 98.34 247.1 86.34 247.1 72C247.1 49.91 265.9 32 288 32s39.1 17.91 39.1 40c0 14.34-7.963 26.34-19.3 33.4l57.6 115.2c9.111 18.22 32.71 23.4 48.61 10.68l89.63-71.7C499.5 112.9 496 104.1 496 96c0-22.09 17.91-40 40-40S576 73.91 576 96z"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* No Members Message */
+.no-members {
+    text-align: center;
+    color: #95a5a6;
+    font-style: italic;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+/* Invite Button */
+.invite-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-self: flex-start;
+    margin-left: 0.5rem;
+}
+
+.invite-button:hover {
+    background-color: #2980b9;
+    box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
+}
+
+/* Connections Dropdown */
+.connections-dropdown {
+    position: absolute;
+    top:-500px;
+    right: -350px;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    max-height: 300px;
+    overflow-y: auto;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateX(10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Connection Items */
+.connection-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    border-bottom: 1px solid #eee;
+}
+
+.connection-item:last-child {
+    border-bottom: none;
+}
+
+.connection-link {
+    color: #34495e;
+    text-decoration: none;
+    font-weight: 500;
+    flex-grow: 1;
+    transition: color 0.2s;
+}
+
+.connection-link:hover {
+    color: #3498db;
+}
+
+.invite-action-button {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.invite-action-button:hover {
+    background-color: #27ae60;
+}
+
+/* No Connections Message */
+.no-connections {
+    text-align: center;
+    color: #95a5a6;
+    padding: 1rem;
+}
+
+/* Team Actions */
+.team-actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.join-button, .exit-team-button, .pending-button {
+    padding: 0.8rem 2rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.join-button {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.join-button:hover {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(46, 204, 113, 0.3);
+}
+
+.exit-team-button {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.exit-team-button:hover {
+    background-color: #c0392b;
+    box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
+}
+
+.pending-button {
+    background-color: #f39c12;
+    color: white;
+    cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .auth-box.listing-box {
+        padding: 1.5rem;
+    }
+
+    .team-header {
+        font-size: 1.6rem;
+    }
+
+    .team-member {
+        padding: 1rem;
+    }
+
+    .connection-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .invite-action-button {
+        align-self: flex-end;
+    }
+}

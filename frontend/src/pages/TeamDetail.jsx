@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import "../styles/addListingPage.css";
+import defaultAva from "../imgs/default-avatar.jpeg"
+import LoadingRabbit from "../components/pixi/Loading";
+import "../styles/TeamDetails.css"
 
 const API_URL = "http://localhost:8080";
 
@@ -78,8 +80,9 @@ const TeamDetail = () => {
             });
 
             if (!response.ok) throw new Error("Ошибка проверки статуса заявки");
-            const result = await response.text();
-            setStatus(result === "true" ? "PENDING" : null);
+            const data = await response.json();
+            // Assuming the API returns { pending: true/false }
+            setStatus(data ? "PENDING" : null);
         } catch (error) {
             console.error("Ошибка при проверке статуса заявки:", error);
         }
@@ -152,9 +155,10 @@ const TeamDetail = () => {
             fetchConnections();
             checkIfRequestSent();
         }
-    }, [user?.userId, navigate, fetchTeamDetails, fetchConnections, checkIfRequestSent]);
+    }, [user, navigate, fetchTeamDetails, fetchConnections, checkIfRequestSent]);
 
     const isTeamMember = members.some(member => member.userId === user?.userId);
+    console.log(members);
 
     return (
         <div className="auth-container">
@@ -178,13 +182,18 @@ const TeamDetail = () => {
                                     <li key={index} className="team-member">
                                         {member?.userId ? (
                                             <>
+                                                <img alt={`${member.personalInfo.name}'s avatar`} src={member.profilePhotoPath === "default" ? defaultAva : member.profilePhotoPath} />
+
                                                 <Link className="team-member-link" to={`/profile/${member.userId}`}>
                                                     {member.personalInfo.name} {member.personalInfo.surname}
                                                 </Link>
                                                 <p><i>{member.socialDetails.profession}</i> at <strong>{member.socialDetails.company}</strong></p>
+                                                {member.userId === team.owner.userId && (
+                                                    <span className="team-owner-crown"></span>
+                                                )}
                                             </>
                                         ) : (
-                                            <p>Loading...</p>
+                                            <LoadingRabbit />
                                         )}
                                     </li>
                                 ))
@@ -194,12 +203,6 @@ const TeamDetail = () => {
 
                             {isTeamMember && (
                                 <li className="team-member">
-                                    <button
-                                        onClick={() => setShowConnections(!showConnections)}
-                                        className="invite-button"
-                                    >
-                                        Invite Connections
-                                    </button>
                                     {showConnections && (
                                         <div className="connections-dropdown">
                                             {connections.length > 0 ? (
@@ -238,20 +241,26 @@ const TeamDetail = () => {
                                 </button>
                             ) : status === "PENDING" ? (
                                 <button className="pending-button" disabled>
-                                    ⏳ Заявка отправлена
+                                    ⏳ Pending
                                 </button>
                             ) : (
                                 <button
                                     onClick={handleJoinRequest}
                                     className="join-button"
                                 >
-                                    Подать заявку
+                                    Send Request to join
                                 </button>
                             )}
+                            <button
+                                onClick={() => setShowConnections(!showConnections)}
+                                className="invite-button"
+                            >
+                                Invite Connections
+                            </button>
                         </div>
                     </>
                 ) : (
-                    <p>Загрузка...</p>
+                    <LoadingRabbit />
                 )}
             </motion.div>
         </div>
