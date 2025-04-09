@@ -86,7 +86,7 @@ const TeamDetail = () => {
     }, [user?.userId, id]);
 
     const handleJoinRequest = async () => {
-        if (!user) return alert("Вы не авторизованы!");
+        if (!user) return alert("You are not authorized to join this team!");
 
         try {
             const token = localStorage.getItem("token");

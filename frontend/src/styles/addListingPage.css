@@ -298,26 +298,6 @@ background: #2563eb;
   cursor: pointer;
 }
 
-.file-input {
-  padding: 0.5rem !important;
-}
-
-.photo-preview {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  overflow-x: auto;
-  padding: 1rem 0;
-  position: relative;
-}
-
-.photo-preview img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
 .textarea {
   min-height: 100px;
   resize: vertical;
@@ -442,35 +422,81 @@ text-decoration: underline;
   background: #f0f0f0;
 }
 
+/* File input styling */
+.file-input-label {
+  display: inline-block;
+  padding: 10px 15px;
+  background: #dadada;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.file-input-label:hover {
+  background: #cacaca;
+}
+
+.file-input {
+  display: none;
+}
+
+/* Photo preview styling */
+.photo-preview {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin-top: 15px;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.default-preview {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* Cancel button styling */
 .apartment-preview-cancellation {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 5px;
+  right: 5px;
   width: 20px;
   height: 20px;
   cursor: pointer;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .apartment-preview-cancellation::before,
 .apartment-preview-cancellation::after {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
+  width: 12px;
   height: 2px;
-  background-color: #333; /* цвет крестика */
-  transform-origin: center;
+  background-color: #333;
 }
 
 .apartment-preview-cancellation::before {
-  transform: translate(-50%, -50%) rotate(45deg);
+  transform: rotate(45deg);
 }
 
 .apartment-preview-cancellation::after {
-  transform: translate(-50%, -50%) rotate(-45deg);
+  transform: rotate(-45deg);
 }
-
 
 @media (max-width: 768px) {
   .input-row {

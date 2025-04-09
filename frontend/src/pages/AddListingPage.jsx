@@ -273,19 +273,34 @@ const AddListingPage = () => {
           <div className="form-section">
             <h3>Photo</h3>
             <div className="input-group">
-              <input
-                type="file"
-                name="photo"
-                className="auth-input file-input"
-                onChange={handlePhotoChange}
-                multiple
-                accept="image/png image/jpeg image/jpg"
-                required
-              />
+              <label className="file-input-label">
+                Choose Photo
+                <input
+                    type="file"
+                    name="photo"
+                    className="file-input"
+                    onChange={handlePhotoChange}
+                    accept="image/png, image/jpeg, image/jpg"
+                    required
+                />
+              </label>
             </div>
             <div className="photo-preview">
-              <span className="apartment-preview-cancellation" onClick={() => setApartmentPhotoPreview('default')}></span>
-              <img alt="Preview" src={apartmentPhotoPreview} />
+              {apartmentPhotoPreview !== 'default' && (
+                  <>
+        <span
+            className="apartment-preview-cancellation"
+            onClick={() => {
+              setApartmentPhotoPreview('default');
+              setFormData(prev => ({...prev, photoPath: ''}));
+            }}
+        ></span>
+                    <img src={apartmentPhotoPreview} alt="Apartment preview" />
+                  </>
+              )}
+              {apartmentPhotoPreview === 'default' && (
+                  <div className="default-preview">No photo selected</div>
+              )}
             </div>
           </div>
 
