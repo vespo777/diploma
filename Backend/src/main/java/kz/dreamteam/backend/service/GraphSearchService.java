@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -31,6 +32,19 @@ public class GraphSearchService {
     private final PersonalInfoRepository personalInfoRepository;
     private final RoommateSearchRepository roommateSearchRepository;
     private final TeamRepository teamRepository;
+    private final ConnectionService connectionService;
+    private final RoommateRatingService roommateRatingService;
+
+    private final Map<String, Boolean> processedPairs = new HashMap<>();
+    
+    private String getPairKey(int userId1, int userId2) {
+        int min = Math.min(userId1, userId2);
+        int max = Math.max(userId1, userId2);
+        return min + "-" + max;
+    }
+    
+    private Boolean ratingCounted = false;
+
 
     private GraphSearchService(UserRepository userRepository,
                                SocialDetailsRepository socialDetailsRepository,
@@ -38,7 +52,9 @@ public class GraphSearchService {
                                RoommatePreferencesRepository roommatePreferencesRepository,
                                PersonalInfoRepository personalInfoRepository,
                                RoommateSearchRepository roommateSearchRepository,
-                               TeamRepository teamRepository) {
+                               TeamRepository teamRepository,
+                               ConnectionService connectionService,
+                               RoommateRatingService roommateRatingService) {
         this.userRepository = userRepository;
         this.socialDetailsRepository = socialDetailsRepository;
         this.locationDetailsRepository = locationDetailsRepository;
@@ -46,6 +62,8 @@ public class GraphSearchService {
         this.personalInfoRepository = personalInfoRepository;
         this.roommateSearchRepository = roommateSearchRepository;
         this.teamRepository = teamRepository;
+        this.connectionService = connectionService;
+        this.roommateRatingService = roommateRatingService;
         initializeCoefficients();
         downloadFromDB();
     }
@@ -195,6 +213,36 @@ public class GraphSearchService {
     public ResponseEntity<List<User>> getUserRecommendations(int userIdP) {
         List<Pair<Double, Integer>> res = graph.getOrDefault(userIdP, new ArrayList<>());
 
+        // for (int i = 0; i < res.size(); i++) {
+        //     Pair<Double, Integer> pair = res.get(i);
+        //     int otherUserId = pair.getValue();
+        //     String pairKey = getPairKey(userIdP, otherUserId);
+
+        //     if (!processedPairs.containsKey(pairKey)) {
+        //         String con = connectionService.isTwoUsersConnected(Long.valueOf(otherUserId), Long.valueOf(userIdP));
+
+        //         if (con.contains("ACCEPTED")) {
+        //             res.set(i, new Pair<>(pair.getKey() * 1.2, pair.getValue()));
+        //             processedPairs.put(pairKey, true);
+        //         } 
+        //     }
+        // }
+
+        // if (!ratingCounted) {
+        //     for (int i = 0; i < res.size(); i++) {
+        //         Pair<Double, Integer> pair = res.get(i);
+        //         BigDecimal rating = roommateRatingService.getOverallRating(Long.valueOf(userIdP));
+        //         double normalizedRating = rating.doubleValue() / 5.0;
+                
+        //         System.out.println("DEBUG --- rating: " + normalizedRating);
+        //         res.set(i, new Pair<>(
+        //             pair.getKey() * normalizedRating, 
+        //             pair.getValue()
+        //         ));
+        //     }
+        //     ratingCounted = true;
+        // }
+
         res.sort((a, b) -> Double.compare(b.getKey(), a.getKey()));
 
         List<User> recommendedUsers = res.stream()
@@ -218,6 +266,21 @@ public class GraphSearchService {
     }
     public ResponseEntity<List<UserRecommendationDTO>> getUserRecommendationsDTO(int userIdP) {
         List<Pair<Double, Integer>> res = graph.getOrDefault(userIdP, new ArrayList<>());
+
+        // for (int i = 0; i < res.size(); i++) {
+        //     Pair<Double, Integer> pair = res.get(i);
+        //     int otherUserId = pair.getValue();
+        //     String pairKey = getPairKey(userIdP, otherUserId);
+
+        //     if (!processedPairs.containsKey(pairKey)) {
+        //         String con = connectionService.isTwoUsersConnected(Long.valueOf(otherUserId), Long.valueOf(userIdP));
+
+        //         if (con.contains("ACCEPTED")) {
+        //             res.set(i, new Pair<>(pair.getKey() * 1.2, pair.getValue()));
+        //             processedPairs.put(pairKey, true);
+        //         } 
+        //     }
+        // }
 
         res.sort((a, b) -> Double.compare(b.getKey(), a.getKey()));
 

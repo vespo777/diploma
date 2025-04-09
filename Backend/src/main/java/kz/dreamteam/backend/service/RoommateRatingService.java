@@ -51,7 +51,7 @@ public class RoommateRatingService {
     public BigDecimal getOverallRating(Long userId) {
         return roommateRatingRepository.findByRoommateUserId(userId)
                 .map(RoommateRating::getAverageRating)
-                .orElse(BigDecimal.valueOf(5.00)); // Если нет рейтинга, вернуть 0
+                .orElse(BigDecimal.valueOf(5.00)); // Если нет рейтинга, вернуть 5,0
     }
 
     @Transactional
