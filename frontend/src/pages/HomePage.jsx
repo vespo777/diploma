@@ -57,10 +57,6 @@ const HomePage = () => {
     setShowAttention(true);
   };
 
-  const handleBasicSkip = () => {
-    setShowBasicAlert(false);
-    // You might want to set another attention state here if needed
-  };
 
   return (
       <div className="home-container">
@@ -112,9 +108,6 @@ const HomePage = () => {
                 <div className="alert-buttons">
                   <button className="alert-primary" onClick={() => navigate("/anceta-page")}>
                     Complete Now
-                  </button>
-                  <button className="alert-secondary" onClick={handleBasicSkip}>
-                    Maybe Later
                   </button>
                 </div>
               </div>

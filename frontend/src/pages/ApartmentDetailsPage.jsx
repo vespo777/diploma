@@ -14,7 +14,6 @@ const ApartmentDetailsPage = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const API_URL = 'http://localhost:8080';
 
-
   useEffect(() => {
     const fetchApartment = async () => {
       try {
@@ -46,7 +45,6 @@ const ApartmentDetailsPage = () => {
     fetchApartment();
   }, [id]);
 
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -70,13 +68,12 @@ const ApartmentDetailsPage = () => {
       setImagePreview(base64String);
       setApartment(prev => ({
         ...prev,
-        photoBase64: base64String  // Store base64 string
+        photoPath: base64String  // Store directly in photoPath
       }));
       setHasChanges(true);
     };
     reader.readAsDataURL(file);
   };
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -87,7 +84,6 @@ const ApartmentDetailsPage = () => {
     setHasChanges(true);
   };
 
-  // Add this function in your component
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this apartment listing?')) {
       try {
@@ -100,7 +96,7 @@ const ApartmentDetailsPage = () => {
 
         if (!response.ok) throw new Error('Failed to delete apartment');
 
-        navigate('/apartments'); // Redirect after deletion
+        navigate('/apartments');
       } catch (err) {
         console.error('Delete error:', err);
         alert('Error deleting apartment');
@@ -108,15 +104,10 @@ const ApartmentDetailsPage = () => {
     }
   };
 
-
   const handleSave = async () => {
     try {
-      // Create a copy of apartment data without circular references
-      const apartmentData = {
-        ...apartment,
-        photoBase64: apartment.photoBase64
-      };
-
+      // Create a copy of apartment data without the photoBase64 field
+      const { photoBase64, ...apartmentData } = apartment;
 
       const response = await fetch(`${API_URL}/apartments/${id}`, {
         method: 'PUT',
@@ -151,208 +142,219 @@ const ApartmentDetailsPage = () => {
   if (!apartment) return <div>No apartment found</div>;
 
   return (
-    <div className="apartment-details-container">
-      <button className="back-button" onClick={() => navigate(-1)}>
-        ← Back
-      </button>
+      <div className="apartment-details-container">
+        <button className="back-button" onClick={() => navigate(-1)}>
+          ← Back
+        </button>
 
-      {isOwner && (
-  <div className="owner-buttons">
-    {hasChanges && (
-      <button className="save-button" onClick={handleSave}>
-        Save Changes
-      </button>
-    )}
-    <button className="delete-button" onClick={handleDelete}>
-      Delete from listing
-    </button>
-  </div>
-)}
-      <div className="apartment-header">
-         {isOwner ? (
-            <input
-            type="text"
-            name="title"
-            value={apartment.title}
-            onChange={handleInputChange}
-            placeholder="Введите название квартиры"
-            className="title-input editable"
+        {isOwner && (
+            <div className="owner-buttons">
+              {hasChanges && (
+                  <button className="save-button" onClick={handleSave}>
+                    Save Changes
+                  </button>
+              )}
+              <button className="delete-button" onClick={handleDelete}>
+                Delete from listing
+              </button>
+            </div>
+        )}
+
+        <div className="apartment-header">
+          {isOwner ? (
+              <input
+                  type="text"
+                  name="title"
+                  value={apartment.title}
+                  onChange={handleInputChange}
+                  placeholder="Введите название квартиры"
+                  className="title-input editable"
+              />
+          ) : (
+              <h1 className="title-text">{apartment.title}</h1>
+          )}
+          <div className="image-upload-container">
+            {imagePreview && (
+                <img src={imagePreview} alt="Apartment" className="apartment-photo" />
+            )}
+            {isOwner && (
+                <div className="image-upload-controls">
+                  <label className="upload-label">
+                    Change Photo
+                    <input
+                        type="file"
+                        accept="image/png, image/jpg, image/jpeg"
+                        onChange={handleImageChange}
+                        className="file-input"
+                    />
+                  </label>
+                </div>
+            )}
+          </div>
+        </div>
+
+        <div className="apartment-info">
+          <div className="description-field">
+            <strong>Description:</strong>
+            {isOwner ? (
+                <textarea
+                    name="description"
+                    value={apartment.description}
+                    onChange={handleInputChange}
+                    placeholder="Apartment description"
+                    className="description-input"
                 />
             ) : (
-                <h1 className="title-text">{apartment.title}</h1>
+                <div className="description-text">{apartment.description}</div>
             )}
-        <div className="image-upload-container">
-          {imagePreview && (
-              <img src={imagePreview} alt="Apartment" className="apartment-photo" />
-          )}
-          {isOwner && (
-              <div className="image-upload-controls">
-                <label className="upload-label">
-                  Change Photo
+          </div>
+
+          <div className="info-field">
+            <strong>Price:</strong> {isOwner ? (
+              <input
+                  type="number"
+                  name="price"
+                  value={apartment.price}
+                  onChange={handleInputChange}
+                  placeholder="Price"
+                  className="info-input"
+              />
+          ) : apartment.price} ₸
+          </div>
+
+          <div className="info-field">
+            <strong>Address:</strong> {isOwner ? (
+              <input
+                  type="text"
+                  name="address"
+                  value={apartment.address}
+                  onChange={handleInputChange}
+                  placeholder="Address"
+                  className="info-input"
+              />
+          ) : apartment.address}
+          </div>
+
+          <p><strong>Rooms:</strong> {isOwner ? (
+              <input
+                  type="number"
+                  name="roomQuantity"
+                  value={apartment.roomQuantity}
+                  onChange={handleInputChange}
+                  placeholder="Room quantity"
+              />
+          ) : apartment.roomQuantity}</p>
+
+          <p><strong>Size:</strong> {isOwner ? (
+              <input
+                  type="number"
+                  name="sizeSquareMeter"
+                  value={apartment.sizeSquareMeter}
+                  onChange={handleInputChange}
+                  placeholder="Size (m²)"
+              />
+          ) : apartment.sizeSquareMeter} м²</p>
+
+          <p><strong>Furnished:</strong> {isOwner ? (
+              <select
+                  name="furnished"
+                  value={apartment.furnished}
+                  onChange={handleInputChange}
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+          ) : (apartment.furnished ? 'Yes' : 'No')}</p>
+
+          <p><strong>Internet Included:</strong> {isOwner ? (
+              <select
+                  name="internetIncluded"
+                  value={apartment.internetIncluded}
+                  onChange={handleInputChange}
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+          ) : (apartment.internetIncluded ? 'Yes' : 'No')}</p>
+
+          <p><strong>Pets Allowed:</strong> {isOwner ? (
+              <select
+                  name="petsAllowed"
+                  value={apartment.petsAllowed}
+                  onChange={handleInputChange}
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+          ) : (apartment.petsAllowed ? 'Yes' : 'No')}</p>
+
+          <p><strong>Parking Available:</strong> {isOwner ? (
+              <select
+                  name="parkingAvailable"
+                  value={apartment.parkingAvailable}
+                  onChange={handleInputChange}
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+          ) : (apartment.parkingAvailable ? 'Yes' : 'No')}</p>
+
+          <p><strong>Phone Number:</strong> {isOwner ? (
+              <input
+                  type="text"
+                  name="phoneNumber"
+                  value={apartment.phoneNumber}
+                  onChange={handleInputChange}
+                  placeholder="Address"
+              />
+          ) : apartment.phoneNumber}</p>
+
+          {apartment.location2Gis && (
+              <p><strong>2GIS Location:</strong> {isOwner ? (
                   <input
-                      type="file"
-                      accept="image/png image/jpg image/jpeg"
-                      onChange={handleImageChange}
-                      className="file-input"
+                      type="text"
+                      name="location2Gis"
+                      value={apartment.location2Gis}
+                      onChange={handleInputChange}
+                      placeholder="2GIS link"
                   />
-                </label>
-              </div>
+              ) : (
+                  <a href={apartment.location2Gis} target="_blank" rel="noopener noreferrer">
+                    View on 2GIS
+                  </a>
+              )}</p>
+          )}
+
+          <p><strong>Property Type</strong> {isOwner ? (
+              <select
+                  name="propertyType"
+                  value={apartment.propertyType}
+                  onChange={handleInputChange}
+              >
+                <option value="ROOM">Room</option>
+                <option value="HOUSE">House</option>
+                <option value="HOSTEL">Hostel</option>
+              </select>
+          ) : apartment.propertyType}</p>
+
+          {apartment.linkToKrishaKz && (
+              <p><strong>Krisha.kz Link:</strong> {isOwner ? (
+                  <input
+                      type="text"
+                      name="linkToKrishaKz"
+                      value={apartment.linkToKrishaKz}
+                      onChange={handleInputChange}
+                      placeholder="Krisha.kz link"
+                  />
+              ) : (
+                  <a href={apartment.linkToKrishaKz} target="_blank" rel="noopener noreferrer">
+                    View on Krisha.kz
+                  </a>
+              )}</p>
           )}
         </div>
       </div>
-
-      <div className="apartment-info">
-        <div className="description-field">
-        <strong>Description:</strong>
-            {isOwner ? (
-            <textarea
-                name="description"
-                value={apartment.description}
-                onChange={handleInputChange}
-                placeholder="Apartment description"
-                className="description-input"
-            />
-            ) : (
-            <div className="description-text">{apartment.description}</div>
-            )}
-        </div>
-
-        <div className="info-field">
-        <strong>Price:</strong> {isOwner ? (
-            <input
-                type="number"
-                name="price"
-                value={apartment.price}
-                onChange={handleInputChange}
-                placeholder="Price"
-                className="info-input"
-            />
-            ) : apartment.price} ₸
-        </div>
-
-        <div className="info-field">
-        <strong>Address:</strong> {isOwner ? (
-            <input
-                type="text"
-                name="address"
-                value={apartment.address}
-                onChange={handleInputChange}
-                placeholder="Address"
-                className="info-input"
-            />
-            ) : apartment.address}
-        </div>
-
-        <p><strong>Rooms:</strong> {isOwner ? (
-          <input
-            type="number"
-            name="roomQuantity"
-            value={apartment.roomQuantity}
-            onChange={handleInputChange}
-            placeholder="Room quantity"
-          />
-        ) : apartment.roomQuantity}</p>
-
-<p><strong>Size:</strong> {isOwner ? (
-          <input
-            type="number"
-            name="sizeSquareMeter"
-            value={apartment.sizeSquareMeter}
-            onChange={handleInputChange}
-            placeholder="Size (m²)"
-          />
-        ) : apartment.sizeSquareMeter} м²</p>
-
-<p><strong>Furnished:</strong> {isOwner ? (
-          <select
-            name="furnished"
-            value={apartment.furnished}
-            onChange={handleInputChange}
-          >
-            <option value="true">Да</option>
-            <option value="false">Нет</option>
-          </select>
-        ) : (apartment.furnished ? 'Да' : 'Нет')}</p>
-
-<p><strong>Internet Included:</strong> {isOwner ? (
-          <select
-            name="internetIncluded"
-            value={apartment.internetIncluded}
-            onChange={handleInputChange}
-          >
-            <option value="true">Да</option>
-            <option value="false">Нет</option>
-          </select>
-        ) : (apartment.internetIncluded ? 'Да' : 'Нет')}</p>
-
-<p><strong>Pets Allowed:</strong> {isOwner ? (
-          <select
-            name="petsAllowed"
-            value={apartment.petsAllowed}
-            onChange={handleInputChange}
-          >
-            <option value="true">Да</option>
-            <option value="false">Нет</option>
-          </select>
-        ) : (apartment.petsAllowed ? 'Да' : 'Нет')}</p>
-
-<p><strong>Parking Available:</strong> {isOwner ? (
-          <select
-            name="parkingAvailable"
-            value={apartment.parkingAvailable}
-            onChange={handleInputChange}
-          >
-            <option value="true">Да</option>
-            <option value="false">Нет</option>
-          </select>
-        ) : (apartment.parkingAvailable ? 'Да' : 'Нет')}</p>
-
-<p><strong>Phone Number:</strong> {isOwner ? (
-          <input
-            type="text"
-            name="phoneNumber"
-            value={apartment.phoneNumber}
-            onChange={handleInputChange}
-            placeholder="Address"
-          />
-        ) : apartment.phoneNumber}</p>
-
-        {apartment.location2Gis && (
-          <p><strong>2GIS Location:</strong> {isOwner ? (
-            <input
-              type="text"
-              name="location2Gis"
-              value={apartment.location2Gis}
-              onChange={handleInputChange}
-              placeholder="2GIS link"
-            />
-          ) : (
-            <a href={apartment.location2Gis} target="_blank" rel="noopener noreferrer">
-              View on 2GIS
-            </a>
-          )}</p>
-        )}
-
-        {apartment.linkToKrishaKz && (
-          <p><strong>Krisha.kz Link:</strong> {isOwner ? (
-            <input
-              type="text"
-              name="linkToKrishaKz"
-              value={apartment.linkToKrishaKz}
-              onChange={handleInputChange}
-              placeholder="Krisha.kz link"
-            />
-          ) : (
-            <a href={apartment.linkToKrishaKz} target="_blank" rel="noopener noreferrer">
-              View on Krisha.kz
-            </a>
-          )}</p>
-        )}
-
-      </div>
-    </div>
   );
 };
 
 export default ApartmentDetailsPage;
-
