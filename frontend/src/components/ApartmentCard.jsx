@@ -13,7 +13,7 @@ const ApartmentCard = ({ apartment, onDelete, isOwner }) => {
                 )}
             </div>
             <div className="apartment-details">
-                <h3>Title: {apartment.title || 'No title provided'}</h3>
+                <h3>{apartment.title || 'No title provided'}</h3>
                 <p><strong>Rooms:</strong> {apartment.roomQuantity}</p>
                 <p><strong>Size:</strong> {apartment.sizeSquareMeter} m²</p>
 

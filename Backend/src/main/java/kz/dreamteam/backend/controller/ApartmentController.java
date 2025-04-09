@@ -34,6 +34,8 @@ public class ApartmentController {
             @RequestParam(required = false) Integer maxRooms,
             @RequestParam(required = false) Integer minSize,
             @RequestParam(required = false) Integer maxSize) {
+//        log.info("Search params: query={}, minRooms={}, maxRooms={}, minSize={}, maxSize={}",
+//                query, minRooms, maxRooms, minSize, maxSize);
 
         return apartmentService.searchApartments(query, minRooms, maxRooms, minSize, maxSize);
     }
@@ -46,7 +48,7 @@ public class ApartmentController {
                 ? authorizationHeader.substring(7)
                 : authorizationHeader;
 
-        log.info(apartmentDTO.getPhotoPath());
+//        log.info(apartmentDTO.getPhotoPath());
 
         Apartment savedApartment = apartmentService.createApartment(token, apartmentDTO);
         return ResponseEntity.ok(savedApartment);

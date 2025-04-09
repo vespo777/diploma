@@ -21,41 +21,50 @@ const ApartmentsPage = () => {
   const navigate = useNavigate();
   const API_URL = 'http://localhost:8080';
 
+  // useEffect(() => {
+  const fetchApartments = async () => {
+    try {
+      const query = new URLSearchParams();
+      if (searchParams.query) query.append('query', searchParams.query);
+      if (searchParams.minRooms) query.append('minRooms', searchParams.minRooms);
+      if (searchParams.maxRooms) query.append('maxRooms', searchParams.maxRooms);
+      if (searchParams.minSize) query.append('minSize', searchParams.minSize);
+      if (searchParams.maxSize) query.append('maxSize', searchParams.maxSize);
+
+      // console.log("Query URL:", `${API_URL}/apartments/search?${query.toString()}`);
+      const response = await fetch(`${API_URL}/apartments/search?${query.toString()}`, {
+        method: 'GET',
+          headers: {
+            Authorization: `${localStorage.getItem('token')}`
+          }
+      });
+      // if (!response.ok) throw new Error('Failed to fetch apartments');
+      // const response = await fetch(`${API_URL}/apartments`, {
+      //   method: 'GET',
+      //     headers: {
+      //       Authorization: `${localStorage.getItem('token')}`
+      //     }
+      // });
+      const data = await response.json();
+      setApartments(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //   fetchApartments();
+  // }, []);
+
   useEffect(() => {
-    const fetchApartments = async () => {
-      try {
-        const query = new URLSearchParams();
-        if (searchParams.query) query.append('query', searchParams.query);
-        if (searchParams.minRooms) query.append('minRooms', searchParams.minRooms);
-        if (searchParams.maxRooms) query.append('maxRooms', searchParams.maxRooms);
-        if (searchParams.minSize) query.append('minSize', searchParams.minSize);
-        if (searchParams.maxSize) query.append('maxSize', searchParams.maxSize);
-
-        // const response = await fetch(`${API_URL}/apartments/search?${query.toString()}`, {
-        //   method: 'GET',
-        //     headers: {
-        //       Authorization: `${localStorage.getItem('token')}`
-        //     }
-        // });
-        // if (!response.ok) throw new Error('Failed to fetch apartments');
-        const response = await fetch(`${API_URL}/apartments`, {
-          method: 'GET',
-            headers: {
-              Authorization: `${localStorage.getItem('token')}`
-            }
-        });
-        const data = await response.json();
-        setApartments(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchApartments();
-  }, []);
-
+    const delayDebounce = setTimeout(() => {
+      fetchApartments();
+    }, 500); // задержка 500мс
+  
+    return () => clearTimeout(delayDebounce);
+  }, [searchParams]); // реагируем на любые изменения фильтров
+  
 
   const handleDeleteApartment = async (id) => {
     try {

@@ -41,7 +41,6 @@ public class Apartment {
     private String phoneNumber;
     private Boolean petsAllowed;
     private Boolean parkingAvailable;
-
     private String linkToKrishaKz; // URL to the listing on krisha.kz
     private Integer roomQuantity;
     private Integer sizeSquareMeter;
@@ -232,7 +231,6 @@ public class Apartment {
                 safeStr(apartmentId) + " " +
                         safeStr(userId) + " " +
                         safeStr(description) + " " +
-                        safeStr(photoPath) + " " +
                         safeStr(location2Gis) + " " +
                         safeStr(linkToKrishaKz) + " " +
                         safeStr(roomQuantity) + " " +

@@ -68,7 +68,7 @@ public class UserService {
         return ResponseEntity.ok(user);
     }
 
-//    @CacheEvict(value = "users", key = "#userId")
+    @CacheEvict(value = "users", key = "#userId")
     public void updateProfilePhoto(Long userId, String profilePhotoPath) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
@@ -76,7 +76,7 @@ public class UserService {
         user.setProfilePhotoPath(profilePhotoPath);
         userRepository.save(user);
     }
-//    @CacheEvict(value = "users", key = "#userId")
+    @CacheEvict(value = "users", key = "#userId")
     public void deleteProfilePhoto(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
@@ -85,7 +85,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-//    @Cacheable(value = "users", key = "#userId")
+    @Cacheable(value = "users", key = "#userId")
     public UserDto getUserById(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));

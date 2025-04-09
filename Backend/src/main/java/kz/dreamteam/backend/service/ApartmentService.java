@@ -60,10 +60,12 @@ public class ApartmentService {
         if(maxSize == null) maxSize=1000000;
 
         if (query != null && !query.isEmpty()) {
-            boolQuery.must(QueryBuilders.wildcardQuery("descriptionJunkKeyword.keyword", "*" + query.toLowerCase() + "*"))
-                    .filter(QueryBuilders.rangeQuery("roomQuantity").gte(minRooms).lte(maxRooms))
-                    .filter(QueryBuilders.rangeQuery("sizeSquareMeter").gte(minSize).lte(maxSize));
+            boolQuery.must(QueryBuilders.wildcardQuery("descriptionJunkKeyword.keyword", "*" + query.toLowerCase() + "*"));
         }
+
+        // Эти фильтры должны применяться всегда
+        boolQuery.filter(QueryBuilders.rangeQuery("roomQuantity").gte(minRooms).lte(maxRooms));
+        boolQuery.filter(QueryBuilders.rangeQuery("sizeSquareMeter").gte(minSize).lte(maxSize));
 
         String jsonQuery = boolQuery.toString();
         String encodedQuery = Base64.getEncoder().encodeToString(jsonQuery.getBytes(StandardCharsets.UTF_8));
@@ -95,7 +97,7 @@ public class ApartmentService {
         Apartment savedApartment = apartmentsRepository.save(apartment);
 
         // Сохраняем в Elasticsearch
-//        saveToElasticsearch(apartment);
+        saveToElasticsearch(apartment);
 
         return savedApartment;
     }
@@ -142,7 +144,7 @@ public class ApartmentService {
                     apartmentsRepository.save(apartment);
 
                     // Обновляем запись в Elasticsearch
-//                    saveToElasticsearch(apartment);
+                    saveToElasticsearch(apartment);
 
                     return apartment;
                 })
