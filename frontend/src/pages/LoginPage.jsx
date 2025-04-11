@@ -18,7 +18,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (user) {
-      navigate('/');
+      navigate('/profile');
     }
   }, [user, navigate]);
 
@@ -32,7 +32,7 @@ const LoginPage = () => {
       await login(email, rawPassword);
       setSuccess("Login successful! Redirecting to home page...");
       setTimeout(() => {
-        navigate("/");
+        navigate("/profile");
       }, 2000);
     } catch (err) {
       setError(err.message || "Failed to login");
