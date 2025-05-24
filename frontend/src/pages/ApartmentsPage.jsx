@@ -32,14 +32,14 @@ const ApartmentsPage = () => {
       if (searchParams.maxSize) query.append('maxSize', searchParams.maxSize);
 
       // console.log("Query URL:", `${API_URL}/apartments/search?${query.toString()}`);
-      const response = await fetch(`${API_URL}/apartments/search?${query.toString()}`, {
+      const response = await fetch(`${API_URL}/apartments`, {
         method: 'GET',
           headers: {
             Authorization: `${localStorage.getItem('token')}`
           }
       });
       // if (!response.ok) throw new Error('Failed to fetch apartments');
-      // const response = await fetch(`${API_URL}/apartments`, {
+      // const response = await fetch(`${API_URL}/apartments/search?${query.toString()}`, {
       //   method: 'GET',
       //     headers: {
       //       Authorization: `${localStorage.getItem('token')}`
@@ -61,10 +61,10 @@ const ApartmentsPage = () => {
     const delayDebounce = setTimeout(() => {
       fetchApartments();
     }, 500); // задержка 500мс
-  
+
     return () => clearTimeout(delayDebounce);
   }, [searchParams]); // реагируем на любые изменения фильтров
-  
+
 
   const handleDeleteApartment = async (id) => {
     try {

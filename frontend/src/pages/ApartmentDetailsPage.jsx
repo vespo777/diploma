@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useParams, useNavigate, Link} from 'react-router-dom';
 import LoadingRabbit from "../components/pixi/Loading";
 import '../styles/ApartmentDetailsPage.css';
+import avatarPlaceholder from "../imgs/default-avatar.jpeg";
 
 const ApartmentDetailsPage = () => {
   const { id } = useParams();
@@ -12,17 +13,50 @@ const ApartmentDetailsPage = () => {
   const [isOwner, setIsOwner] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
+  const [members, setMembers] = useState(null);
   const API_URL = 'http://localhost:8080';
+
+  const fetchMemberProfiles = useCallback(async (memberIds) => {
+    try {
+      const memberRequests = memberIds.map(id =>
+          fetch(`${API_URL}/profile/${id}`, {
+            headers: { Authorization: localStorage.getItem("token") },
+          }).then(res => res.ok ? res.json() : null)
+      );
+      const profiles = await Promise.all(memberRequests);
+      setMembers(profiles.filter(Boolean));
+      console.log(profiles);
+    } catch (error) {
+      console.error("Ошибка загрузки участников:", error);
+    }
+  }, []);
+
+  const fetchApartmentResidents = useCallback(async (userId) => {
+    try {
+      const response = await fetch(`${API_URL}/teams/get-team-by-userId?userId=${userId}`, {
+        headers: { Authorization: localStorage.getItem("token") },
+      });
+
+      if (!response.ok) {
+        throw new Error("Ошибка загрузки residents");
+      }
+
+      const data = await response.json();
+      if (data.members?.length) {
+        fetchMemberProfiles(data.members);
+      }
+    } catch (error) {
+      console.error("Ошибка при загрузке residents:", error);
+    }
+  }, [fetchMemberProfiles]);
+
 
   useEffect(() => {
     const fetchApartment = async () => {
       try {
         const storedUserData = JSON.parse(localStorage.getItem('userData')) || {};
-
         const response = await fetch(`${API_URL}/apartments/${id}`, {
-          headers: {
-            Authorization: `${localStorage.getItem('token')}`
-          }
+          headers: { Authorization: `${localStorage.getItem('token')}` }
         });
 
         if (!response.ok) {
@@ -35,6 +69,9 @@ const ApartmentDetailsPage = () => {
         if (storedUserData && data.userId === storedUserData.userId) {
           setIsOwner(true);
         }
+
+        await fetchApartmentResidents(data.userId);
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -43,7 +80,8 @@ const ApartmentDetailsPage = () => {
     };
 
     fetchApartment();
-  }, [id]);
+  }, [id, fetchApartmentResidents]);
+
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -143,6 +181,40 @@ const ApartmentDetailsPage = () => {
 
   return (
       <div className="apartment-details-container">
+        <div className="residents-section">
+          <h2>Residents:</h2>
+          <div className="resident-list">
+            {members && members.length > 0 ? (
+                members.map((member) => (
+                    <Link
+                        key={member.userId}
+                        to={`/profile/${member.userId}`}
+                        className="resident-card"
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                    >
+                      <img
+                          src={member.profilePhotoPath || '../imgs/default-avatar.jpeg'}
+                          alt={`${member.personalInfo.name}'s avatar`}
+                          className="notification-avatar"
+                      />
+                      <div className="resident-card__info">
+                        <p>
+                          <strong>
+                            {member.personalInfo.name} {member.personalInfo.surname}
+                          </strong>
+                          {" "}
+                          {member.socialDetails.company}
+                        </p>
+                        <p>Email: {member.email}</p>
+                      </div>
+                    </Link>
+                ))
+            ) : (
+                <p>No residents found.</p>
+            )}
+          </div>
+        </div>
+
         <button className="back-button" onClick={() => navigate(-1)}>
           ← Back
         </button>

@@ -273,7 +273,7 @@ const AddListingPage = () => {
           <div className="form-section">
             <h3>Photo</h3>
             <div className="input-group">
-              <label>
+              <label className="browse-photo">
                 Choose Photo
                 <input
                     type="file"

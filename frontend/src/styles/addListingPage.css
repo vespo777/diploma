@@ -4,6 +4,7 @@
     margin: 0 auto;
 }
 
+
 .link-owner{
   text-decoration: none;
   cursor: pointer;
@@ -244,6 +245,31 @@ justify-content: space-evenly;
 }
 
 
+.residents-section {
+  position: absolute;
+  top: 110px;
+  background-color: #f5f5f5;
+  padding: 10px;
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+  box-shadow: 1px 1px 10px rgba(118, 118, 118, 0.2);
+  right: 10px;
+}
+
+.resident-card{
+  display: flex;
+  border-bottom: 1px solid #dddddd;
+  padding: 5px;
+}
+
+.resident-card__info{
+  padding:5px;
+}
+.resident-card:hover{
+  background-color: #dddddd;
+  cursor: pointer;
+}
+
 .no-members {
 font-size: 14px;
 color: #94a3b8;
@@ -253,6 +279,11 @@ color: #94a3b8;
 display: flex;
 gap: 10px;
 margin-top: 10px;
+}
+
+.browse-photo{
+outline: 1px solid gray;
+width: 30%;
 }
 
 .invite-input {
